@@ -34,11 +34,13 @@ app.use(express.static(path.join(__dirname, "build")));
 
 const vndbRoute = require("./routes/vndb.route");
 const patchRoute = require("./routes/patch.route");
+const renderRoute = require("./routes/render.route")
 // const userRoute = require("./routes/user.route");
 // const tokenRoute = require("./routes/token.route");
 
 app.use("/api/vndb", vndbRoute);
 app.use("/api/patch", patchRoute);
+app.use("/", renderRoute);
 // app.use("/api/user", userRoute);
 // app.use("/api", tokenRoute);
 
