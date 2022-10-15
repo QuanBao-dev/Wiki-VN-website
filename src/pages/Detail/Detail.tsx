@@ -123,7 +123,11 @@ const Detail = () => {
         <div className="detail-title-container">
           <img
             src={
-              !detailState.image_nsfw ? detailState.image : "/nsfw-warning.webp"
+              !detailState.image_nsfw
+                ? detailState.image
+                : detailState.screens
+                ? detailState.screens.filter(({ nsfw }) => !nsfw)[0].image
+                : "/nsfw-warning.webp"
             }
             alt=""
           ></img>

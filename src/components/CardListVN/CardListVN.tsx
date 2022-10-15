@@ -177,7 +177,6 @@ const CardListVN = () => {
   let lastPage = 0;
   if (indexActive === 1) lastPage = Math.ceil(((dbStats.vn || 0) + 1646) / 10);
   if (indexActive === 0) lastPage = Math.ceil((patchStats.vn || 0) / 10);
-  console.log(visualNovelList);
   return (
     <div className="card-list-vn-container">
       <div className="card-list-toggle-mode">
@@ -202,18 +201,21 @@ const CardListVN = () => {
       </div>
       <div className="card-list-vn-wrapper" ref={cardListVnContainerRef}>
         {!isLoading &&
-          visualNovelList.map(({ title, description, image, id, image_nsfw }) => (
-            <CardItemVN
-              key={id}
-              id={id}
-              title={title}
-              image={image}
-              description={description}
-              trigger={trigger}
-              setTrigger={setTrigger}
-              isNsfw={image_nsfw}
-            />
-          ))}
+          visualNovelList.map(
+            ({ title, description, image, id, image_nsfw, screens }) => (
+              <CardItemVN
+                key={id}
+                id={id}
+                title={title}
+                image={image}
+                description={description}
+                trigger={trigger}
+                setTrigger={setTrigger}
+                isNsfw={image_nsfw}
+                screens={screens}
+              />
+            )
+          )}
         {isLoading &&
           Array.from(Array(10).keys()).map((key) => (
             <SkeletonLoading

@@ -18,6 +18,7 @@ const CardItemVN = ({
   trigger,
   setTrigger,
   isNsfw,
+  screens,
 }: Partial<Props>) => {
   const descriptionRef = useRef(document.createElement("div"));
   useEffect(() => {
@@ -27,7 +28,13 @@ const CardItemVN = ({
     <Link to={`/vns/${id}`} className="card-item-vn-container">
       <div className="container-image-frame">
         <img
-          src={!isNsfw ? image : "/nsfw-warning.webp"}
+          src={
+            !isNsfw
+              ? image
+              : screens && screens[0]
+              ? screens.filter(({ nsfw }) => !nsfw)[0].image
+              : "/nsfw-warning.webp"
+          }
           alt=""
           onLoad={() => {
             if (setTrigger) setTrigger(!trigger);
