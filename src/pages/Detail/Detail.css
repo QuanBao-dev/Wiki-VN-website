@@ -1,0 +1,154 @@
+fieldset {
+  border-radius: 10px;
+  line-height: 2rem;
+  margin-top: 1rem;
+  border: 3px solid rgba(128, 128, 128, 0.362);
+  background-color: rgba(192, 192, 192, 0.219);
+}
+
+legend {
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 1.4rem;
+  font-family: "Roboto";
+}
+
+.visual-novel-detail-container {
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0 0 3px 3px rgb(128 128 128 / 36%);
+  border-radius: 10px;
+  padding: 1rem;
+  font-size: 1.1rem;
+}
+
+.visual-novel-detail-container a {
+  color: blue;
+}
+
+.detail-title-container{
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.detail-title-wrapper {
+  margin-left: 1rem;
+}
+
+.detail-title-table-info-container {
+  margin-left: 1rem;
+  width: 94%;
+  border-radius: 10px;
+  border: 3px solid rgba(128, 128, 128, 0.362);
+}
+
+.detail-title-table-info-container legend {
+  text-align: center;
+}
+
+.detail-title-table-info tr td {
+  padding-left: 1rem;
+  padding-bottom: 0.5rem;
+}
+
+.detail-title-table-info tr th {
+  text-align: left;
+  vertical-align: text-top;
+  padding-bottom: 0.5rem;
+}
+
+.detail-title-table-info tr a {
+  text-decoration: none;
+}
+
+.visual-novel-title {
+  font-family: "Merriweather", serif;
+  text-align: center;
+  margin-top: 0;
+  font-size: 2rem;
+}
+
+.description-container a {
+  text-transform: capitalize;
+  color: blue;
+  text-decoration: none;
+}
+
+.detail-relation-list {
+  margin: 0.5rem;
+  padding-left: 2rem;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+  font-size: 1.2rem;
+  list-style-type: square;
+}
+
+.screenshots-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.screenshots-container img {
+  max-width: 110px;
+  margin: 0.5rem;
+  cursor: zoom-in;
+}
+
+.image-zoom-container{
+  position: fixed;
+  z-index: 1000;
+  cursor: zoom-out;
+  display: none;
+}
+
+.black-background{
+  position: fixed;
+  z-index: 999;
+  background-color: rgba(0, 0, 0, 0.642);
+  width: 100%;
+  top: 0;
+  left: 0;
+  height: 100%;
+  display: none;
+}
+
+.image-zoom-container img{
+  width: 100%;
+  height: 100%;
+}
+
+.release-list{
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0.5rem;
+}
+
+.button-download{
+  box-shadow: 0 0 3px 1px black;
+  padding: 1rem;
+  display: inline-block;
+  color: white!important;
+  border-radius: 10px;
+  background-color: rgb(42, 89, 165);
+  margin: 0.5rem;
+  transition: 0.3s;
+}
+
+.button-download:hover{
+  background-color: blueviolet;
+}
+
+@media (max-width:690px) {
+  .detail-title-container{
+    flex-direction: column;
+  }
+
+  .app-wrapper{
+    margin: auto;
+  }
+
+  .detail-title-table-info-container{
+    margin-left: 0;
+    width: 92%;
+  }
+}

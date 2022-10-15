@@ -1,38 +1,55 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Cookie&family=Merriweather:ital@1&family=Roboto&family=Source+Serif+Pro:wght@600&display=swap');
+
+a{
+  text-decoration: none;
+  color: blue;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.app-container{
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  max-width: 1215.35px;
+  width: 100%;
+  margin: auto;
+  padding-top: 1rem;
+  flex: 1 0 100%;
 }
 
-.App-link {
-  color: #61dafb;
+.app-wrapper{
+  width: 65%;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.side-section-container {
+  width: 30%;
+  margin-left: 1rem;
+}
+
+@media (max-width:970px) {
+  .app-container{
+    flex-direction: column;
   }
-  to {
-    transform: rotate(360deg);
+
+  .app-wrapper{
+    width: 97%;
+    margin: auto!important;
+  }
+
+  .search-VNs-container{
+    width: 90%!important;
+    margin: auto!important;
+    margin-bottom: 1rem!important;
+  }
+
+  .side-section-container{
+    width: 90%;
+    margin: auto;
+    margin-top: 1rem;
+    padding: 1rem!important;
+    box-shadow:0 0 3px 3px rgb(128 128 128 / 36%);
+    border-radius: 10px;
+  }
+
+  .random-vn-list-container{
+    padding: 0!important;
+    box-shadow: none!important;
   }
 }

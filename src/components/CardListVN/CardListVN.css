@@ -1,0 +1,54 @@
+.card-list-vn-container{
+  margin-right: 1rem;
+  width: 100%;
+}
+
+.card-list-vn-wrapper{
+  position: relative;
+  width: 100%;
+  height: 10px;
+}
+
+.card-list-page-list{
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.card-list-page-item{
+  padding:0.3rem 0.8rem;
+  color: black;
+  box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.308);
+  margin: 0.4rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.5s;
+  background-color: rgb(255, 255, 255);
+}
+
+.card-list-page-item.active{
+  background-color: purple;
+  color: white;
+}
+
+.card-list-toggle-mode{
+  display: flex;
+  margin-bottom: 1rem;
+}
+
+.card-list-toggle-mode div{
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: 0.5s;
+  margin: 0 0.5rem;
+  background-color: rgba(0, 0, 0, 0.438);
+  color: white;
+  font-weight: 600;
+  border-radius: 10px;
+  box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.199);
+}
+
+.card-list-toggle-mode div.active{
+  background-color: purple;
+}

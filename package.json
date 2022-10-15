@@ -2,20 +2,37 @@
   "name": "knight90-patch-eng",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:5000",
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^13.3.0",
-    "@testing-library/user-event": "^13.5.0",
+    "@hapi/joi": "^17.1.1",
+    "@types/node": "^18.6.3",
+    "@types/react": "^18.0.15",
+    "@types/react-dom": "^18.0.6",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "express-rate-limit": "^6.6.0",
+    "joi": "^17.6.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.6.1",
+    "nanoid": "^3.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
+    "rxjs": "^7.5.6",
+    "typescript": "^4.7.4",
+    "uuid": "^8.3.2",
+    "vndb-api": "^1.0.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev:ui": "set PORT=3000 && react-scripts start",
+    "dev:server": "node_modules\\.bin\\nodemon index.js",
+    "start": "node index.js",
+    "build": "react-scripts build && rm build/static/js/*.map && rm build/static/css/*.map",
+    "eject": "react-scripts eject",
+    "dev": "node_modules\\.bin\\concurrently \"npm run dev:ui\" \"nodemon index.js\""
   },
   "eslintConfig": {
     "extends": [
@@ -33,6 +50,15 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "concurrently": "^7.3.0",
+    "nodemon": "^2.0.19"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "src/*"
     ]
   }
 }
