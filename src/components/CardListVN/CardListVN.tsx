@@ -47,16 +47,12 @@ const CardListVN = () => {
   useEffect(() => {
     if (window.innerWidth > 1130) {
       setNumberOfColumn(3);
-      setTrigger(!trigger);
-      return;
     }
 
     if (window.innerWidth <= 1130) {
       setNumberOfColumn(2);
-      setTrigger(!trigger);
-      return;
     }
-  }, [trigger]);
+  }, []);
 
   useEffect(() => {
     const subscription = fromEvent(window, "resize")
