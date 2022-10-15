@@ -43,7 +43,7 @@ const RandomVNItem = ({
           src={
             !image_nsfw
               ? image
-              : screens
+              : screens && screens.filter(({ nsfw }) => !nsfw)[0]
               ? screens.filter(({ nsfw }) => !nsfw)[0].image
               : "/nsfw-warning.webp"
           }

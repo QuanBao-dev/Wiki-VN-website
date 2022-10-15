@@ -125,7 +125,8 @@ const Detail = () => {
             src={
               !detailState.image_nsfw
                 ? detailState.image
-                : detailState.screens
+                : detailState.screens &&
+                  detailState.screens.filter(({ nsfw }) => !nsfw)[0]
                 ? detailState.screens.filter(({ nsfw }) => !nsfw)[0].image
                 : "/nsfw-warning.webp"
             }

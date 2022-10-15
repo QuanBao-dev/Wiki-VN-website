@@ -31,7 +31,7 @@ const CardItemVN = ({
           src={
             !isNsfw
               ? image
-              : screens && screens[0]
+              : screens && screens.filter(({ nsfw }) => !nsfw)[0]
               ? screens.filter(({ nsfw }) => !nsfw)[0].image
               : "/nsfw-warning.webp"
           }
