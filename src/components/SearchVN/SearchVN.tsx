@@ -45,7 +45,14 @@ const SearchVN = () => {
                   indexActive === key + 1 ? " active" : ""
                 }`}
               >
-                <img src={suggestion.image} alt="" />
+                <img
+                  src={
+                    !suggestion.image_nsfw
+                      ? suggestion.image
+                      : "/nsfw-warning.webp"
+                  }
+                  alt=""
+                />
                 <div>
                   <h4>{(suggestion as any).title}</h4>
                   <div className="suggestion-description">
