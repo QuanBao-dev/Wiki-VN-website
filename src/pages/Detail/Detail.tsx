@@ -121,7 +121,12 @@ const Detail = () => {
       <div className="visual-novel-detail-container">
         <h1 className="visual-novel-title">{detailState.title}</h1>
         <div className="detail-title-container">
-          <img src={detailState.image} alt=""></img>
+          <img
+            src={
+              !detailState.image_nsfw ? detailState.image : "/nsfw-warning.webp"
+            }
+            alt=""
+          ></img>
           <fieldset className="detail-title-table-info-container">
             <legend>Information</legend>
             <table className="detail-title-table-info">
@@ -185,90 +190,97 @@ const Detail = () => {
           <fieldset>
             <legend>Screenshots</legend>
             <div className="screenshots-container">
-              {detailState.screens.map((screen, key) => (
-                <img
-                  key={key}
-                  src={screen.image}
-                  alt=""
-                  onClick={(e) => {
-                    clearTimeout(timeoutRef.current);
-                    const element = e.target as HTMLImageElement;
-                    chosenImageRef.current = element;
-                    const { y, x } = element.getBoundingClientRect();
-                    imageZoomContainerRef.current.style.display = "block";
-                    imageZoomContainerRef.current.style.transition = "0s";
-                    imageZoomContainerRef.current.style.zIndex = "1000";
-                    blackBackgroundRef.current.style.zIndex = "999";
-                    imageZoomContainerRef.current.style.left = `${x}px`;
-                    imageZoomContainerRef.current.style.top = `${y}px`;
-                    imageZoomContainerRef.current.style.width = `${element.offsetWidth}px`;
-                    imageZoomContainerRef.current.style.height = `${element.offsetHeight}px`;
-                    (
-                      imageZoomContainerRef.current.querySelector("img") as any
-                    ).src = screen.image;
-                    chosenImageRef.current.style.opacity = "0";
-                    timeoutRef.current = setTimeout(() => {
-                      document.body.style.overflow = "hidden";
-                      imageZoomContainerRef.current.style.transition = "0.4s";
-                      if (
-                        screen.width < window.innerWidth &&
-                        screen.height < window.innerHeight
-                      ) {
-                        imageZoomContainerRef.current.style.width = `${screen.width}px`;
-                        imageZoomContainerRef.current.style.height = `${screen.height}px`;
-                        imageZoomContainerRef.current.style.top = `${
-                          window.innerHeight / 2 - screen.height / 2
-                        }px`;
-                        imageZoomContainerRef.current.style.left = `${
-                          window.innerWidth / 2 - screen.width / 2
-                        }px`;
-                      } else {
+              {detailState.screens
+                .filter(({ nsfw }) => !nsfw)
+                .map((screen, key) => (
+                  <img
+                    key={key}
+                    src={screen.image}
+                    alt=""
+                    onClick={(e) => {
+                      clearTimeout(timeoutRef.current);
+                      const element = e.target as HTMLImageElement;
+                      chosenImageRef.current = element;
+                      const { y, x } = element.getBoundingClientRect();
+                      imageZoomContainerRef.current.style.display = "block";
+                      imageZoomContainerRef.current.style.transition = "0s";
+                      imageZoomContainerRef.current.style.zIndex = "1000";
+                      blackBackgroundRef.current.style.zIndex = "999";
+                      imageZoomContainerRef.current.style.left = `${x}px`;
+                      imageZoomContainerRef.current.style.top = `${y}px`;
+                      imageZoomContainerRef.current.style.width = `${element.offsetWidth}px`;
+                      imageZoomContainerRef.current.style.height = `${element.offsetHeight}px`;
+                      (
+                        imageZoomContainerRef.current.querySelector(
+                          "img"
+                        ) as any
+                      ).src = screen.image;
+                      chosenImageRef.current.style.opacity = "0";
+                      timeoutRef.current = setTimeout(() => {
+                        document.body.style.overflow = "hidden";
+                        imageZoomContainerRef.current.style.transition = "0.4s";
                         if (
-                          window.innerWidth <= screen.width &&
-                          window.innerWidth * (screen.height / screen.width) <=
-                            window.innerHeight
+                          screen.width < window.innerWidth &&
+                          screen.height < window.innerHeight
                         ) {
-                          imageZoomContainerRef.current.style.width = `${window.innerWidth}px`;
-                          imageZoomContainerRef.current.style.height = `${
-                            window.innerWidth * (screen.height / screen.width)
-                          }px`;
+                          imageZoomContainerRef.current.style.width = `${screen.width}px`;
+                          imageZoomContainerRef.current.style.height = `${screen.height}px`;
                           imageZoomContainerRef.current.style.top = `${
-                            window.innerHeight / 2 -
-                            (window.innerWidth *
-                              (screen.height / screen.width)) /
-                              2
+                            window.innerHeight / 2 - screen.height / 2
                           }px`;
-                          imageZoomContainerRef.current.style.left = `${0}px`;
-                        }
-                        if (
-                          window.innerHeight <= screen.height &&
-                          window.innerHeight * (screen.width / screen.height) <=
-                            window.innerWidth
-                        ) {
-                          imageZoomContainerRef.current.style.width = `${
-                            window.innerHeight * (screen.width / screen.height)
-                          }px`;
-                          imageZoomContainerRef.current.style.height = `${window.innerHeight}px`;
-                          imageZoomContainerRef.current.style.top = `${0}px`;
                           imageZoomContainerRef.current.style.left = `${
-                            window.innerWidth / 2 -
-                            (window.innerHeight *
-                              (screen.width / screen.height)) /
-                              2
+                            window.innerWidth / 2 - screen.width / 2
                           }px`;
+                        } else {
+                          if (
+                            window.innerWidth <= screen.width &&
+                            window.innerWidth *
+                              (screen.height / screen.width) <=
+                              window.innerHeight
+                          ) {
+                            imageZoomContainerRef.current.style.width = `${window.innerWidth}px`;
+                            imageZoomContainerRef.current.style.height = `${
+                              window.innerWidth * (screen.height / screen.width)
+                            }px`;
+                            imageZoomContainerRef.current.style.top = `${
+                              window.innerHeight / 2 -
+                              (window.innerWidth *
+                                (screen.height / screen.width)) /
+                                2
+                            }px`;
+                            imageZoomContainerRef.current.style.left = `${0}px`;
+                          }
+                          if (
+                            window.innerHeight <= screen.height &&
+                            window.innerHeight *
+                              (screen.width / screen.height) <=
+                              window.innerWidth
+                          ) {
+                            imageZoomContainerRef.current.style.width = `${
+                              window.innerHeight *
+                              (screen.width / screen.height)
+                            }px`;
+                            imageZoomContainerRef.current.style.height = `${window.innerHeight}px`;
+                            imageZoomContainerRef.current.style.top = `${0}px`;
+                            imageZoomContainerRef.current.style.left = `${
+                              window.innerWidth / 2 -
+                              (window.innerHeight *
+                                (screen.width / screen.height)) /
+                                2
+                            }px`;
+                          }
                         }
-                      }
-                      backupObj.current = {
-                        x,
-                        y,
-                        width: element.offsetWidth,
-                        height: element.offsetHeight,
-                      };
-                      blackBackgroundRef.current.style.display = "block";
-                    }, 100);
-                  }}
-                ></img>
-              ))}
+                        backupObj.current = {
+                          x,
+                          y,
+                          width: element.offsetWidth,
+                          height: element.offsetHeight,
+                        };
+                        blackBackgroundRef.current.style.display = "block";
+                      }, 100);
+                    }}
+                  ></img>
+                ))}
             </div>
           </fieldset>
         )}

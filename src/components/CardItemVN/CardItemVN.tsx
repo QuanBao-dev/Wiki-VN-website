@@ -7,7 +7,8 @@ import { parseDescription } from "../../util/parseDescription";
 interface Props extends VisualNovel {
   trigger: boolean;
   setTrigger: React.Dispatch<React.SetStateAction<boolean>>;
-  isLoading:boolean
+  isLoading: boolean;
+  isNsfw: boolean;
 }
 const CardItemVN = ({
   title,
@@ -16,6 +17,7 @@ const CardItemVN = ({
   id,
   trigger,
   setTrigger,
+  isNsfw,
 }: Partial<Props>) => {
   const descriptionRef = useRef(document.createElement("div"));
   useEffect(() => {
@@ -25,7 +27,7 @@ const CardItemVN = ({
     <Link to={`/vns/${id}`} className="card-item-vn-container">
       <div className="container-image-frame">
         <img
-          src={image}
+          src={!isNsfw ? image : "/nsfw-warning.webp"}
           alt=""
           onLoad={() => {
             if (setTrigger) setTrigger(!trigger);

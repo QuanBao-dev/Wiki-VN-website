@@ -6,7 +6,13 @@ import { VisualNovel } from "../../Interfaces/visualNovelList";
 import { Link } from "react-router-dom";
 
 interface Props extends VisualNovel {}
-const RandomVNItem = ({ id, image, title, description }: Partial<Props>) => {
+const RandomVNItem = ({
+  id,
+  image,
+  title,
+  image_nsfw,
+  description,
+}: Partial<Props>) => {
   const descriptionRef = useRef(document.createElement("p"));
   useEffect(() => {
     descriptionRef.current.innerHTML = description
@@ -32,7 +38,7 @@ const RandomVNItem = ({ id, image, title, description }: Partial<Props>) => {
       }}
     >
       <li className="random-vn-item" key={id}>
-        <img src={image} alt=""></img>
+        <img src={!image_nsfw ? image : "/nsfw-warning.webp"} alt=""></img>
         <h4>{title}</h4>
         <p ref={descriptionRef}></p>
       </li>
