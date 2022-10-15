@@ -41,7 +41,7 @@ const CardListVN = () => {
       : cachesStore.currentState().caches.VNs &&
           !Object.values(cachesStore.currentState().caches.VNs).filter(
             (v: any) => v.isPatchContained
-          )[page * 10 + 2]
+          )[page * 10]
   );
 
   useEffect(() => {
