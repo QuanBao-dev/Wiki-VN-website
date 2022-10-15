@@ -21,7 +21,7 @@ const RandomVNList = () => {
     <ul className="random-vn-list-container">
       <h1>Random games</h1>
       {!isLoading &&
-        randomVNList.map(({ description, title, image, id, image_nsfw }) => (
+        randomVNList.map(({ description, title, image, id, image_nsfw, screens }) => (
           <RandomVNItem
             key={id}
             title={title}
@@ -29,6 +29,7 @@ const RandomVNList = () => {
             id={id}
             description={description}
             image_nsfw={image_nsfw}
+            screens={screens}
           />
         ))}
       {isLoading &&

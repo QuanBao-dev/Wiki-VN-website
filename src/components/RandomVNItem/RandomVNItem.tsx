@@ -12,6 +12,7 @@ const RandomVNItem = ({
   title,
   image_nsfw,
   description,
+  screens,
 }: Partial<Props>) => {
   const descriptionRef = useRef(document.createElement("p"));
   useEffect(() => {
@@ -38,7 +39,16 @@ const RandomVNItem = ({
       }}
     >
       <li className="random-vn-item" key={id}>
-        <img src={!image_nsfw ? image : "/nsfw-warning.webp"} alt=""></img>
+        <img
+          src={
+            !image_nsfw
+              ? image
+              : screens
+              ? screens.filter(({ nsfw }) => !nsfw)[0].image
+              : "/nsfw-warning.webp"
+          }
+          alt=""
+        ></img>
         <h4>{title}</h4>
         <p ref={descriptionRef}></p>
       </li>
