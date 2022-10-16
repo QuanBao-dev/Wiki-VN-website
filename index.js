@@ -31,7 +31,16 @@ app.use(limiter);
 app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ limit: "100mb", extended: true }));
 app.use(express.static(path.join(__dirname, "build")));
-
+app.use((req, res, next) => {
+  if (process.env.NODE_ENV !== "production")
+    res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Headers", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  res.setHeader("X-XSS-Protection", "1; mode=block");
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  next();
+});
 const vndbRoute = require("./routes/vndb.route");
 const patchRoute = require("./routes/patch.route");
 const renderRoute = require("./routes/render.route")

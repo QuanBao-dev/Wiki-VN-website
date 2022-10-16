@@ -49,6 +49,8 @@ const SearchVN = () => {
                   src={
                     !suggestion.image_nsfw
                       ? suggestion.image
+                      : suggestion.screens && suggestion.screens[0]
+                      ? suggestion.screens[0].image
                       : "/nsfw-warning.webp"
                   }
                   alt=""
