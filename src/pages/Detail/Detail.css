@@ -27,13 +27,49 @@ legend {
 
 .detail-title-container{
   display: flex;
-  align-items: center;
   justify-content: flex-start;
+  align-items: flex-start;
 }
+
+.image-wrapper{
+  width: 50%;
+  position: relative;
+}
+
+.image-wrapper .block-overlay{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  color: red;
+}
+
+.image-wrapper .block-overlay div{
+  font-weight: 600;
+}
+
+.image-wrapper .block-overlay .show-me-button{
+  color: blue;
+  cursor: pointer;
+}
+
+.image-wrapper .block-overlay .show-me-button:hover{
+  text-decoration: underline;
+}
+
 
 .detail-title-container img{
   width: 100%;
   max-width: 300px;
+}
+
+.detail-title-container img.nsfw{
+  filter: blur(10px);
 }
 
 .detail-title-wrapper {
@@ -42,6 +78,8 @@ legend {
 
 .detail-title-table-info-container {
   margin-left: 1rem;
+  margin-top: 0;
+  padding-top: 0;
   width: 94%;
   border-radius: 10px;
   border: 3px solid rgba(128, 128, 128, 0.362);
@@ -143,9 +181,38 @@ legend {
   background-color: blueviolet;
 }
 
+.mode-filter-screenshots{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.mode-filter-screenshots div.active{
+  background-color: purple;
+}
+
+.mode-filter-screenshots div{
+  margin: 0 0.5rem;
+  padding: 0 0.9rem;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.388);
+  color: white;
+  cursor: pointer;
+  transition: 0.5s;
+}
+
+.screenshots-container .nsfw{
+  border: 3px solid red;
+}
+
 @media (max-width:690px) {
   .detail-title-container{
     flex-direction: column;
+  }
+
+  .image-wrapper{
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
 
   .app-wrapper{

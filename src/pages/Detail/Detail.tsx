@@ -20,6 +20,8 @@ const convertObject = {
 };
 const Detail = () => {
   const { id } = useParams();
+  const [filterMode, setFilterMode] = useState(0);
+  const [isShowExplicitImage, setIsShowExplicitImage] = useState(false);
   let [detailState, setDetailState] = useState(
     (cachesStore.currentState().caches.VNs &&
     cachesStore.currentState().caches.VNs[id as string]
@@ -121,17 +123,26 @@ const Detail = () => {
       <div className="visual-novel-detail-container">
         <h1 className="visual-novel-title">{detailState.title}</h1>
         <div className="detail-title-container">
-          <img
-            src={
-              !detailState.image_nsfw
-                ? detailState.image
-                : detailState.screens &&
-                  detailState.screens.filter(({ nsfw }) => !nsfw)[0]
-                ? detailState.screens.filter(({ nsfw }) => !nsfw)[0].image
-                : "/nsfw-warning.webp"
-            }
-            alt=""
-          ></img>
+          <div className="image-wrapper">
+            <img
+              className={
+                detailState.image_nsfw && !isShowExplicitImage ? "nsfw" : ""
+              }
+              src={detailState.image}
+              alt=""
+            ></img>
+            {!isShowExplicitImage && detailState.image_nsfw && (
+              <div className="block-overlay">
+                <div>NSFW Image (18+)</div>
+                <div
+                  className="show-me-button"
+                  onClick={() => setIsShowExplicitImage(!isShowExplicitImage)}
+                >
+                  Show me anyway
+                </div>
+              </div>
+            )}
+          </div>
           <fieldset className="detail-title-table-info-container">
             <legend>Information</legend>
             <table className="detail-title-table-info">
@@ -194,14 +205,33 @@ const Detail = () => {
         {detailState.screens && detailState.screens.length > 0 && (
           <fieldset>
             <legend>Screenshots</legend>
+            {detailState.screens.filter(({ nsfw }) => nsfw).length > 0 && (
+              <div className="mode-filter-screenshots">
+                <div
+                  className={filterMode === 0 ? "active" : ""}
+                  onClick={() => setFilterMode(0)}
+                >
+                  Safe ({detailState.screens.filter(({ nsfw }) => !nsfw).length}
+                  )
+                </div>
+                <div
+                  className={filterMode === 1 ? "active" : ""}
+                  onClick={() => setFilterMode(1)}
+                >
+                  Explicit (
+                  {detailState.screens.filter(({ nsfw }) => nsfw).length})
+                </div>
+              </div>
+            )}
             <div className="screenshots-container">
               {detailState.screens
-                .filter(({ nsfw }) => !nsfw)
+                .filter(({ nsfw }) => (filterMode === 0 ? !nsfw : true))
                 .map((screen, key) => (
                   <img
                     key={key}
                     src={screen.image}
                     alt=""
+                    className={screen.nsfw ? "nsfw" : ""}
                     onClick={(e) => {
                       clearTimeout(timeoutRef.current);
                       const element = e.target as HTMLImageElement;
