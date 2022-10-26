@@ -13,6 +13,7 @@ const registerValidation = (data) => {
     email: Joi.string().min(6).required().email(),
     password: Joi.string().min(6).required(),
     username: Joi.string().min(6).required(),
+    confirmedPassword: Joi.string().min(6).required()
   });
   return schema.validate(data);
 };
@@ -22,6 +23,7 @@ const changeInfoAccountValidation = (data) => {
     email: Joi.string().min(6).email(),
     password: Joi.string().min(6),
     username: Joi.string().min(6),
+    avatarImage: Joi.string().min(6),
   });
   return schema.validate(data);
 };
@@ -37,4 +39,5 @@ const changeInfoAccountValidationMiddleWare = (data) => {
 module.exports.loginValidation = loginValidation;
 module.exports.registerValidation = registerValidation;
 module.exports.changeInfoAccountValidation = changeInfoAccountValidation;
-module.exports.changeInfoAccountValidationMiddleWare = changeInfoAccountValidationMiddleWare;
+module.exports.changeInfoAccountValidationMiddleWare =
+  changeInfoAccountValidationMiddleWare;

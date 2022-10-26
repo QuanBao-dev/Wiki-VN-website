@@ -7,7 +7,7 @@ export function createStore<T>(initialState: T) {
     subscribe: (setState: React.Dispatch<React.SetStateAction<T>>) =>
       behaviorSubject.subscribe(setState),
     currentState: () => {
-      let ans = initialState;
+      let ans;
       behaviorSubject.subscribe((v) => (ans = v));
       return ans || initialState;
     },

@@ -1,0 +1,12 @@
+.form-update-translatable{
+  padding: 1rem;
+}
+
+.form-update-translatable section{
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-update-translatable label{
+  font-weight: 600;
+}

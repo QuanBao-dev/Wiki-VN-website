@@ -11,7 +11,7 @@ export function useFetchApi<T>(
   isUpdatingCaches: boolean,
   condition: boolean = true,
   setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>,
-  handleError?:any,
+  handleError?: any
 ) {
   useEffect(() => {
     const subscription = timer(0)
@@ -29,17 +29,17 @@ export function useFetchApi<T>(
             method: "GET",
           }).pipe(
             pluck("response", "message"),
-            catchError((error) => of({ error })),
+            catchError((error) => of(error).pipe(pluck("response")))
           )
         )
       )
-      .subscribe((v:any) => {
-        if(!v.error){
+      .subscribe((v: any) => {
+        if (v && !v.error) {
           if (setIsLoading) setIsLoading(false);
           setState(v as T);
           if (isUpdatingCaches) updateCaches<T>(v as T[], type);
         } else {
-          if(handleError) handleError()
+          if (handleError) handleError();
         }
       });
     return () => {

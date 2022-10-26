@@ -1,0 +1,82 @@
+.ranking-vn-item{
+  margin: 1rem 0;
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  box-shadow:  0 0 5px 1px rgba(0, 0, 0, 0.244);
+  border-radius: 10px;
+  padding: 1rem 0;
+  cursor: pointer;
+  color: black;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.ranking-vn-item:hover{
+  box-shadow: 0 0 6px 1px rgb(106, 1, 103);
+}
+
+.ranking-vn-image-container{
+  max-width: 300px;
+  margin-right: 1rem;
+  overflow: hidden;
+  margin-left: 1rem;
+  max-height: 240px;
+}
+
+.ranking-vn-image-progress{
+  width: 60%;
+}
+
+.ranking-vn-image-container img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.ranking-vn-item .progress-bar{
+  height: 20px;
+  width: 100%;
+  background: purple;
+  overflow: hidden;
+  border-radius: 50px;
+}
+
+.progress-bar-container {
+  position: relative;
+  width: 100%;
+  background-color: rgba(117, 11, 117, 0.444);
+  border-radius: 50px;
+}
+
+.progress-bar-container label {
+  text-align: center;
+  z-index: 10;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-weight: 1000;
+  font-size: 1.2rem;
+  font-family: "Roboto", sans-serif;
+}
+
+.ranking-vn-image-progress p{
+  -webkit-line-clamp: 7;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  font-family: Roboto, sans-serif;
+  line-height: 1.5rem;
+}
+
+.ranking-vn-image-progress h2{
+  margin: 0;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  overflow: hidden;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  -webkit-box-orient: vertical;
+}

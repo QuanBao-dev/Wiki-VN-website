@@ -1,0 +1,49 @@
+.input-container{
+  position: relative;
+  width: 100%;
+  margin-top: 1rem;
+  overflow: hidden;
+  padding-top: 1.5rem;
+}
+
+.input-container input{
+  border: none;
+  outline: none;
+  border-bottom: 1px solid black;
+  width: 99%;
+  font-size: 1rem;
+  padding-bottom: 0.2rem;
+  background-color: transparent;
+}
+
+.input-container label{
+  position: absolute;
+  top: 19px;
+  width: 100%;
+  font-size: 1.1rem;
+  left: 0;
+  text-transform: capitalize;
+  pointer-events: none;
+  transition: 0.5s;
+  font-weight: 600;
+}
+
+.input-container .border-line{
+  width: 100%;
+  transition: 0.5s;
+  background-color: rgb(248, 7, 248);
+  height: 3px;
+  position: absolute;
+  bottom: 0;
+  left: -100%;
+}
+
+.input-container input:focus +div label,
+.input-container input:valid +div label{
+  top: 0;
+}
+
+.input-container input:focus +div .border-line,
+.input-container input:valid +div .border-line{
+  left: 0;
+}

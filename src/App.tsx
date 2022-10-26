@@ -2,25 +2,60 @@ import "./App.css";
 
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import Home from "./pages/Home/Home";
 import NavBar from "./components/NavBar/NavBar";
-import Detail from "./pages/Detail/Detail";
 import RandomVNList from "./components/RandomVNList/RandomVNList";
+import Detail from "./pages/Detail/Detail";
+import Home from "./pages/Home/Home";
+import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
+import Verify from "./pages/Verify/Verify";
+import Account from "./pages/Account/Account";
+import { userStore } from "./store/user";
+import { useState } from "react";
+import { useInitStore } from "./pages/Hooks/useInitStore";
+import NotFound from "./pages/NotFound/NotFound";
 
 function App() {
+  const [userState, setUserState] = useState(userStore.currentState());
+  useInitStore(userStore, setUserState);
+  document.body.style.backgroundImage = `url("${window.location.origin}/background.jpg")`;
   return (
     <BrowserRouter>
       <NavBar />
       <div className="app-container">
         <Routes>
-          <Route path="/vns/:id" element={<Detail />} />
-          <Route path="/auth/register" element={<Register />} />
-          <Route path="/" element={<Home />}></Route>
+          <Route
+            path="/vns/:id"
+            element={
+              <div className="app-container-2">
+                <Detail />
+                <div className="side-section-container">
+                  <RandomVNList />
+                </div>
+              </div>
+            }
+          />
+          {userState.role === "" && <Route path="/login" element={<Login />} />}
+          {userState.role === "" && (
+            <Route path="/register" element={<Register />} />
+          )}
+          <Route path="/verify/:token" element={<Verify />} />
+          {userState.role !== "" && (
+            <Route path="/account" element={<Account />} />
+          )}
+          <Route
+            path="/"
+            element={
+              <div className="app-container-2">
+                <Home />
+                <div className="side-section-container">
+                  <RandomVNList />
+                </div>
+              </div>
+            }
+          ></Route>
+          <Route path="/*" element={<NotFound />}></Route>
         </Routes>
-        <div className="side-section-container">
-          <RandomVNList />
-        </div>
       </div>
     </BrowserRouter>
   );

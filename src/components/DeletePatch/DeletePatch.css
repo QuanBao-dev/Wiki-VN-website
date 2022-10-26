@@ -1,0 +1,11 @@
+.release-container{
+  position: relative;
+}
+
+.release-container i{
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+  font-size: 2rem;
+}

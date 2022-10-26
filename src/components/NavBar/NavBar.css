@@ -58,3 +58,66 @@
 .navbar-container.hide{
   transform: translateY(-100%);
 }
+
+.navbar-item .right-side-link{
+  margin-left: 1.3rem;
+  text-decoration: none;
+  color: white;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.right-side-link.log-out-link{
+  cursor: pointer;
+}
+
+.account-detail{
+  background-color: rgb(92, 6, 85);
+  border-radius:80px;
+  padding: 0.3rem 0.4rem;
+  position: relative;
+}
+
+.right-side-link img{
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  margin-right: 0.5rem;
+}
+
+.right-side-link i{
+  font-size: 0.7rem;
+}
+
+.drop-down-container{
+  position: absolute;
+  top: 100%;
+  background-color: rgb(66, 6, 66);
+  right: 10%;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.drop-down-container div{
+  white-space: nowrap;
+  padding: 0.3rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.345);
+  text-decoration: none;
+  color:white
+}
+
+.drop-down-container div:hover,
+.drop-down-container .link-account-setting:hover{
+  background-color: rgb(177, 2, 177);
+}
+
+.drop-down-container .link-account-setting{
+  white-space: nowrap;
+  padding: 0.3rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.345);
+  text-decoration: none;
+  color:white;
+  display:block
+}

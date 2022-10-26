@@ -1,0 +1,27 @@
+.not-found-container{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: purple;
+  background-color: rgb(255, 255, 255);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 10px;
+  box-shadow: 0 0 5px 1px purple;
+  background-size: cover;
+  padding-right: 370px;
+}
+
+.not-found-container h1{
+  font-size: 3rem;
+  margin: 0;
+  transform: translateY(-70px);
+  color: rgb(255, 0, 43);
+}
+
+.not-found-container img{
+  width: 500px;
+
+}

@@ -8,6 +8,11 @@ import { VisualNovel } from "../../Interfaces/visualNovelList";
 import cachesStore from "../../store/caches";
 import { parseDescription } from "../../util/parseDescription";
 import { useFetchApi } from "../Hooks/useFetchApi";
+import Votes from "../../components/Votes/Votes";
+import { userStore } from "../../store/user";
+import FormUpdatePatch from "../../components/FormUpdatePatch/FormUpdatePatch";
+import DeletePatch from "../../components/DeletePatch/DeletePatch";
+import FormUpdateTranslatable from "../../components/FormUpdateTranslatable/FormUpdateTranslatable";
 
 const convertObject = {
   char: "Shares characters",
@@ -22,6 +27,7 @@ const Detail = () => {
   const { id } = useParams();
   const [filterMode, setFilterMode] = useState(0);
   const [isShowExplicitImage, setIsShowExplicitImage] = useState(false);
+  const [trigger, setTrigger] = useState(true);
   let [detailState, setDetailState] = useState(
     (cachesStore.currentState().caches.VNs &&
     cachesStore.currentState().caches.VNs[id as string]
@@ -69,7 +75,7 @@ const Detail = () => {
     "/api/patch/" + id,
     setPatch,
     "patches",
-    [id],
+    [id, trigger],
     true,
     true,
     undefined,
@@ -321,6 +327,13 @@ const Detail = () => {
         )}
         {patch && patch.linkDownloads && (
           <fieldset className="release-container">
+            {userStore.currentState().role === "Admin" && (
+              <DeletePatch
+                vnId={parseInt(id || "0")}
+                setTrigger={setTrigger}
+                trigger={trigger}
+              />
+            )}
             <legend>Releases</legend>
             <ul className="release-list">
               {patch.linkDownloads.map(({ label, url }, key) => {
@@ -332,6 +345,17 @@ const Detail = () => {
               })}
             </ul>
           </fieldset>
+        )}
+        {detailState.id && <Votes vnId={detailState.id} dataVN={detailState} />}
+        {userStore.currentState().role === "Admin" && (
+          <FormUpdatePatch
+            dataVN={detailState}
+            setTrigger={setTrigger}
+            trigger={trigger}
+          />
+        )}
+        {userStore.currentState().role === "Admin" && (
+          <FormUpdateTranslatable dataVN={detailState} />
         )}
       </div>
     </div>

@@ -1,0 +1,15 @@
+.form-update-patch-button{
+  margin: 0 0 0 auto;
+  display: block;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background-color: purple;
+  color: white;
+  transition: 0.5s;
+}
+
+.form-update-patch-button:hover{
+  background-color: rgb(167, 9, 146);
+}

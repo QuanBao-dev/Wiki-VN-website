@@ -1,37 +1,42 @@
 import { useState } from "react";
 import { VisualNovel } from "../../Interfaces/visualNovelList";
 import { useFetchApi } from "../../pages/Hooks/useFetchApi";
+import cachesStore from "../../store/caches";
 import RandomVNItem from "../RandomVNItem/RandomVNItem";
 import SkeletonLoading from "../SkeletonLoading/SkeletonLoading";
 import "./RandomVNList.css";
 const RandomVNList = () => {
-  const [randomVNList, setRandomVNList] = useState<VisualNovel[] | []>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [randomVNList, setRandomVNList] = useState<VisualNovel[] | []>(
+    cachesStore.currentState().caches.randomVNs || []
+  );
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   useFetchApi(
     "/api/vndb/random",
     setRandomVNList,
-    "VNs",
+    "randomVNs",
     [],
     true,
-    true,
+    cachesStore.currentState().caches.randomVNs &&
+      cachesStore.currentState().caches.randomVNs.length === 0,
     setIsLoading
   );
-
   return (
     <ul className="random-vn-list-container">
       <h1>Random games</h1>
       {!isLoading &&
-        randomVNList.map(({ description, title, image, id, image_nsfw, screens }) => (
-          <RandomVNItem
-            key={id}
-            title={title}
-            image={image}
-            id={id}
-            description={description}
-            image_nsfw={image_nsfw}
-            screens={screens}
-          />
-        ))}
+        randomVNList.map(
+          ({ description, title, image, id, image_nsfw, screens }) => (
+            <RandomVNItem
+              key={id}
+              title={title}
+              image={image}
+              id={id}
+              description={description}
+              image_nsfw={image_nsfw}
+              screens={screens}
+            />
+          )
+        )}
       {isLoading &&
         Array.from(Array(5).keys()).map((key) => (
           <SkeletonLoading

@@ -6,7 +6,11 @@ const patchSchema = mongoose.Schema({
     require: true,
   },
   vnId: { type: Number, require: true },
-  label: { type: String, require: true },
+  dataVN: { type: Map, require: true },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 module.exports = mongoose.model("patch", patchSchema);

@@ -11,6 +11,7 @@ import cachesStore from "../../store/caches";
 import { homeStore } from "../../store/home";
 import { Dbstats } from "../../Interfaces/dbstats";
 import { debounceTime, fromEvent } from "rxjs";
+import RankingVN from "../RankingVN/RankingVN";
 
 const CardListVN = () => {
   const cardListVnContainerRef = useRef(document.createElement("div"));
@@ -28,6 +29,7 @@ const CardListVN = () => {
       ? homeStore.currentState().page
       : homeStore.currentState().patchesPage
   );
+  const [triggerFetching, setTriggerFetching] = useState(true);
   const [dbStats, setDbStats] = useState<Partial<Dbstats>>(
     cachesStore.currentState().caches.dbStats || {}
   );
@@ -43,7 +45,6 @@ const CardListVN = () => {
             (v: any) => v.isPatchContained
           )[page * 10]
   );
-
   useEffect(() => {
     if (window.innerWidth > 1130) {
       setNumberOfColumn(3);
@@ -100,18 +101,19 @@ const CardListVN = () => {
     `/api/vndb?id=${page * 10 + 1}&isLarger=true`,
     setVisualNovelList,
     "VNs",
-    [page, indexActive],
+    [triggerFetching],
     true,
     indexActive === 1 &&
       cachesStore.currentState().caches.VNs &&
       !cachesStore.currentState().caches.VNs[page * 10 + 2],
     setIsLoading
   );
+
   useFetchApi(
     `/api/patch?page=${page}`,
     setVisualNovelList,
     "VNs",
-    [page, indexActive],
+    [page],
     true,
     indexActive === 0 &&
       cachesStore.currentState().caches.VNs &&
@@ -133,6 +135,10 @@ const CardListVN = () => {
     selectPageRef.current.value = (page + 1).toString();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
+  useEffect(() => {
+    setTriggerFetching(!triggerFetching);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, indexActive]);
   useEffect(() => {
     if (indexActive === 1) {
       homeStore.updateState({
@@ -198,8 +204,21 @@ const CardListVN = () => {
         >
           All visual novels
         </div>
+        <div
+          className={indexActive === 2 ? "active" : ""}
+          onClick={() => {
+            setIndexActive(2);
+            homeStore.updateState({ indexActive: 2 });
+          }}
+        >
+          Visual Novels Ranking
+        </div>
       </div>
-      <div className="card-list-vn-wrapper" ref={cardListVnContainerRef}>
+      <div
+        className="card-list-vn-wrapper"
+        ref={cardListVnContainerRef}
+        style={{ display: [0, 1].includes(indexActive) ? "block" : "none" }}
+      >
         {!isLoading &&
           visualNovelList.map(
             ({ title, description, image, id, image_nsfw, screens }) => (
@@ -228,6 +247,7 @@ const CardListVN = () => {
             />
           ))}
       </div>
+      {indexActive === 2 && <RankingVN />}
       <div
         className="card-list-page-list"
         style={{

@@ -1,11 +1,102 @@
-import { useEffect, useRef } from "react";
-import { NavLink } from "react-router-dom";
-import { fromEvent } from "rxjs";
 import "./NavBar.css";
+
+import { useEffect, useRef, useState } from "react";
+import { Link, NavLink } from "react-router-dom";
+import {
+  catchError,
+  debounceTime,
+  fromEvent,
+  of,
+  pluck,
+  switchMap,
+  timer,
+} from "rxjs";
+
+import { useInitStore } from "../../pages/Hooks/useInitStore";
+import { userStore } from "../../store/user";
+import { ajax } from "rxjs/ajax";
+import ChangeAccountInfoForm from "../ChangeAccountInfoForm/ChangeAccountInfoForm";
+
 const NavBar = () => {
   const posY1 = useRef(0);
   const posY2 = useRef(0);
+  const accountDetailRef = useRef(document.createElement("div"));
+  const logoutButtonRef = useRef(document.createElement("div"));
   const navbarContainerRef = useRef(document.createElement("nav"));
+  const [userState, setUserState] = useState(userStore.currentState());
+  const [isShowDropdown, setIsShowDropDown] = useState(false);
+  useInitStore(userStore, setUserState);
+  useEffect(() => {
+    const subscription = timer(0)
+      .pipe(
+        switchMap(() =>
+          ajax({
+            url: "/api",
+            method: "GET",
+          }).pipe(
+            debounceTime(500),
+            pluck("response", "message"),
+            catchError((error) => of(error).pipe(pluck("response")))
+          )
+        )
+      )
+      .subscribe((v: any) => {
+        if (!v.error) {
+          const object = { ...v.user };
+          userStore.updateState(object);
+        }
+      });
+    return () => subscription.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userState.trigger]);
+  useEffect(() => {
+    const subscription = fromEvent(logoutButtonRef.current, "click")
+      .pipe(
+        switchMap(() =>
+          ajax({
+            method: "DELETE",
+            url: "/api/user/logout",
+          }).pipe(
+            pluck("response", "message"),
+            catchError((error) => of(error).pipe(pluck("response")))
+          )
+        )
+      )
+      .subscribe((v) => {
+        if (!v.error) {
+          userStore.updateState({
+            role: "",
+            username: "",
+            avatarImage: "/avatar.webp",
+            createdAt: "",
+            email: "",
+            trigger: !userStore.currentState().trigger,
+          });
+        }
+      });
+    return () => {
+      subscription.unsubscribe();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    const subscription = fromEvent(accountDetailRef.current, "click").subscribe(
+      () => {
+        setIsShowDropDown(!isShowDropdown);
+      }
+    );
+    const subscription2 = fromEvent(accountDetailRef.current, "mouseleave")
+      .pipe(switchMap(() => fromEvent(window, "click")))
+      .subscribe(() => {
+        setIsShowDropDown(false);
+      });
+
+    return () => {
+      subscription.unsubscribe();
+      subscription2.unsubscribe();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isShowDropdown]);
   useEffect(() => {
     const subscription = fromEvent(window, "scroll").subscribe(() => {
       posY2.current = posY1.current - window.scrollY;
@@ -20,12 +111,15 @@ const NavBar = () => {
       }
       posY1.current = window.scrollY;
     });
+
     return () => {
       subscription.unsubscribe();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <nav className="navbar-container" ref={navbarContainerRef}>
+      <ChangeAccountInfoForm />
       <ul className="navbar-wrapper">
         <li className="navbar-item">
           <NavLink className={"logo"} to="/">
@@ -35,10 +129,43 @@ const NavBar = () => {
                 transform: "translateX(-12px)",
               }}
             >
-              SugoiVisualNovels
+              SugoiVisualNovel
             </span>
           </NavLink>
         </li>
+        <div className="navbar-item">
+          {userState.role === "" && (
+            <NavLink className="right-side-link" to="/login">
+              Login
+            </NavLink>
+          )}
+          <div
+            className="right-side-link account-detail"
+            style={{
+              display: userState.role === "" ? "none" : "flex",
+            }}
+            ref={accountDetailRef}
+          >
+            <img src={userState.avatarImage} alt="" />
+            <i className="fas fa-chevron-down"></i>
+            <div
+              className="drop-down-container"
+              style={{
+                display: isShowDropdown ? "block" : "none",
+              }}
+            >
+              <Link className="link-account-setting" to={"/account"}>
+                Account Settings
+              </Link>
+              <div ref={logoutButtonRef}>Logout</div>
+            </div>
+          </div>
+          {userState.role === "" && (
+            <NavLink className="right-side-link" to="/register">
+              Register
+            </NavLink>
+          )}
+        </div>
       </ul>
     </nav>
   );

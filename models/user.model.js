@@ -1,7 +1,7 @@
 const { nanoid } = require("nanoid");
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
+const userSchema = mongoose.Schema({
   userId: {
     type: String,
     default: () => nanoid(20),
@@ -17,6 +17,14 @@ const userSchema = new mongoose.Schema({
   },
   avatarImage: {
     type: String,
+  },
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
+  votedVnIdList: {
+    type: [Number],
+    default: [],
   },
 });
 

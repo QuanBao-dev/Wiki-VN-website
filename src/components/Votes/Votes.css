@@ -1,0 +1,44 @@
+.votes-container{
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.4rem;
+  position: relative;
+}
+
+.votes-container i{
+  cursor: pointer;
+}
+
+.votes-paragraph{
+  color: red;
+  text-align: center;
+  margin-bottom: 1rem;
+  background-color: rgb(0, 0, 0);
+  border-radius: 10px;
+  padding: 0.3rem 0;
+  display: none;
+  margin-top: 1rem;
+}
+
+.votes-container button{
+  background-color: purple;
+  color: white;
+  outline: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: grey;
+  transition: 0.5s;
+}
+
+.votes-number{
+  font-size: 2rem;
+  margin: 0.5rem 0;
+}
+
+.button-notes{
+  margin: 0 0 0 auto;
+}

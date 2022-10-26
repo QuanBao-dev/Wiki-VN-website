@@ -1,0 +1,32 @@
+.form-container{
+  display:flex;
+  flex-direction:column;
+  width:80%;
+  align-items: center;
+  padding: 1rem 2rem;
+  box-shadow: 0 0 5px 1px rgba(128, 128, 128, 0.623);
+  border-radius: 10px;
+  justify-content: center;
+  max-width: 600px;
+}
+
+.auth-container{
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.error-container{
+  color: red;
+  background-color: rgba(255, 0, 0, 0.252);
+  padding: 1rem;
+  width: 100%;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid red;
+}
