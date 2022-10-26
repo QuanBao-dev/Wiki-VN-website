@@ -209,6 +209,10 @@ legend {
     flex-direction: column;
   }
 
+  .right-side-link{
+    margin-left: 0.3rem!important;
+  }
+
   .image-wrapper{
     width: 100%;
     display: flex;
