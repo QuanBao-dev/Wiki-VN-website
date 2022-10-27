@@ -1,13 +1,21 @@
-import './NavBar.css';
+import "./NavBar.css";
 
-import { useEffect, useRef, useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
-import { catchError, debounceTime, fromEvent, of, pluck, switchMap, timer } from 'rxjs';
-import { ajax } from 'rxjs/ajax';
+import { useEffect, useRef, useState } from "react";
+import { Link, NavLink } from "react-router-dom";
+import {
+  catchError,
+  debounceTime,
+  fromEvent,
+  of,
+  pluck,
+  switchMap,
+  timer,
+} from "rxjs";
+import { ajax } from "rxjs/ajax";
 
-import { useInitStore } from '../../pages/Hooks/useInitStore';
-import { userStore } from '../../store/user';
-import ChangeAccountInfoForm from '../ChangeAccountInfoForm/ChangeAccountInfoForm';
+import { useInitStore } from "../../pages/Hooks/useInitStore";
+import { userStore } from "../../store/user";
+import ChangeAccountInfoForm from "../ChangeAccountInfoForm/ChangeAccountInfoForm";
 
 const NavBar = () => {
   const posY1 = useRef(0);
@@ -188,13 +196,13 @@ const NavBar = () => {
             </NavLink>
           )}
           <div className="navbar-small-mobile-container">
-            {isHide && (
+            {isHide && userState.role === "" && (
               <i
                 className="fas fa-bars fa-2x"
                 ref={navbarSmallMobileContainerRef}
               ></i>
             )}
-            {isHide && isShowDropdown2 && (
+            {isHide && userState.role === "" && isShowDropdown2 && (
               <div className="navbar-small-mobile-wrapper">
                 <NavLink className="right-side-link" to="/login">
                   Login
