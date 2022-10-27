@@ -33,7 +33,8 @@ const Votes = ({ vnId, dataVN }: Props) => {
     [vnId, trigger],
     true,
     true,
-    undefined
+    undefined,
+    100
   );
   useEffect(() => {
     setVotes(data.votes || 0);

@@ -95,11 +95,9 @@ router.put("/:vnId", verifyRole("User", "Admin"), async (req, res) => {
       userModel.findOne({ userId }),
     ]);
     if (voteData && voteData.isTranslatable === false) {
-      return res
-        .status(400)
-        .send({
-          error: "This vn is not translatable or it's already been translated",
-        });
+      return res.status(400).send({
+        error: "This vn is not translatable or it's already been translated",
+      });
     }
     if (!user.votedVnIdList || !user.votedVnIdList.includes(vnId)) {
       if (!voteData)
@@ -114,14 +112,18 @@ router.put("/:vnId", verifyRole("User", "Admin"), async (req, res) => {
       if (user.votedVnIdList.includes(vnId)) isIncreased = true;
     }
     if (!isDownVotes) {
-      voteData.votes += 1;
-      user.votedVnIdList.push(vnId);
+      if (!user.votedVnIdList.includes(vnId)) {
+        voteData.votes += 1;
+        user.votedVnIdList.push(vnId);
+      }
     } else {
       if (isIncreased) {
-        voteData.votes -= 1;
-        user.votedVnIdList = user.votedVnIdList.filter(
-          (votes) => votes !== vnId
-        );
+        if (user.votedVnIdList.includes(vnId)) {
+          voteData.votes -= 1;
+          user.votedVnIdList = user.votedVnIdList.filter(
+            (votes) => votes !== vnId
+          );
+        }
       }
     }
     if (voteData.votes > 0) {

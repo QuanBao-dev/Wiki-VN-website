@@ -1,4 +1,4 @@
-import { catchError, filter, mergeMapTo, pluck, tap } from "rxjs/operators";
+import { catchError, delay, filter, mergeMapTo, pluck, tap } from "rxjs/operators";
 import { ajax } from "rxjs/ajax";
 import { useEffect } from "react";
 import { of, timer } from "rxjs";
@@ -11,11 +11,13 @@ export function useFetchApi<T>(
   isUpdatingCaches: boolean,
   condition: boolean = true,
   setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>,
-  handleError?: any
+  handleError?: any,
+  delayTime: number = 0
 ) {
   useEffect(() => {
     const subscription = timer(0)
       .pipe(
+        delay(delayTime),
         tap(() => {
           if (setIsLoading)
             if (condition) {
