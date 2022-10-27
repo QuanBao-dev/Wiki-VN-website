@@ -1,21 +1,13 @@
-import "./NavBar.css";
+import './NavBar.css';
 
-import { useEffect, useRef, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
-import {
-  catchError,
-  debounceTime,
-  fromEvent,
-  of,
-  pluck,
-  switchMap,
-  timer,
-} from "rxjs";
+import { useEffect, useRef, useState } from 'react';
+import { Link, NavLink } from 'react-router-dom';
+import { catchError, debounceTime, fromEvent, of, pluck, switchMap, timer } from 'rxjs';
+import { ajax } from 'rxjs/ajax';
 
-import { useInitStore } from "../../pages/Hooks/useInitStore";
-import { userStore } from "../../store/user";
-import { ajax } from "rxjs/ajax";
-import ChangeAccountInfoForm from "../ChangeAccountInfoForm/ChangeAccountInfoForm";
+import { useInitStore } from '../../pages/Hooks/useInitStore';
+import { userStore } from '../../store/user';
+import ChangeAccountInfoForm from '../ChangeAccountInfoForm/ChangeAccountInfoForm';
 
 const NavBar = () => {
   const posY1 = useRef(0);
@@ -25,6 +17,9 @@ const NavBar = () => {
   const navbarContainerRef = useRef(document.createElement("nav"));
   const [userState, setUserState] = useState(userStore.currentState());
   const [isShowDropdown, setIsShowDropDown] = useState(false);
+  const [isShowDropdown2, setIsShowDropDown2] = useState(false);
+  const navbarSmallMobileContainerRef = useRef(document.createElement("i"));
+  const [isHide, setIsHide] = useState(false);
   useInitStore(userStore, setUserState);
   useEffect(() => {
     const subscription = timer(0)
@@ -98,6 +93,32 @@ const NavBar = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isShowDropdown]);
   useEffect(() => {
+    const subscription2 = fromEvent(window, "click").subscribe((e: any) => {
+      if (e.target.className !== "fas fa-bars fa-2x") setIsShowDropDown2(false);
+      else setIsShowDropDown2(true);
+    });
+
+    return () => {
+      subscription2.unsubscribe();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isShowDropdown2]);
+  useEffect(() => {
+    const subscription = fromEvent(window, "resize").subscribe(() => {
+      if (window.innerWidth < 690) {
+        setIsHide(true);
+      } else {
+        setIsHide(false);
+      }
+    });
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [isHide]);
+  useEffect(() => {
+    if (window.innerWidth < 690) {
+      setIsHide(true);
+    }
     const subscription = fromEvent(window, "scroll").subscribe(() => {
       posY2.current = posY1.current - window.scrollY;
       if (posY1.current !== 0) {
@@ -107,6 +128,7 @@ const NavBar = () => {
 
         if (posY2.current < -2 && window.scrollY > 50) {
           navbarContainerRef.current.className = "navbar-container hide";
+          setIsShowDropDown2(false);
         }
       }
       posY1.current = window.scrollY;
@@ -134,7 +156,7 @@ const NavBar = () => {
           </NavLink>
         </li>
         <div className="navbar-item">
-          {userState.role === "" && (
+          {userState.role === "" && !isHide && (
             <NavLink className="right-side-link" to="/login">
               Login
             </NavLink>
@@ -160,11 +182,29 @@ const NavBar = () => {
               <div ref={logoutButtonRef}>Logout</div>
             </div>
           </div>
-          {userState.role === "" && (
+          {userState.role === "" && !isHide && (
             <NavLink className="right-side-link" to="/register">
               Register
             </NavLink>
           )}
+          <div className="navbar-small-mobile-container">
+            {isHide && (
+              <i
+                className="fas fa-bars fa-2x"
+                ref={navbarSmallMobileContainerRef}
+              ></i>
+            )}
+            {isHide && isShowDropdown2 && (
+              <div className="navbar-small-mobile-wrapper">
+                <NavLink className="right-side-link" to="/login">
+                  Login
+                </NavLink>
+                <NavLink className="right-side-link" to="/register">
+                  Register
+                </NavLink>
+              </div>
+            )}
+          </div>
         </div>
       </ul>
     </nav>

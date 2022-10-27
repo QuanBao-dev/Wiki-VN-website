@@ -121,3 +121,26 @@
   color:white;
   display:block
 }
+
+.navbar-small-mobile-container{
+  position: relative;
+}
+
+.navbar-small-mobile-wrapper{
+  position: absolute;
+  top: 150%;
+  left: -70px;
+  border-radius: 10px;
+  background-color: rgb(94, 12, 83);
+}
+
+.navbar-small-mobile-wrapper a{
+  padding-bottom: 0.3rem;
+  padding: 0.5rem 1rem;
+  margin: 0!important;
+  border-bottom: 1px solid pink;
+}
+
+.navbar-small-mobile-wrapper a:active{
+  background-color: rgb(226, 1, 226);
+}
