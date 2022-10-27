@@ -19,7 +19,7 @@ const RandomVNList = () => {
     cachesStore.currentState().caches.randomVNs &&
       cachesStore.currentState().caches.randomVNs.length === 0,
     setIsLoading,
-    1000
+    2000
   );
   return (
     <ul className="random-vn-list-container">

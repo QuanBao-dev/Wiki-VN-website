@@ -18,7 +18,6 @@ export function useFetchApi<T>(
     const subscription = timer(0)
       .pipe(
         delay(delayTime),
-        retry(2),
         tap(() => {
           if (setIsLoading)
             if (condition) {
@@ -31,6 +30,7 @@ export function useFetchApi<T>(
             url: url,
             method: "GET",
           }).pipe(
+            retry(5),
             pluck("response", "message"),
             catchError((error) => of(error).pipe(pluck("response")))
           )
