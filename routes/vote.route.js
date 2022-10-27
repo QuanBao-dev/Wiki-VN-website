@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
     const votes = await voteModel.aggregate([
       { $match: { isTranslatable: true } },
       { $sort: { votes: -1 } },
-      { $skip: page * 6 },
+      { $skip: page * 5 },
       { $limit: 5 },
     ]);
     if (votes.length === 0) {
