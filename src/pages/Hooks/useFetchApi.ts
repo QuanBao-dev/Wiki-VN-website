@@ -1,4 +1,4 @@
-import { catchError, delay, filter, mergeMapTo, pluck, tap } from "rxjs/operators";
+import { catchError, delay, filter, mergeMapTo, pluck, retry, tap } from "rxjs/operators";
 import { ajax } from "rxjs/ajax";
 import { useEffect } from "react";
 import { of, timer } from "rxjs";
@@ -18,6 +18,7 @@ export function useFetchApi<T>(
     const subscription = timer(0)
       .pipe(
         delay(delayTime),
+        retry(2),
         tap(() => {
           if (setIsLoading)
             if (condition) {
