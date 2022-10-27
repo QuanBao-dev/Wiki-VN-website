@@ -8,6 +8,8 @@ interface Props extends Partial<VisualNovel> {
 }
 const RankingVNItem = ({
   image,
+  screens,
+  image_nsfw,
   votes = 0,
   maxVotes,
   description = "",
@@ -21,7 +23,16 @@ const RankingVNItem = ({
   return (
     <Link to={`/vns/${id}`} className="ranking-vn-item">
       <div className="ranking-vn-image-container">
-        <img src={image} alt="" />
+        <img
+          src={
+            !image_nsfw
+              ? image
+              : screens && screens.filter(({ nsfw }) => !nsfw)[0]
+              ? screens.filter(({ nsfw }) => !nsfw)[0].image
+              : "/nsfw-warning.webp"
+          }
+          alt=""
+        />
       </div>
       <div className="ranking-vn-image-progress">
         <h2>{title}</h2>

@@ -99,15 +99,17 @@ const RankingVN = () => {
 
   return (
     <div className="ranking-vn-container">
-      {dataRankingVN.map(({ image, votes, description, title, id }, key) => (
+      {dataRankingVN.map(({ image, votes, description, title, id,screens, image_nsfw }, key) => (
         <RankingVNItem
           key={key}
           image={image}
           votes={votes || 0}
           maxVotes={maxVotes}
+          image_nsfw={image_nsfw}
           description={description}
           title={title}
           id={id}
+          screens={screens}
         />
       ))}
       {isLoading &&
