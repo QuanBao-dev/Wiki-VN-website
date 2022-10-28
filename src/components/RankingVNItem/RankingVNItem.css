@@ -1,9 +1,9 @@
-.ranking-vn-item{
+.ranking-vn-item {
   margin: 1rem 0;
   width: 100%;
   display: flex;
   align-items: stretch;
-  box-shadow:  0 0 5px 1px rgba(0, 0, 0, 0.244);
+  box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.244);
   border-radius: 10px;
   padding: 1rem 0;
   cursor: pointer;
@@ -12,30 +12,31 @@
   transition: 0.2s;
 }
 
-.ranking-vn-item:hover{
+.ranking-vn-item:hover {
   box-shadow: 0 0 6px 1px rgb(106, 1, 103);
 }
 
-.ranking-vn-image-container{
-  max-width: 300px;
+.ranking-vn-image-container {
+  width: 40%;
   margin-right: 1rem;
   overflow: hidden;
   margin-left: 1rem;
   max-height: 240px;
 }
 
-.ranking-vn-image-progress{
+.ranking-vn-image-progress {
   width: 60%;
+  margin-right: 1.2rem;
 }
 
-.ranking-vn-image-container img{
+.ranking-vn-image-container img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
 }
 
-.ranking-vn-item .progress-bar{
+.ranking-vn-item .progress-bar {
   height: 20px;
   width: 100%;
   background: purple;
@@ -63,7 +64,7 @@
   font-family: "Roboto", sans-serif;
 }
 
-.ranking-vn-image-progress p{
+.ranking-vn-image-progress p {
   -webkit-line-clamp: 7;
   display: -webkit-box;
   overflow: hidden;
@@ -72,11 +73,35 @@
   line-height: 1.5rem;
 }
 
-.ranking-vn-image-progress h2{
+.ranking-vn-image-progress h2 {
   margin: 0;
   -webkit-line-clamp: 2;
   display: -webkit-box;
   overflow: hidden;
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
   -webkit-box-orient: vertical;
+}
+
+@media (max-width:600px) {
+  .ranking-vn-item{
+    display:flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ranking-vn-image-container{
+    width: 90%;
+    margin: auto;
+    margin-bottom: 1rem;
+  }
+
+  .ranking-vn-image-progress{
+    width: 90%;
+    margin: auto;
+  }
+
+  .app-container-2{
+    padding-left: 0;
+  }
 }
