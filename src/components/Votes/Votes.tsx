@@ -40,6 +40,7 @@ const Votes = ({ vnId, dataVN }: Props) => {
     setVotes(data.votes || 0);
   }, [data.votes]);
   useEffect(() => {
+    if(!upVotesRef.current) return;
     const subscription = fromEvent(upVotesRef.current, "click")
       .pipe(
         debounceTime(1000),
@@ -79,6 +80,7 @@ const Votes = ({ vnId, dataVN }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vnId, votes]);
   useEffect(() => {
+    if(!downVotesRef.current) return;
     const subscription = fromEvent(downVotesRef.current, "click")
       .pipe(
         debounceTime(1000),
