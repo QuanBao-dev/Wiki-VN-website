@@ -1,6 +1,6 @@
 import "./RankingVN.css";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   catchError,
   debounceTime,
@@ -36,6 +36,7 @@ const RankingVN = () => {
   const [isStopFetching, setIsStopFetching] = useState(
     homeStore.currentState().isStopFetching
   );
+  const rankingVnContainerRef = useRef(document.createElement("div"));
   useEffect(() => {
     const voteList = dataRankingVN.map(({ votes }) => {
       return votes || 0;
@@ -67,8 +68,10 @@ const RankingVN = () => {
         debounceTime(500),
         filter(
           () =>
-            document.body.scrollHeight - (window.scrollY + window.innerHeight) <
-              100 &&
+            rankingVnContainerRef.current.getBoundingClientRect().height -
+              window.innerHeight +
+              rankingVnContainerRef.current.getBoundingClientRect().top <=
+              0 &&
             !isLoading &&
             !isStopFetching
         ),
@@ -98,20 +101,25 @@ const RankingVN = () => {
   }, [isLoading, page, isStopFetching, dataRankingVN.length]);
 
   return (
-    <div className="ranking-vn-container">
-      {dataRankingVN.map(({ image, votes, description, title, id,screens, image_nsfw }, key) => (
-        <RankingVNItem
-          key={key}
-          image={image}
-          votes={votes || 0}
-          maxVotes={maxVotes}
-          image_nsfw={image_nsfw}
-          description={description}
-          title={title}
-          id={id}
-          screens={screens}
-        />
-      ))}
+    <div className="ranking-vn-container" ref={rankingVnContainerRef}>
+      {dataRankingVN.map(
+        (
+          { image, votes, description, title, id, screens, image_nsfw },
+          key
+        ) => (
+          <RankingVNItem
+            key={key}
+            image={image}
+            votes={votes || 0}
+            maxVotes={maxVotes}
+            image_nsfw={image_nsfw}
+            description={description}
+            title={title}
+            id={id}
+            screens={screens}
+          />
+        )
+      )}
       {isLoading &&
         Array.from(Array(5).keys()).map((_, key) => (
           <SkeletonLoading
