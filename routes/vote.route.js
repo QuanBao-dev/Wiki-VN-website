@@ -8,12 +8,20 @@ const jwt = require("jsonwebtoken");
 router.get("/", async (req, res) => {
   const page = parseInt(req.query.page || 0);
   try {
-    const votes = await voteModel.aggregate([
-      { $match: { isTranslatable: true } },
-      { $sort: { votes: -1 } },
-      { $skip: page * 10 },
-      { $limit: 10 },
-    ]);
+    let votes = await voteModel
+      .find({ isTranslatable: true })
+      .select({
+        vnId: 1,
+        votes: 1,
+        isTranslatable: 1,
+        dataVN: 1,
+        _id: 0,
+      })
+      .lean();
+    votes = votes
+      .sort((a, b) => b.votes - a.votes)
+      .slice(page * 10, (page + 1) * 10);
+
     if (votes.length === 0) {
       return res.status(400).send({ error: "It has reached its last page" });
     }
