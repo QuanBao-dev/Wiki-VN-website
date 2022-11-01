@@ -14,6 +14,7 @@ import { userStore } from "./store/user";
 import { useState } from "react";
 import { useInitStore } from "./pages/Hooks/useInitStore";
 import NotFound from "./pages/NotFound/NotFound";
+import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 
 function App() {
   const [userState, setUserState] = useState(userStore.currentState());
@@ -22,6 +23,7 @@ function App() {
   return (
     <BrowserRouter>
       <NavBar />
+      <ScrollToTop />
       <div className="app-container">
         <Routes>
           <Route

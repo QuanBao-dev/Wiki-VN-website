@@ -1,0 +1,16 @@
+.scroll-to-top-container{
+  padding:0.7rem;
+  background-color:rgb(133, 6, 121);
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 1.2rem;
+  border-radius: 10px;
+  transition: 0.4s;
+  cursor: pointer;
+  transform: translateY(100px);
+}
+
+.scroll-to-top-container i{
+  color: white;
+}
