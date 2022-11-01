@@ -1,26 +1,15 @@
-import "./RankingVN.css";
+import './RankingVN.css';
 
-import { useEffect, useRef, useState } from "react";
-import {
-  catchError,
-  debounceTime,
-  filter,
-  fromEvent,
-  iif,
-  of,
-  pluck,
-  switchMap,
-  tap,
-  timer,
-} from "rxjs";
-import { ajax } from "rxjs/ajax";
+import { useEffect, useRef, useState } from 'react';
+import { catchError, filter, fromEvent, iif, of, pluck, switchMap, tap, timer } from 'rxjs';
+import { ajax } from 'rxjs/ajax';
 
-import { VisualNovel } from "../../Interfaces/visualNovelList";
-import cachesStore from "../../store/caches";
-import { homeStore } from "../../store/home";
-import { updateCaches } from "../../util/updateCaches";
-import RankingVNItem from "../RankingVNItem/RankingVNItem";
-import SkeletonLoading from "../SkeletonLoading/SkeletonLoading";
+import { VisualNovel } from '../../Interfaces/visualNovelList';
+import cachesStore from '../../store/caches';
+import { homeStore } from '../../store/home';
+import { updateCaches } from '../../util/updateCaches';
+import RankingVNItem from '../RankingVNItem/RankingVNItem';
+import SkeletonLoading from '../SkeletonLoading/SkeletonLoading';
 
 const RankingVN = () => {
   const [dataRankingVN, setDataRankingVN] = useState<VisualNovel[]>(
@@ -65,7 +54,7 @@ const RankingVN = () => {
         )
       ),
       fromEvent(window, "scroll").pipe(
-        debounceTime(500),
+        // debounceTime(500),
         filter(
           () =>
             rankingVnContainerRef.current.getBoundingClientRect().height -
@@ -128,7 +117,7 @@ const RankingVN = () => {
             height={300}
             width={"100%"}
             isLoading={true}
-            margin={10}
+            margin={3}
           />
         ))}
     </div>
