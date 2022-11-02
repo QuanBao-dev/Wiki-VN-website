@@ -110,10 +110,10 @@ const CardListVN = () => {
   );
 
   useFetchApi(
-    `/api/patch?page=${page}`,
+    `/api/patch`,
     setVisualNovelList,
     "VNs",
-    [page],
+    [],
     true,
     indexActive === 0 &&
       cachesStore.currentState().caches.VNs &&
