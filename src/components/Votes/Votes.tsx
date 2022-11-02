@@ -40,7 +40,7 @@ const Votes = ({ vnId, dataVN }: Props) => {
     setVotes(data.votes || 0);
   }, [data.votes]);
   useEffect(() => {
-    if(!upVotesRef.current) return;
+    if (!upVotesRef.current) return;
     const subscription = fromEvent(upVotesRef.current, "click")
       .pipe(
         debounceTime(1000),
@@ -59,11 +59,12 @@ const Votes = ({ vnId, dataVN }: Props) => {
       )
       .subscribe((v) => {
         if (!v.error) {
+          updateCaches([], "rankingVNs");
           homeStore.updateState({
             isStopFetching: false,
             isLoading: true,
+            votesPage: 0,
           });
-          updateCaches([], "rankingVNs");
           let temp = votes;
           setVotes(++temp);
           setTrigger(!trigger);
@@ -80,7 +81,7 @@ const Votes = ({ vnId, dataVN }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vnId, votes]);
   useEffect(() => {
-    if(!downVotesRef.current) return;
+    if (!downVotesRef.current) return;
     const subscription = fromEvent(downVotesRef.current, "click")
       .pipe(
         debounceTime(1000),
@@ -100,11 +101,12 @@ const Votes = ({ vnId, dataVN }: Props) => {
       )
       .subscribe((v) => {
         if (!v.error) {
+          updateCaches([], "rankingVNs");
           homeStore.updateState({
             isStopFetching: false,
             isLoading: true,
+            votesPage: 0,
           });
-          updateCaches([], "rankingVNs");
           let temp = votes;
           setVotes(--temp);
           setTrigger(!trigger);
@@ -124,7 +126,7 @@ const Votes = ({ vnId, dataVN }: Props) => {
     if (isHide) votesParagraphRef.current.style.display = "none";
     if (!isHide) votesParagraphRef.current.style.display = "block";
   }, [isHide]);
-  if(data.isTranslatable === false) return <div></div>; 
+  if (data.isTranslatable === false) return <div></div>;
   return (
     <fieldset className="votes-container">
       <legend>Votes</legend>
