@@ -1,18 +1,17 @@
 import "./CardListVN.css";
 
-import { VisualNovel } from "../../Interfaces/visualNovelList";
-import CardItemVN from "../CardItemVN/CardItemVN";
-import { useEffect, useRef } from "react";
-import { useCardListVNPosition } from "../../pages/Hooks/useCardListVN";
+import React, { useEffect, useRef, Suspense } from "react";
 import { useState } from "react";
-import SkeletonLoading from "../SkeletonLoading/SkeletonLoading";
+import { debounceTime, fromEvent } from "rxjs";
+import { Dbstats } from "../../Interfaces/dbstats";
+import { VisualNovel } from "../../Interfaces/visualNovelList";
+import { useCardListVNPosition } from "../../pages/Hooks/useCardListVN";
 import { useFetchApi } from "../../pages/Hooks/useFetchApi";
 import cachesStore from "../../store/caches";
 import { homeStore } from "../../store/home";
-import { Dbstats } from "../../Interfaces/dbstats";
-import { debounceTime, fromEvent } from "rxjs";
-import RankingVN from "../RankingVN/RankingVN";
-
+import SkeletonLoading from "../SkeletonLoading/SkeletonLoading";
+const RankingVN = React.lazy(() => import("../RankingVN/RankingVN"));
+const CardItemVN = React.lazy(() => import("../CardItemVN/CardItemVN"));
 const CardListVN = () => {
   const cardListVnContainerRef = useRef(document.createElement("div"));
   const [trigger, setTrigger] = useState<boolean>(true);
@@ -41,8 +40,13 @@ const CardListVN = () => {
       ? (cachesStore.currentState() as any).caches.VNs &&
           !(cachesStore.currentState() as any).caches.VNs[page * 10 + 2]
       : cachesStore.currentState().caches.VNs &&
-          !Object.values(cachesStore.currentState().caches.VNs).filter(
-            (v: any) => v.isPatchContained
+          !(
+            Object.values(cachesStore.currentState().caches.VNs)
+              .filter((v: any) => v.isPatchContained)
+              .reduce((ans: any, curr: any) => {
+                ans[curr.index] = curr;
+                return ans;
+              }, {}) as any
           )[page * 10]
   );
   useEffect(() => {
@@ -110,15 +114,20 @@ const CardListVN = () => {
   );
 
   useFetchApi(
-    `/api/patch`,
+    `/api/patch?page=${page}`,
     setVisualNovelList,
     "VNs",
-    [],
+    [page],
     true,
     indexActive === 0 &&
       cachesStore.currentState().caches.VNs &&
-      !Object.values(cachesStore.currentState().caches.VNs).filter(
-        (v: any) => v.isPatchContained
+      !(
+        Object.values(cachesStore.currentState().caches.VNs)
+          .filter((v: any) => v.isPatchContained)
+          .reduce((ans: any, curr: any) => {
+            ans[curr.index] = curr;
+            return ans;
+          }, {}) as any
       )[page * 10],
     setIsLoading
   );
@@ -167,15 +176,18 @@ const CardListVN = () => {
     if (indexActive === 0) {
       setPage(homeStore.currentState().patchesPage);
       if ((cachesStore.currentState() as any).caches.VNs) {
+        const object = Object.values(cachesStore.currentState().caches.VNs)
+          .filter((v: any) => v.isPatchContained)
+          .reduce((ans: any, curr: any) => {
+            ans[curr.index] = curr;
+            return ans;
+          }, {}) as any;
         setVisualNovelList(
-          (Object.values((cachesStore.currentState() as any).caches.VNs) as any)
-            .filter((v: any) => v.isPatchContained)
-            .sort(
-              (a: any, b: any) =>
-                new Date(new Date(b.createdAt).toUTCString()).getTime() -
-                new Date(new Date(a.createdAt).toUTCString()).getTime()
-            )
-            .slice(page * 10, (page + 1) * 10)
+          (Object.keys(object) as any)
+            .filter((key: any) => +key >= page * 10 && (page + 1) * 10 > +key)
+            .map((key: any) => {
+              return object[key];
+            })
         );
       }
     }
@@ -222,17 +234,29 @@ const CardListVN = () => {
         {!isLoading &&
           visualNovelList.map(
             ({ title, description, image, id, image_nsfw, screens }) => (
-              <CardItemVN
+              <Suspense
                 key={id}
-                id={id}
-                title={title}
-                image={image}
-                description={description}
-                trigger={trigger}
-                setTrigger={setTrigger}
-                isNsfw={image_nsfw}
-                screens={screens}
-              />
+                fallback={
+                  <SkeletonLoading
+                    isLoading={true}
+                    height={300}
+                    width={`${100 / numberOfColumn - 2}%`}
+                    LoadingComponent={undefined}
+                    margin={3}
+                  />
+                }
+              >
+                <CardItemVN
+                  id={id}
+                  title={title}
+                  image={image}
+                  description={description}
+                  trigger={trigger}
+                  setTrigger={setTrigger}
+                  isNsfw={image_nsfw}
+                  screens={screens}
+                />
+              </Suspense>
             )
           )}
         {isLoading &&
@@ -247,7 +271,21 @@ const CardListVN = () => {
             />
           ))}
       </div>
-      {indexActive === 2 && <RankingVN />}
+      {indexActive === 2 && (
+        <Suspense
+          fallback={
+            <SkeletonLoading
+              isLoading={true}
+              height={300}
+              width={`${100}%`}
+              LoadingComponent={undefined}
+              margin={3}
+            />
+          }
+        >
+          <RankingVN />
+        </Suspense>
+      )}
       <div
         className="card-list-page-list"
         style={{

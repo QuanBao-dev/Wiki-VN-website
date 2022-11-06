@@ -28,6 +28,7 @@ const Detail = () => {
   const [filterMode, setFilterMode] = useState(0);
   const [isShowExplicitImage, setIsShowExplicitImage] = useState(false);
   const [trigger, setTrigger] = useState(true);
+  const [isLoading,setIsLoading] = useState(true);
   let [detailState, setDetailState] = useState(
     (cachesStore.currentState().caches.VNs &&
     cachesStore.currentState().caches.VNs[id as string]
@@ -78,7 +79,7 @@ const Detail = () => {
     [id, trigger],
     true,
     true,
-    undefined,
+    setIsLoading,
     () => {
       setPatch({} as Patch);
     }
@@ -346,7 +347,9 @@ const Detail = () => {
             </ul>
           </fieldset>
         )}
-        {detailState.id && <Votes vnId={detailState.id} dataVN={detailState} />}
+        {detailState.id && isLoading === false && (
+          <Votes vnId={detailState.id} dataVN={detailState} />
+        )}
         {userStore.currentState().role === "Admin" && (
           <FormUpdatePatch
             dataVN={detailState}

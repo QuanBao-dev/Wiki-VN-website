@@ -18,7 +18,8 @@ export interface VisualNovel {
   original: string;
   released: string;
   isPatchContained?:boolean;
-  votes?:number
+  votes?:number,
+  isTranslatable?:boolean
 }
 
 interface ImageFlagging {

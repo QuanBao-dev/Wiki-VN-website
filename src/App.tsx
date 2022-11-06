@@ -1,20 +1,24 @@
 import "./App.css";
 
+import React, { useState, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import NavBar from "./components/NavBar/NavBar";
-import RandomVNList from "./components/RandomVNList/RandomVNList";
-import Detail from "./pages/Detail/Detail";
-import Home from "./pages/Home/Home";
-import Login from "./pages/Login/Login";
-import Register from "./pages/Register/Register";
-import Verify from "./pages/Verify/Verify";
-import Account from "./pages/Account/Account";
-import { userStore } from "./store/user";
-import { useState } from "react";
-import { useInitStore } from "./pages/Hooks/useInitStore";
-import NotFound from "./pages/NotFound/NotFound";
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
+import { useInitStore } from "./pages/Hooks/useInitStore";
+import { userStore } from "./store/user";
+import SkeletonLoading from "./components/SkeletonLoading/SkeletonLoading";
+
+const RandomVNList = React.lazy(
+  () => import("./components/RandomVNList/RandomVNList")
+);
+const Account = React.lazy(() => import("./pages/Account/Account"));
+const NotFound = React.lazy(() => import("./pages/NotFound/NotFound"));
+const Home = React.lazy(() => import("./pages/Home/Home"));
+const Login = React.lazy(() => import("./pages/Login/Login"));
+const Register = React.lazy(() => import("./pages/Register/Register"));
+const Detail = React.lazy(() => import("./pages/Detail/Detail"));
+const Verify = React.lazy(() => import("./pages/Verify/Verify"));
 
 function App() {
   const [userState, setUserState] = useState(userStore.currentState());
@@ -30,33 +34,118 @@ function App() {
             path="/vns/:id"
             element={
               <div className="app-container-2">
-                <Detail />
+                <Suspense
+                  fallback={
+                    <SkeletonLoading
+                      isLoading={true}
+                      height={300}
+                      width={`${100}%`}
+                      LoadingComponent={undefined}
+                      margin={3}
+                    />
+                  }
+                >
+                  <Detail />
+                </Suspense>
                 <div className="side-section-container">
-                  <RandomVNList />
+                  <Suspense
+                    fallback={
+                      <SkeletonLoading
+                        isLoading={true}
+                        height={300}
+                        width={`${100}%`}
+                        LoadingComponent={undefined}
+                        margin={3}
+                      />
+                    }
+                  >
+                    <RandomVNList />
+                  </Suspense>
                 </div>
               </div>
             }
           />
-          {userState.role === "" && <Route path="/login" element={<Login />} />}
           {userState.role === "" && (
-            <Route path="/register" element={<Register />} />
+            <Route
+              path="/login"
+              element={
+                <Suspense fallback={<h1>Loading...</h1>}>
+                  <Login />
+                </Suspense>
+              }
+            />
           )}
-          <Route path="/verify/:token" element={<Verify />} />
+          {userState.role === "" && (
+            <Route
+              path="/register"
+              element={
+                <Suspense fallback={<h1>Loading...</h1>}>
+                  <Register />
+                </Suspense>
+              }
+            />
+          )}
+          <Route
+            path="/verify/:token"
+            element={
+              <Suspense fallback={<h1>Loading...</h1>}>
+                <Verify />
+              </Suspense>
+            }
+          />
           {userState.role !== "" && (
-            <Route path="/account" element={<Account />} />
+            <Route
+              path="/account"
+              element={
+                <Suspense fallback={<h1>Loading...</h1>}>
+                  <Account />
+                </Suspense>
+              }
+            />
           )}
           <Route
             path="/"
             element={
               <div className="app-container-2">
-                <Home />
+                <Suspense
+                  fallback={
+                    <SkeletonLoading
+                      isLoading={true}
+                      height={700}
+                      width={`${100}%`}
+                      LoadingComponent={undefined}
+                      margin={3}
+                    />
+                  }
+                >
+                  <Home />
+                </Suspense>
                 <div className="side-section-container">
-                  <RandomVNList />
+                  <Suspense
+                    fallback={
+                      <SkeletonLoading
+                        isLoading={true}
+                        height={700}
+                        width={`${100}%`}
+                        LoadingComponent={undefined}
+                        margin={3}
+                      />
+                    }
+                  >
+                    <RandomVNList />
+                  </Suspense>
                 </div>
               </div>
             }
           ></Route>
-          <Route path="/*" element={<NotFound />}></Route>
+          <Route
+            path="/*"
+            element={
+              <Suspense fallback={<h1>Loading...</h1>}>
+                <NotFound />
+              </Suspense>
+            }
+          ></Route>
         </Routes>
       </div>
     </BrowserRouter>

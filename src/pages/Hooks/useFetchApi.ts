@@ -39,11 +39,11 @@ export function useFetchApi<T>(
       .subscribe((v: any) => {
         if (v && !v.error) {
           if (isUpdatingCaches) updateCaches<T>(v as T[], type);
-          if (setIsLoading) setIsLoading(false);
           setState(v as T);
         } else {
           if (handleError) handleError();
         }
+        if (setIsLoading) setIsLoading(false);
       });
     return () => {
       subscription.unsubscribe();

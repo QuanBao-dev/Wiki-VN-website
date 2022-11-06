@@ -87,7 +87,23 @@ router.post("/register", async (req, res) => {
     newUser.password = await bcrypt.hash(password, salt);
     await verifyEmailUser(newUser);
     await newUser.save();
-    return res.send({ message: "Checking your email account, Please verify your email address" });
+    return res.send({
+      message: "Checking your email account, Please verify your email address",
+    });
+  } catch (error) {
+    if (error) return res.status(400).send({ error: error.message });
+    res.status(404).send({ error: "Something went wrong" });
+  }
+});
+
+router.get("/:vnId/vote", verifyRole("Admin"), async (req, res) => {
+  try {
+    const { vnId } = req.params;
+    const users = await userModel.aggregate([
+      { $match: { votedVnIdList: parseInt(vnId) } },
+      { $project: { _id: 0, avatarImage: 1, username: 1 } },
+    ]);
+    res.send({ message: users });
   } catch (error) {
     if (error) return res.status(400).send({ error: error.message });
     res.status(404).send({ error: "Something went wrong" });
@@ -145,7 +161,9 @@ router.put("/edit", verifyRole("Admin", "User"), async (req, res) => {
       user.email = email;
       user.isVerified = false;
       await verifyEmailUser(user);
-      return res.status(401).send({ error: "Checking your email account, Please verify your new email" });
+      return res.status(401).send({
+        error: "Checking your email account, Please verify your new email",
+      });
     }
 
     if (avatarImage) {

@@ -13,10 +13,11 @@ route.get("/", async (req, res) => {
           new Date(new Date(b.createdAt).toUTCString()).getTime() -
           new Date(new Date(a.createdAt).toUTCString()).getTime()
       )
+      .slice(page * 10, (page + 1) * 10);
     res.send({
-      message: patches.map((v) => {
+      message: patches.map((v, key) => {
         v.dataVN.createdAt = v.createdAt;
-        return { ...v.dataVN, isPatchContained: true };
+        return { ...v.dataVN, isPatchContained: true, index: page*10 + key };
       }),
     });
   } catch (error) {
