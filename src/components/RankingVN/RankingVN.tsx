@@ -72,7 +72,7 @@ const RankingVN = () => {
         filter(() => false)
       )
     ).subscribe((v) => {
-      if (!v.error) {
+      if (v &&!v.error) {
         updateCaches(v, "VNs");
         setDataRankingVN([...dataRankingVN, ...v]);
         updateCaches([...dataRankingVN, ...v], "rankingVNs");

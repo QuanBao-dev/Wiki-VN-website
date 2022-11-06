@@ -5,7 +5,7 @@ import { ajax } from "rxjs/ajax";
 interface Props {
   vnId: number;
   setTrigger: React.Dispatch<React.SetStateAction<boolean>>;
-  trigger: boolean
+  trigger: boolean;
 }
 const DeletePatch = ({ vnId, setTrigger, trigger }: Props) => {
   const deletePatchRef = useRef(document.createElement("i"));
@@ -14,7 +14,7 @@ const DeletePatch = ({ vnId, setTrigger, trigger }: Props) => {
       .pipe(
         switchMap(() =>
           ajax({
-            method:"DELETE",
+            method: "DELETE",
             url: "/api/patch/" + vnId,
           }).pipe(
             pluck("response", "message"),
@@ -23,14 +23,14 @@ const DeletePatch = ({ vnId, setTrigger, trigger }: Props) => {
         )
       )
       .subscribe((v) => {
-        if (!v.error) {
-          setTrigger(!trigger)
+        if (v && !v.error) {
+          setTrigger(!trigger);
         }
       });
     return () => {
       subscription.unsubscribe();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trigger, vnId]);
   return (
     <div>

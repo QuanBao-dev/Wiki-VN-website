@@ -44,7 +44,7 @@ const NavBar = () => {
         )
       )
       .subscribe((v: any) => {
-        if (!v.error) {
+        if (v && !v.error) {
           const object = { ...v.user };
           userStore.updateState(object);
         }
@@ -66,7 +66,7 @@ const NavBar = () => {
         )
       )
       .subscribe((v) => {
-        if (!v.error) {
+        if (v &&!v.error) {
           userStore.updateState({
             role: "",
             username: "",

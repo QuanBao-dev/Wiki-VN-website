@@ -76,6 +76,6 @@ async function handleCardItem(
           ? `${Math.max(...sumColumnList)}px`
           : "fit-content";
       res("Done");
-    }, 50);
+    }, 100);
   });
 }

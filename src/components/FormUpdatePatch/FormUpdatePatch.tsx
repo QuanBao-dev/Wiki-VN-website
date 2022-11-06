@@ -36,7 +36,7 @@ const FormUpdatePatch = ({ dataVN, setTrigger, trigger }: Props) => {
         )
       )
       .subscribe((v) => {
-        if (!v.error) {
+        if (v && !v.error) {
           setTrigger(!trigger);
         }
       });

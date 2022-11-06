@@ -30,7 +30,7 @@ const FormUpdateTranslatable = ({ dataVN }: Props) => {
         )
       )
       .subscribe((v) => {
-        if (!v.error) {
+        if (v && !v.error) {
           homeStore.updateState({
             isStopFetching: false,
             isLoading: true,

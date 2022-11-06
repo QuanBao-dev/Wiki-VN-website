@@ -58,7 +58,7 @@ const Votes = ({ vnId, dataVN }: Props) => {
         )
       )
       .subscribe((v) => {
-        if (!v.error) {
+        if (v && !v.error) {
           updateCaches([], "rankingVNs");
           homeStore.updateState({
             isStopFetching: false,
@@ -69,7 +69,7 @@ const Votes = ({ vnId, dataVN }: Props) => {
           setVotes(++temp);
           setTrigger(!trigger);
         } else {
-          if (v.error === "Access Denied") {
+          if (v && v.error === "Access Denied") {
             return alert("Require login to use this feature");
           }
           alert(v.error);
@@ -100,7 +100,7 @@ const Votes = ({ vnId, dataVN }: Props) => {
         )
       )
       .subscribe((v) => {
-        if (!v.error) {
+        if (v && !v.error) {
           updateCaches([], "rankingVNs");
           homeStore.updateState({
             isStopFetching: false,
