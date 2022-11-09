@@ -101,7 +101,7 @@ router.get("/:vnId/vote", verifyRole("Admin"), async (req, res) => {
     const { vnId } = req.params;
     const users = await userModel.aggregate([
       { $match: { votedVnIdList: parseInt(vnId) } },
-      { $project: { _id: 0, avatarImage: 1, username: 1 } },
+      { $project: { _id: 0, avatarImage: 1, username: 1, email: 1 } },
     ]);
     res.send({ message: users });
   } catch (error) {
