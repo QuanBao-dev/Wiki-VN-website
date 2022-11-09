@@ -15,7 +15,7 @@ router.get("/vns/:vnId", async (req, res) => {
     );
     if (visualNovel) visualNovel = visualNovel.items[0];
     else return res.redirect("/");
-    const image = visualNovel.image_nsfw
+    const image = !visualNovel.image_nsfw
       ? visualNovel.image
       : visualNovel.screens &&
         visualNovel.screens.filter(({ nsfw }) => !nsfw)[0]

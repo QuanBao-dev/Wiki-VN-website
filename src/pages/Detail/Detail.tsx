@@ -1,6 +1,6 @@
 import "./Detail.css";
 
-import { useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import { Patch } from "../../Interfaces/patch";
@@ -10,10 +10,20 @@ import { parseDescription } from "../../util/parseDescription";
 import { useFetchApi } from "../Hooks/useFetchApi";
 import Votes from "../../components/Votes/Votes";
 import { userStore } from "../../store/user";
-import FormUpdatePatch from "../../components/FormUpdatePatch/FormUpdatePatch";
-import DeletePatch from "../../components/DeletePatch/DeletePatch";
-import FormUpdateTranslatable from "../../components/FormUpdateTranslatable/FormUpdateTranslatable";
 
+const VoterList = React.lazy(
+  () => import("../../components/VoterList/VoterList")
+);
+
+const DeletePatch = React.lazy(
+  () => import("../../components/DeletePatch/DeletePatch")
+);
+const FormUpdatePatch = React.lazy(
+  () => import("../../components/FormUpdatePatch/FormUpdatePatch")
+);
+const FormUpdateTranslatable = React.lazy(
+  () => import("../../components/FormUpdateTranslatable/FormUpdateTranslatable")
+);
 const convertObject = {
   char: "Shares characters",
   alt: "Alternative version",
@@ -28,7 +38,7 @@ const Detail = () => {
   const [filterMode, setFilterMode] = useState(0);
   const [isShowExplicitImage, setIsShowExplicitImage] = useState(false);
   const [trigger, setTrigger] = useState(true);
-  const [isLoading,setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   let [detailState, setDetailState] = useState(
     (cachesStore.currentState().caches.VNs &&
     cachesStore.currentState().caches.VNs[id as string]
@@ -351,14 +361,23 @@ const Detail = () => {
           <Votes vnId={detailState.id} dataVN={detailState} />
         )}
         {userStore.currentState().role === "Admin" && (
-          <FormUpdatePatch
-            dataVN={detailState}
-            setTrigger={setTrigger}
-            trigger={trigger}
-          />
+          <Suspense fallback={<div>Loading...</div>}>
+            <FormUpdatePatch
+              dataVN={detailState}
+              setTrigger={setTrigger}
+              trigger={trigger}
+            />
+          </Suspense>
         )}
         {userStore.currentState().role === "Admin" && (
-          <FormUpdateTranslatable dataVN={detailState} />
+          <Suspense fallback={<div>Loading...</div>}>
+            <FormUpdateTranslatable dataVN={detailState} />
+          </Suspense>
+        )}
+        {userStore.currentState().role === "Admin" && (
+          <Suspense fallback={<div>Loading...</div>}>
+            <VoterList id={id} />
+          </Suspense>
         )}
       </div>
     </div>
