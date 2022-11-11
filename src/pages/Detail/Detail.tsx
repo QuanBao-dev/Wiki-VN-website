@@ -10,6 +10,7 @@ import { parseDescription } from "../../util/parseDescription";
 import { useFetchApi } from "../Hooks/useFetchApi";
 import Votes from "../../components/Votes/Votes";
 import { userStore } from "../../store/user";
+import Popup from "../../components/Popup/Popup";
 
 const VoterList = React.lazy(
   () => import("../../components/VoterList/VoterList")
@@ -38,6 +39,8 @@ const Detail = () => {
   const [filterMode, setFilterMode] = useState(0);
   const [isShowExplicitImage, setIsShowExplicitImage] = useState(false);
   const [trigger, setTrigger] = useState(true);
+  const [url, setUrl] = useState("");
+  const [isHide, setIsHide] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   let [detailState, setDetailState] = useState(
     (cachesStore.currentState().caches.VNs &&
@@ -115,6 +118,16 @@ const Detail = () => {
     );
   return (
     <div className="app-wrapper">
+      <Popup
+        title={"Thank you"}
+        description={
+          "If you like the free translation patch on this website and want to say thanks, or encourage me to do more, you can buy me a coffee!"
+        }
+        url={url}
+        isHide={isHide}
+        setIsHide={setIsHide}
+      />
+
       <div className="black-background" ref={blackBackgroundRef}></div>
       <div
         className="image-zoom-container"
@@ -349,9 +362,16 @@ const Detail = () => {
             <ul className="release-list">
               {patch.linkDownloads.map(({ label, url }, key) => {
                 return (
-                  <a href={url} key={key} className="button-download">
+                  <div
+                    onClick={() => {
+                      setIsHide(false);
+                      setUrl(url);
+                    }}
+                    key={key}
+                    className="button-download"
+                  >
                     <li>{label}</li>
-                  </a>
+                  </div>
                 );
               })}
             </ul>

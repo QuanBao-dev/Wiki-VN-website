@@ -46,6 +46,7 @@ a{
 @media (max-width:970px) {
   .app-container-2{
     flex-direction: column;
+    padding: 0.5rem 0;
   }
 
   .app-wrapper{

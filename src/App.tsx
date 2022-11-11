@@ -1,13 +1,13 @@
 import "./App.css";
 
-import React, { useState, Suspense } from "react";
+import React, { Suspense, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import NavBar from "./components/NavBar/NavBar";
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
+import SkeletonLoading from "./components/SkeletonLoading/SkeletonLoading";
 import { useInitStore } from "./pages/Hooks/useInitStore";
 import { userStore } from "./store/user";
-import SkeletonLoading from "./components/SkeletonLoading/SkeletonLoading";
 
 const RandomVNList = React.lazy(
   () => import("./components/RandomVNList/RandomVNList")

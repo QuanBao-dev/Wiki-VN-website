@@ -169,6 +169,7 @@ legend {
 .button-download{
   box-shadow: 0 0 3px 1px black;
   padding: 1rem;
+  cursor: pointer;
   display: inline-block;
   color: white!important;
   border-radius: 10px;
