@@ -1,6 +1,11 @@
-import { userStore } from './../../store/user';
 import { useEffect } from 'react';
-export function useInitStore(store = userStore, setState:any){
+import { Subscription } from 'rxjs';
+interface Store<T>{
+  subscribe: (setState: React.Dispatch<React.SetStateAction<T>>) => Subscription;
+  currentState: () => T;
+  updateState: (object: T) => void;
+}
+export function useInitStore<T>(store:Store<T>, setState:any){
   useEffect(() => {
     const subscription = store.subscribe(setState);
     return () => {

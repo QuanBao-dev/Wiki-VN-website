@@ -7,7 +7,8 @@ interface HomeStore {
   maxVotes: number;
   isStopFetching: boolean;
   votesPage: number;
-  isLoading:boolean
+  isLoading:boolean;
+  trigger:boolean;
 }
 
 export const homeStore = createStore<HomeStore>({
@@ -18,5 +19,6 @@ export const homeStore = createStore<HomeStore>({
   maxVotes: 0,
   isStopFetching: false,
   votesPage: 0,
-  isLoading:true
+  isLoading:true,
+  trigger:false
 });

@@ -16,6 +16,7 @@ import { ajax } from "rxjs/ajax";
 import { useInitStore } from "../../pages/Hooks/useInitStore";
 import { userStore } from "../../store/user";
 import ChangeAccountInfoForm from "../ChangeAccountInfoForm/ChangeAccountInfoForm";
+import Donate from "../Donate/Donate";
 
 const NavBar = () => {
   const posY1 = useRef(0);
@@ -66,7 +67,7 @@ const NavBar = () => {
         )
       )
       .subscribe((v) => {
-        if (v &&!v.error) {
+        if (v && !v.error) {
           userStore.updateState({
             role: "",
             username: "",
@@ -188,12 +189,32 @@ const NavBar = () => {
                 Account Settings
               </Link>
               <div ref={logoutButtonRef}>Logout</div>
+              <a
+                className="link-account-setting"
+                href={"https://www.buymeacoffee.com/SugoiVN"}
+                target={"_blank"}
+                rel="noreferrer"
+              >
+                <span>Buy SVN a Coffee</span>
+                <Donate />
+              </a>
             </div>
           </div>
           {userState.role === "" && !isHide && (
             <NavLink className="right-side-link" to="/register">
               Register
             </NavLink>
+          )}
+          {userState.role === "" && !isHide && (
+            <a
+              className="link-account-setting right-side-link"
+              href={"https://www.buymeacoffee.com/SugoiVN"}
+              target={"_blank"}
+              rel="noreferrer"
+            >
+              <span>Buy SVN a Coffee</span>
+              <Donate />
+            </a>
           )}
           <div className="navbar-small-mobile-container">
             {isHide && userState.role === "" && (
@@ -210,6 +231,15 @@ const NavBar = () => {
                 <NavLink className="right-side-link" to="/register">
                   Register
                 </NavLink>
+                <a
+                  className="link-account-setting right-side-link"
+                  href={"https://www.buymeacoffee.com/SugoiVN"}
+                  target={"_blank"}
+                  rel="noreferrer"
+                >
+                  <span style={{whiteSpace:"nowrap"}}>Buy SVN a Coffee</span>
+                  <Donate />
+                </a>
               </div>
             )}
           </div>
