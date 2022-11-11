@@ -33,7 +33,7 @@ const Popup = ({ title, description, url, isHide, setIsHide }: Props) => {
             target={"_blank"}
             rel="noreferrer"
           >
-            <span>Buy SVN a Coffee</span>
+            <span>Buy me a Coffee</span>
             <Donate />
           </a>
           <a
@@ -45,7 +45,7 @@ const Popup = ({ title, description, url, isHide, setIsHide }: Props) => {
               setIsHide(true);
             }}      
           >
-            <span>Close</span>
+            <span>Continue</span>
           </a>
         </div>
       </div>
