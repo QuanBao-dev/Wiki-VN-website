@@ -16,6 +16,10 @@
   background-color: transparent;
 }
 
+.app-container.dark-mode .input-container input{
+  border-bottom: 1px solid white;
+}
+
 .input-container label{
   position: absolute;
   top: 19px;

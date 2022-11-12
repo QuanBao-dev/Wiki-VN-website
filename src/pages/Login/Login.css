@@ -11,6 +11,11 @@
   background-color: white;
 }
 
+.app-container.dark-mode .form-container{
+  background-color:  rgb(39, 42, 85);
+  color: white;
+}
+
 .form-container button{
   margin-top: 1rem;
   background-color: rgb(190, 2, 190);
