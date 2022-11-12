@@ -21,6 +21,10 @@ legend {
   font-size: 1.1rem;
 }
 
+.app-container.dark-mode .visual-novel-detail-container{
+  background-color: rgb(39, 42, 85);
+}
+
 .visual-novel-detail-container a {
   color: blue;
 }
@@ -123,6 +127,10 @@ legend {
   font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
   font-size: 1.2rem;
   list-style-type: square;
+}
+
+.app-container.dark-mode .detail-relation-list a{
+  color: rgb(146, 162, 255);
 }
 
 .screenshots-container {

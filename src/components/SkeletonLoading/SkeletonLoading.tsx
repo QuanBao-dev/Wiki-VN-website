@@ -1,3 +1,4 @@
+import { userStore } from "../../store/user";
 import "./SkeletonLoading.css";
 interface Props {
   width: number | string;
@@ -42,7 +43,15 @@ const SkeletonLoading = ({
           <rect x="0" y="0" width="100%" height="100%"></rect>
         </clipPath>
         <linearGradient id="3sbdhl-animated-diff">
-          <stop offset="0%" stopColor="#f5f6f7" stopOpacity="1">
+          <stop
+            offset="0%"
+            stopColor={
+              !userStore.currentState().isDarkMode
+                ? "#f5f6f7"
+                : "rgb(39, 42, 85)"
+            }
+            stopOpacity="1"
+          >
             <animate
               attributeName="offset"
               values="-2; -2; 1"
@@ -51,7 +60,13 @@ const SkeletonLoading = ({
               repeatCount="indefinite"
             ></animate>
           </stop>
-          <stop offset="50%" stopColor="#eee" stopOpacity="1">
+          <stop
+            offset="50%"
+            stopColor={
+              !userStore.currentState().isDarkMode ? "#eee" : "rgb(88, 95, 184)"
+            }
+            stopOpacity="1"
+          >
             <animate
               attributeName="offset"
               values="-1; -1; 2"
@@ -60,7 +75,15 @@ const SkeletonLoading = ({
               repeatCount="indefinite"
             ></animate>
           </stop>
-          <stop offset="100%" stopColor="#f5f6f7" stopOpacity="1">
+          <stop
+            offset="100%"
+            stopColor={
+              !userStore.currentState().isDarkMode
+                ? "#f5f6f7"
+                : "rgb(39, 42, 85)"
+            }
+            stopOpacity="1"
+          >
             <animate
               attributeName="offset"
               values="0; 0; 3"

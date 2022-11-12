@@ -9,6 +9,10 @@
   width: 100%
 }
 
+.app-container.dark-mode .random-vn-list-container{
+  background-color: rgb(39, 42, 85);
+}
+
 .random-vn-list-container h1{
   margin: 0;
   margin-bottom: 1rem;

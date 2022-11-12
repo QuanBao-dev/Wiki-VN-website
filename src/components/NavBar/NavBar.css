@@ -125,6 +125,7 @@
 
 .navbar-small-mobile-container{
   position: relative;
+  margin-left: 1rem;
 }
 
 .navbar-small-mobile-wrapper{
@@ -144,4 +145,10 @@
 
 .navbar-small-mobile-wrapper a:active{
   background-color: rgb(226, 1, 226);
+}
+
+.dark-mode-container{
+  margin-right: 0.2rem;
+  cursor: pointer;
+  font-size: 2rem;
 }

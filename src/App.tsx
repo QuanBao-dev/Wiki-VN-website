@@ -28,7 +28,9 @@ function App() {
     <BrowserRouter>
       <NavBar />
       <ScrollToTop />
-      <div className="app-container">
+      <div
+        className={`app-container${userState.isDarkMode ? " dark-mode" : ""}`}
+      >
         <Routes>
           <Route
             path="/vns/:id"

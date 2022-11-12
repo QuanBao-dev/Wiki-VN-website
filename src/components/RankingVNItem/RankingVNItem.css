@@ -12,6 +12,10 @@
   transition: 0.2s;
 }
 
+.app-container.dark-mode .ranking-vn-item{
+  color: white;
+}
+
 .ranking-vn-item:hover {
   box-shadow: 0 0 6px 1px rgb(106, 1, 103);
 }

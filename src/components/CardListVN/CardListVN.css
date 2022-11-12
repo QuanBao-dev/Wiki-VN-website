@@ -27,8 +27,13 @@
   background-color: rgb(255, 255, 255);
 }
 
+.app-container.dark-mode .card-list-page-item{
+  background-color: rgb(39, 42, 85);
+  color: white;
+}
+
 .card-list-page-item.active{
-  background-color: purple;
+  background-color: purple!important;
   color: white;
 }
 

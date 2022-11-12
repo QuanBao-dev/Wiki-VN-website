@@ -9,6 +9,14 @@
   background-color: white;
 }
 
+.app-container.dark-mode .search-VNs-container{
+  background-color: rgb(39, 42, 85);
+}
+
+.app-container.dark-mode .search-VNs-container input{
+  color: white;
+}
+
 .search-VNs-container input::placeholder{
   color: rgb(164, 164, 164);
 }
@@ -35,6 +43,14 @@
   list-style-type: none;
   padding: 0;
   margin: 0;
+}
+
+.app-container.dark-mode .suggestion-list-container{
+  background-color: rgb(39, 42, 85);
+}
+
+.app-container.dark-mode .suggestion-list-container .suggestion-item{
+  color: white;
 }
 
 .suggestion-item{

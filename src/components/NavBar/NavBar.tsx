@@ -54,6 +54,11 @@ const NavBar = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userState.trigger]);
   useEffect(() => {
+    userStore.updateState({
+      isDarkMode: JSON.parse(
+        window.localStorage.getItem("isDarkModeSVN") || "false"
+      ),
+    });
     const subscription = fromEvent(logoutButtonRef.current, "click")
       .pipe(
         switchMap(() =>
@@ -165,6 +170,21 @@ const NavBar = () => {
           </NavLink>
         </li>
         <div className="navbar-item">
+          <div
+            className="dark-mode-container"
+            onClick={() => {
+              userStore.updateState({
+                isDarkMode: !userStore.currentState().isDarkMode,
+              });
+              window.localStorage.setItem(
+                "isDarkModeSVN",
+                JSON.stringify(userStore.currentState().isDarkMode)
+              );
+            }}
+          >
+            {!userState.isDarkMode && <span>🌜</span>}
+            {userState.isDarkMode && <span>🌞</span>}
+          </div>
           {userState.role === "" && !isHide && (
             <NavLink className="right-side-link" to="/login">
               Login
@@ -237,7 +257,7 @@ const NavBar = () => {
                   target={"_blank"}
                   rel="noreferrer"
                 >
-                  <span style={{whiteSpace:"nowrap"}}>Buy SVN a Coffee</span>
+                  <span style={{ whiteSpace: "nowrap" }}>Buy SVN a Coffee</span>
                   <Donate />
                 </a>
               </div>

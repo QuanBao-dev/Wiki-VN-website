@@ -5,6 +5,14 @@ a{
   color: blue;
 }
 
+.app-container.dark-mode{
+  background-color: rgb(39, 42, 85);
+}
+.app-container.dark-mode .app-container-2{
+  background-color: rgb(39, 42, 85);
+  color: white;
+}
+
 .app-container,
 .app-container-2{
   display: flex;
