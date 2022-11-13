@@ -16,6 +16,10 @@
   color: white;
 }
 
+.app-container.dark-mode .form-container input{
+  color: white;
+}
+
 .form-container button{
   margin-top: 1rem;
   background-color: rgb(190, 2, 190);
