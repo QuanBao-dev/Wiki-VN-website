@@ -22,12 +22,13 @@ const FormUpdatePatch = ({ dataVN, setTrigger, trigger }: Props) => {
             url: "/api/patch/",
             method: "POST",
             body: {
-              linkDownloads: {
+              linkDownload: {
                 label: labelInputRef.current.value,
                 url: patchReleaseUrlInputRef.current.value,
               },
               vnId: dataVN.id,
               dataVN: dataVN,
+              isAddingNewPatch: checkBoxRef.current.checked,
             },
           }).pipe(
             pluck("response", "message"),

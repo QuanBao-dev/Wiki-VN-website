@@ -1,7 +1,8 @@
 const route = require("express").Router();
 const { verifyRole } = require("../middlewares/verifyRole");
 const Patch = require("../models/patch.model");
-
+const ouo = require("ouo.io")(process.env.OUO);
+const fetch = require("node-fetch");
 route.get("/", async (req, res) => {
   const page = parseInt(req.query.page || 0);
   try {
@@ -17,7 +18,7 @@ route.get("/", async (req, res) => {
     res.send({
       message: patches.map((v, key) => {
         v.dataVN.createdAt = v.createdAt;
-        return { ...v.dataVN, isPatchContained: true, index: page*10 + key };
+        return { ...v.dataVN, isPatchContained: true, index: page * 10 + key };
       }),
     });
   } catch (error) {
@@ -43,11 +44,17 @@ route.get("/:id", async (req, res) => {
         _id: 0,
         vnId: 1,
         linkDownloads: 1,
+        shrinkEarnLinkDownloads: 1,
+        originalLinkDownloads: 1,
       })
       .lean();
     if (!patch) return res.status(400).send({ error: "patch doesn't exist" });
     res.send({
-      message: patch,
+      message: {
+        ...patch,
+        linkDownloads:
+          patch.shrinkEarnLinkDownloads || patch.originalLinkDownloads,
+      },
     });
   } catch (error) {
     res.status(404).send({ error });
@@ -55,19 +62,43 @@ route.get("/:id", async (req, res) => {
 });
 
 route.post("/", verifyRole("Admin"), async (req, res) => {
-  const { vnId, linkDownloads, dataVN, isAddingNewPatch } = req.body;
+  const { vnId, linkDownload, dataVN, isAddingNewPatch } = req.body;
   try {
     let newPatch = await Patch.findOne({ vnId: parseInt(vnId) });
+    const ouoLinkDownload = {
+      label: linkDownload.label,
+      url: await urlShortenerOuo(linkDownload.url),
+    };
+    const shrinkMeLinkDownload = {
+      label: linkDownload.label,
+      url: await urlShortenerShrinkme(linkDownload.url),
+    };
+    const shrinkEarnLinkDownload = {
+      label: linkDownload.label,
+      url: await urlShortenerShrinkEarn(linkDownload.url),
+    };
     if (!newPatch) {
       newPatch = new Patch({
         vnId,
-        linkDownloads,
+        linkDownloads: [ouoLinkDownload],
+        originalLinkDownloads: [linkDownload],
+        shrinkMeLinkDownloads: [shrinkMeLinkDownload],
+        shrinkEarnLinkDownloads: [shrinkEarnLinkDownload],
         dataVN,
       });
     }
     if (newPatch.linkDownloads) {
-      if (!isAddingNewPatch) newPatch.linkDownloads = linkDownloads;
-      else newPatch.linkDownloads.push(linkDownloads[0]);
+      if (!isAddingNewPatch) {
+        newPatch.linkDownloads = [ouoLinkDownload];
+        newPatch.originalLinkDownloads = [linkDownload];
+        newPatch.shrinkMeLinkDownloads = [shrinkMeLinkDownload];
+        newPatch.shrinkEarnLinkDownloads = [shrinkEarnLinkDownload];
+      } else {
+        newPatch.linkDownloads.push(ouoLinkDownload);
+        newPatch.originalLinkDownloads.push(linkDownload);
+        newPatch.shrinkMeLinkDownloads.push(shrinkMeLinkDownload);
+        newPatch.shrinkEarnLinkDownloads.push(shrinkEarnLinkDownload);
+      }
     }
     await newPatch.save();
     res.send({ message: "success" });
@@ -90,5 +121,31 @@ route.delete("/:vnId", verifyRole("Admin"), async (req, res) => {
     res.status(404).send({ error });
   }
 });
+
+function urlShortenerOuo(string) {
+  return new Promise((res, rej) => {
+    ouo.short(string, function (sUrl) {
+      res(sUrl);
+    });
+  });
+}
+
+async function urlShortenerShrinkme(string) {
+  const data = await fetch(
+    `https://shrinkme.io/api?api=${process.env.SHRINKME}&url=${string}`
+  );
+  const json = await data.json();
+  console.log(json);
+  return json.shortenedUrl;
+}
+
+async function urlShortenerShrinkEarn(string) {
+  const data = await fetch(
+    `https://shrinkearn.com/api?api=${process.env.SHRINKEARN}&url=${string}`
+  );
+  const json = await data.json();
+  console.log(json);
+  return json.shortenedUrl;
+}
 
 module.exports = route;
