@@ -18,6 +18,7 @@
 
 .app-container.dark-mode .input-container input{
   border-bottom: 1px solid white;
+  color: white;
 }
 
 .input-container label{
