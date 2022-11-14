@@ -152,3 +152,9 @@
   cursor: pointer;
   font-size: 2rem;
 }
+
+@media (max-width:361px) {
+  .logo{
+    font-size: 1.8rem;
+  }
+}
