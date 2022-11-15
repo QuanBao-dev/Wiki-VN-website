@@ -17,6 +17,10 @@ const patchSchema = mongoose.Schema({
     type: [{ label: String, url: String, _id: false }],
     default: [],
   },
+  adShrinkLinkDownloads: {
+    type: [{ label: String, url: String, _id: false }],
+    default: [],
+  },
   vnId: { type: Number, require: true },
   dataVN: { type: Map, require: true },
   createdAt: {

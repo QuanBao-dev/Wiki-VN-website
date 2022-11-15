@@ -22,6 +22,12 @@ const Popup = ({ title, description, url, isHide, setIsHide }: Props) => {
       style={{
         display: isHide ? "none" : "flex",
       }}
+      onClick={(e) => {
+        const target = e.target as any
+        if(target.className === "popup-container"){
+          setIsHide(true);
+        }
+      }}
     >
       <div className="popup-wrapper">
         <h1 className="popup-title">{title}</h1>

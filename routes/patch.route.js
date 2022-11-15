@@ -44,8 +44,8 @@ route.get("/:id", async (req, res) => {
         _id: 0,
         vnId: 1,
         linkDownloads: 1,
-        shrinkEarnLinkDownloads: 1,
         originalLinkDownloads: 1,
+        adShrinkLinkDownloads: 1,
       })
       .lean();
     if (!patch) return res.status(400).send({ error: "patch doesn't exist" });
@@ -53,7 +53,7 @@ route.get("/:id", async (req, res) => {
       message: {
         ...patch,
         linkDownloads:
-          patch.shrinkEarnLinkDownloads || patch.originalLinkDownloads,
+          patch.adShrinkLinkDownloads || patch.originalLinkDownloads,
       },
     });
   } catch (error) {
@@ -77,6 +77,10 @@ route.post("/", verifyRole("Admin"), async (req, res) => {
       label: linkDownload.label,
       url: await urlShortenerShrinkEarn(linkDownload.url),
     };
+    const adShrinkLinkDownload = {
+      label: linkDownload.label,
+      url: await urlShortenerAdShrink(shrinkEarnLinkDownload.url),
+    };
     if (!newPatch) {
       newPatch = new Patch({
         vnId,
@@ -84,6 +88,7 @@ route.post("/", verifyRole("Admin"), async (req, res) => {
         originalLinkDownloads: [linkDownload],
         shrinkMeLinkDownloads: [shrinkMeLinkDownload],
         shrinkEarnLinkDownloads: [shrinkEarnLinkDownload],
+        adShrinkLinkDownloads: [adShrinkLinkDownload],
         dataVN,
       });
     }
@@ -93,11 +98,13 @@ route.post("/", verifyRole("Admin"), async (req, res) => {
         newPatch.originalLinkDownloads = [linkDownload];
         newPatch.shrinkMeLinkDownloads = [shrinkMeLinkDownload];
         newPatch.shrinkEarnLinkDownloads = [shrinkEarnLinkDownload];
+        newPatch.adShrinkLinkDownloads = [adShrinkLinkDownload];
       } else {
         newPatch.linkDownloads.push(ouoLinkDownload);
         newPatch.originalLinkDownloads.push(linkDownload);
         newPatch.shrinkMeLinkDownloads.push(shrinkMeLinkDownload);
         newPatch.shrinkEarnLinkDownloads.push(shrinkEarnLinkDownload);
+        newPatch.adShrinkLinkDownloads.push(adShrinkLinkDownload);
       }
     }
     await newPatch.save();
@@ -146,6 +153,14 @@ async function urlShortenerShrinkEarn(string) {
   const json = await data.json();
   console.log(json);
   return json.shortenedUrl;
+}
+async function urlShortenerAdShrink(string) {
+  const data = await fetch(
+    `https://www.shrink-service.it/v3/public/api/auth/key/${process.env.ADSHRINK}/json/${string}`
+  );
+  const json = await data.json();
+  console.log(json);
+  return json.url;
 }
 
 module.exports = route;

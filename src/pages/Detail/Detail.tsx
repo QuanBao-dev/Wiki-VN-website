@@ -372,6 +372,15 @@ const Detail = () => {
                   >
                     <li>{label}</li>
                   </div>
+                  // <a
+                  //   className="button-download"
+                  //   key={key}
+                  //   href={url}
+                  //   target={"_blank"}
+                  //   rel="noreferrer"
+                  // >
+                  //   {label}
+                  // </a>
                 );
               })}
             </ul>
