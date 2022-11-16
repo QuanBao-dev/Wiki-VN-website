@@ -24,7 +24,7 @@ router.post("/login", async (req, res) => {
     if (!isEmailValid(email)) {
       return res.status(400).send({
         error:
-          "Email is invalid, only accepted the email containing these prefixes @gmail.com, @yahoo.com, @hotmail.com",
+          "Email is invalid, only accepted the email containing these suffixes @gmail.com, @yahoo.com, @hotmail.com",
       });
     }
     const user = await userModel.findOne({ email });
@@ -79,7 +79,7 @@ router.post("/register", async (req, res) => {
   if (!isEmailValid(email)) {
     return res.status(400).send({
       error:
-        "Email is invalid, only accepted the email containing these prefixes @gmail.com, @yahoo.com, @hotmail.com",
+        "Email is invalid, only accepted the email containing these suffixes @gmail.com, @yahoo.com, @hotmail.com",
     });
   }
   try {
