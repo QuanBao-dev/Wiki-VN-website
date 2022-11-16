@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const cloudinary = require("cloudinary");
 const app = express();
 const cookieParser = require('cookie-parser');
+const rateLimit = require('express-rate-limit');
 cloudinary.config({
   cloud_name: "storagecloud",
   api_key: process.env.API_KEY,
@@ -26,7 +27,13 @@ mongoose.connect(
     }
   }
 );
-
+const limiter = rateLimit({
+	windowMs: 1 * 60 * 1000, 
+	max: 50, 
+	standardHeaders: true,
+	legacyHeaders: false, 
+})
+app.use(limiter);
 app.use(cookieParser(process.env.SECRET_SESSION_COOKIE));
 app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ limit: "100mb", extended: true }));
