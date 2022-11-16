@@ -13,6 +13,7 @@ const tokenModel = require("../models/token.model");
 const { verifyRole } = require("../middlewares/verifyRole");
 const cloudinary = require("cloudinary");
 const loginTokenModel = require("../models/loginToken.model");
+const validEmailSuffixes = ["@gmail.com", "@yahoo.com", "@hotmail.com"];
 router.post("/login", async (req, res) => {
   const result = loginValidation(req.body);
   if (result.error) {
@@ -20,6 +21,12 @@ router.post("/login", async (req, res) => {
   }
   const { email, password } = req.body;
   try {
+    if (!isEmailValid(email)) {
+      return res.status(400).send({
+        error:
+          "Email is invalid, only accepted the email containing these prefixes @gmail.com, @yahoo.com, @hotmail.com",
+      });
+    }
     const user = await userModel.findOne({ email });
     if (!user) {
       return res.status(400).send({ error: "Email or Password is wrong" });
@@ -64,10 +71,17 @@ router.post("/login", async (req, res) => {
 
 router.post("/register", async (req, res) => {
   const result = registerValidation(req.body);
+
   if (result.error) {
     return res.status(400).send({ error: result.error.details[0].message });
   }
   const { username, email, password, confirmedPassword } = req.body;
+  if (!isEmailValid(email)) {
+    return res.status(400).send({
+      error:
+        "Email is invalid, only accepted the email containing these prefixes @gmail.com, @yahoo.com, @hotmail.com",
+    });
+  }
   try {
     if (password !== confirmedPassword) {
       return res.status(400).send({ error: "Wrong confirmed password" });
@@ -229,6 +243,16 @@ function sendEmail(to, subject, message) {
       }
     });
   });
+}
+
+function isEmailValid(email) {
+  let check = false;
+  validEmailSuffixes.forEach((suffix) => {
+    if (email.includes(suffix)) {
+      check = true;
+    }
+  });
+  return check;
 }
 
 async function verifyEmailUser(user) {
