@@ -9,3 +9,9 @@ export interface Dbstats {
   chars: number;
   posts: number;
 }
+
+export interface SugoiVNDBStats {
+  usersLength: number;
+  mtledVNLength: number;
+  releasesLength: number;
+}

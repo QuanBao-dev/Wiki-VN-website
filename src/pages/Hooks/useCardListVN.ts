@@ -56,15 +56,14 @@ async function handleCardItem(
           const temp2 = listChild[rowIndex * numberOfColumn + columnIndex];
           if (
             columnIndex === 0 &&
-            rowIndex === numberOfColumn &&
             temp3.querySelector(".description")
           ) {
             (
               temp3.querySelector(".description") as HTMLElement
-            ).style.webkitLineClamp = "3";
+            ).style.webkitLineClamp = "5";
             (
               temp2.querySelector(".description") as HTMLElement
-            ).style.webkitLineClamp = "2";
+            ).style.webkitLineClamp = "4";
           }
           sum += temp3.offsetHeight;
         }

@@ -47,11 +47,13 @@ const renderRoute = require("./routes/render.route")
 const userRoute = require("./routes/user.route");
 const tokenRoute = require("./routes/token.route");
 const voteRoute = require("./routes/vote.route");
+const statsRoute = require("./routes/stat.route");
 
 app.use("/api/vndb", vndbRoute);
 app.use("/api/patch", patchRoute);
 app.use("/api/user", userRoute);
 app.use("/api/vote",voteRoute)
+app.use("/api/stats", statsRoute);
 app.use("/api", tokenRoute);
 app.use("/", renderRoute);
 

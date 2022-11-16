@@ -8,6 +8,7 @@ import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 import SkeletonLoading from "./components/SkeletonLoading/SkeletonLoading";
 import { useInitStore } from "./pages/Hooks/useInitStore";
 import { userStore } from "./store/user";
+import Stats from "./components/Stats/Stats";
 
 const RandomVNList = React.lazy(
   () => import("./components/RandomVNList/RandomVNList")
@@ -62,6 +63,19 @@ function App() {
                     }
                   >
                     <RandomVNList />
+                  </Suspense>
+                  <Suspense
+                    fallback={
+                      <SkeletonLoading
+                        isLoading={true}
+                        height={700}
+                        width={`${100}%`}
+                        LoadingComponent={undefined}
+                        margin={3}
+                      />
+                    }
+                  >
+                    <Stats />
                   </Suspense>
                 </div>
               </div>
@@ -135,6 +149,19 @@ function App() {
                     }
                   >
                     <RandomVNList />
+                  </Suspense>
+                  <Suspense
+                    fallback={
+                      <SkeletonLoading
+                        isLoading={true}
+                        height={700}
+                        width={`${100}%`}
+                        LoadingComponent={undefined}
+                        margin={3}
+                      />
+                    }
+                  >
+                    <Stats />
                   </Suspense>
                 </div>
               </div>
