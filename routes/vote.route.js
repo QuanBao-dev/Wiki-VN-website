@@ -56,7 +56,9 @@ router.get("/:vnId", async (req, res) => {
         .findOne({ userId: decode.userId })
         .select({ _id: 0, votedVnIdList: 1 })
         .lean(),
-      userModel.aggregate([{ $match: { votedVnIdList: parseInt(vnId) } }]),
+      userModel.aggregate([
+        { $match: { votedVnIdList: parseInt(vnId), isVerified: true } },
+      ]),
     ]);
     const validUsersLength = voters.length;
     if (validUsersLength === 0 && vote.isTranslatable) {
