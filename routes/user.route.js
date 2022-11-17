@@ -13,7 +13,12 @@ const tokenModel = require("../models/token.model");
 const { verifyRole } = require("../middlewares/verifyRole");
 const cloudinary = require("cloudinary");
 const loginTokenModel = require("../models/loginToken.model");
-const validEmailSuffixes = ["@gmail.com", "@yahoo.com", "@hotmail.com"];
+const validEmailSuffixes = [
+  "@gmail.com",
+  "@yahoo.com",
+  "@hotmail.com",
+  "@icloud.com",
+];
 router.post("/login", async (req, res) => {
   const result = loginValidation(req.body);
   if (result.error) {
@@ -24,7 +29,7 @@ router.post("/login", async (req, res) => {
     if (!isEmailValid(email)) {
       return res.status(400).send({
         error:
-          "Email is invalid, only accepted the email containing these suffixes @gmail.com, @yahoo.com, @hotmail.com",
+          "Email is invalid, only accepted the email containing these suffixes @gmail.com, @yahoo.com, @hotmail.com, @icloud.com",
       });
     }
     const user = await userModel.findOne({ email });
@@ -79,7 +84,7 @@ router.post("/register", async (req, res) => {
   if (!isEmailValid(email)) {
     return res.status(400).send({
       error:
-        "Email is invalid, only accepted the email containing these suffixes @gmail.com, @yahoo.com, @hotmail.com",
+        "Email is invalid, only accepted the email containing these suffixes @gmail.com, @yahoo.com, @hotmail.com, @icloud.com",
     });
   }
   try {
