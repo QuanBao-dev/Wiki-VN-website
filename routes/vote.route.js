@@ -4,22 +4,8 @@ const voteModel = require("../models/vote.model");
 
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
-const validEmailSuffixes = [
-  "@gmail.com",
-  "@yahoo.com",
-  "@hotmail.com",
-  "@icloud.com",
-  "@msn.com",
-];
-function isEmailValid(email) {
-  let check = false;
-  validEmailSuffixes.forEach((suffix) => {
-    if (email.match(new RegExp("(" + suffix + ")$", "g"))) {
-      check = true;
-    }
-  });
-  return check;
-}
+const isValidEmail = require("../utils/isValidEmail");
+
 router.get("/", async (req, res) => {
   const page = parseInt(req.query.page || 0);
   try {
@@ -58,7 +44,7 @@ router.get("/:vnId", async (req, res) => {
       { $project: { _id: 0, avatarImage: 1, username: 1, email: 1 } },
     ]);
     const validUsersLength = users.filter(({ email }) =>
-      isEmailValid(email)
+      isValidEmail(email)
     ).length;
     if (validUsersLength === 0) {
       const vote = await voteModel.findOne({ vnId });
