@@ -14,7 +14,6 @@ const { verifyRole } = require("../middlewares/verifyRole");
 const cloudinary = require("cloudinary");
 const loginTokenModel = require("../models/loginToken.model");
 const isValidEmail = require("../utils/isValidEmail");
-const filterValidUsers = require("../utils/filterValidUsers");
 async function removeToken(userId) {
   const token = await tokenModel.findOne({ userId });
   if (token) await token.remove();
@@ -145,8 +144,7 @@ router.get("/:vnId/vote", verifyRole("Admin"), async (req, res) => {
       { $match: { votedVnIdList: parseInt(vnId) } },
       { $project: { _id: 0, avatarImage: 1, username: 1, email: 1 } },
     ]);
-    const finalResult = await filterValidUsers(users);
-    res.send({ message: finalResult });
+    res.send({ message: users });
   } catch (error) {
     if (error) return res.status(400).send({ error: error.message });
     res.status(404).send({ error: "Something went wrong" });

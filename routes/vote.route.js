@@ -57,18 +57,13 @@ router.get("/:vnId", async (req, res) => {
         .findOne({ userId: decode.userId })
         .select({ _id: 0, votedVnIdList: 1 })
         .lean(),
-      userModel.aggregate([
-        { $match: { votedVnIdList: parseInt(vnId) } },
-        { $project: { _id: 0, email: 1 } },
-      ]),
+      userModel.aggregate([{ $match: { votedVnIdList: parseInt(vnId) } }]),
     ]);
-    let validUsers = await filterValidUsers(voters);
-    const validUsersLength = validUsers.length;
+    const validUsersLength = voters.length;
     if (validUsersLength === 0) {
       const vote = await voteModel.findOne({ vnId });
       await vote.delete();
-    }
-    if (validUsersLength !== vote.votes) {
+    } else if (validUsersLength !== vote.votes) {
       const vote = await voteModel.findOne({ vnId });
       vote.votes = validUsersLength;
       await vote.save();
