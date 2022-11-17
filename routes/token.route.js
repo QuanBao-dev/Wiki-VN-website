@@ -3,6 +3,7 @@ const userModel = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const router = require("express").Router();
 const tokenModel = require("../models/token.model");
+const isValidEmail = require("../utils/isValidEmail");
 router.get("/", verifyRole("Admin", "User"), async (req, res) => {
   const { userId } = req.user;
   try {
@@ -37,6 +38,20 @@ router.get("/verify/:token", async (req, res) => {
     userExisted.isVerified = true;
     userExisted.email = user.email;
     await Promise.all([removeToken(user.userId), userExisted.save()]);
+    const users = await userModel.find({});
+    await Promise.all(
+      users.map(async ({ userId }) => {
+        const user = await userModel.findOne({ userId });
+        const createdAt = new Date(user.createdAt).getTime();
+        if (
+          (user && !isValidEmail(user.email)) ||
+          (Math.abs(Date.now() - createdAt) / (3600 * 24 * 1000) > 7 &&
+            user.isVerified === false)
+        ) {
+          await Promise.all([user.delete(), removeToken(user.userId)]);
+        }
+      })
+    );
     res.send({ message: "success" });
   } catch (error) {
     if (error) return res.status(400).send({ error: error.message });

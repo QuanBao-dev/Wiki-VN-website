@@ -15,28 +15,6 @@ const cloudinary = require("cloudinary");
 const loginTokenModel = require("../models/loginToken.model");
 const isValidEmail = require("../utils/isValidEmail");
 
-router.get("/", verifyRole("Admin"), async (req, res) => {
-  try {
-    const users = await userModel.find({});
-    await Promise.all(
-      users.map(async ({ userId }) => {
-        const user = await userModel.findOne({ userId });
-        const createdAt = new Date(user.createdAt).getTime();
-        if (
-          (user && !isValidEmail(user.email)) ||
-          (Math.abs(Date.now() - createdAt) / (3600 * 24 * 1000) > 7 &&
-            user.isVerified === false)
-        ) {
-          await user.delete();
-        }
-      })
-    );
-    res.send({ message: "success" });
-  } catch (error) {
-    if (error) return res.status(400).send({ error: error.message });
-    res.status(404).send({ error: "Something went wrong" });
-  }
-});
 router.post("/login", async (req, res) => {
   const result = loginValidation(req.body);
   if (result.error) {
@@ -191,7 +169,7 @@ router.put("/edit", verifyRole("Admin", "User"), async (req, res) => {
         return res.status(400).send({
           error: `Fake email is not accepted`,
         });
-      }    
+      }
       const isExactPassword = await compare(password, user.password);
       if (!isExactPassword)
         return res.status(400).send({ error: "Wrong Password" });
