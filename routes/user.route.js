@@ -253,7 +253,7 @@ function sendEmail(to, subject, message) {
 function isEmailValid(email) {
   let check = false;
   validEmailSuffixes.forEach((suffix) => {
-    if (email.includes(suffix)) {
+    if (email.match(new RegExp("(" + suffix + ")$", "g"))) {
       check = true;
     }
   });
