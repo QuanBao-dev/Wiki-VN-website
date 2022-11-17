@@ -13,6 +13,10 @@ a{
   color: white;
 }
 
+.app-container.dark-mode .loading-3-dot{
+  color: white!important;
+}
+
 .app-container,
 .app-container-2{
   display: flex;

@@ -3,7 +3,6 @@ const userModel = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const router = require("express").Router();
 const tokenModel = require("../models/token.model");
-const isValidEmail = require("../utils/isValidEmail");
 router.get("/", verifyRole("Admin", "User"), async (req, res) => {
   const { userId } = req.user;
   try {

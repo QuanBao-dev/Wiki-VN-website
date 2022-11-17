@@ -85,7 +85,7 @@ function App() {
             <Route
               path="/login"
               element={
-                <Suspense fallback={<h1>Loading...</h1>}>
+                <Suspense fallback={<h1 className="loading-3-dot">Loading...</h1>}>
                   <Login />
                 </Suspense>
               }
@@ -95,7 +95,7 @@ function App() {
             <Route
               path="/register"
               element={
-                <Suspense fallback={<h1>Loading...</h1>}>
+                <Suspense fallback={<h1 className="loading-3-dot">Loading...</h1>}>
                   <Register />
                 </Suspense>
               }
@@ -104,7 +104,7 @@ function App() {
           <Route
             path="/verify/:token"
             element={
-              <Suspense fallback={<h1>Loading...</h1>}>
+              <Suspense fallback={<h1 className="loading-3-dot">Loading...</h1>}>
                 <Verify />
               </Suspense>
             }
@@ -113,7 +113,7 @@ function App() {
             <Route
               path="/account"
               element={
-                <Suspense fallback={<h1>Loading...</h1>}>
+                <Suspense fallback={<h1 className="loading-3-dot">Loading...</h1>}>
                   <Account />
                 </Suspense>
               }
@@ -170,7 +170,7 @@ function App() {
           <Route
             path="/*"
             element={
-              <Suspense fallback={<h1>Loading...</h1>}>
+              <Suspense fallback={<h1 className="loading-3-dot">Loading...</h1>}>
                 <NotFound />
               </Suspense>
             }
