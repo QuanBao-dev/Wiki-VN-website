@@ -18,6 +18,7 @@ const validEmailSuffixes = [
   "@yahoo.com",
   "@hotmail.com",
   "@icloud.com",
+  "@msn.com",
 ];
 router.post("/login", async (req, res) => {
   const result = loginValidation(req.body);
@@ -27,9 +28,12 @@ router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   try {
     if (!isEmailValid(email)) {
+      const user = await userModel.findOne({ email });
+      if (user) await user.delete();
       return res.status(400).send({
-        error:
-          "Email is invalid, only accepted the email containing these suffixes @gmail.com, @yahoo.com, @hotmail.com, @icloud.com",
+        error: `Email is invalid, only accepted the email containing these suffixes ${validEmailSuffixes.join(
+          ", "
+        )}`,
       });
     }
     const user = await userModel.findOne({ email });
@@ -83,8 +87,9 @@ router.post("/register", async (req, res) => {
   const { username, email, password, confirmedPassword } = req.body;
   if (!isEmailValid(email)) {
     return res.status(400).send({
-      error:
-        "Email is invalid, only accepted the email containing these suffixes @gmail.com, @yahoo.com, @hotmail.com, @icloud.com",
+      error: `Email is invalid, only accepted the email containing these suffixes ${validEmailSuffixes.join(
+        ", "
+      )}`,
     });
   }
   try {
