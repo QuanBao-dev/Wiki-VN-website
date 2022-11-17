@@ -1,15 +1,25 @@
-import './RankingVN.css';
+import "./RankingVN.css";
 
-import { useEffect, useRef, useState } from 'react';
-import { catchError, filter, fromEvent, iif, of, pluck, switchMap, tap, timer } from 'rxjs';
-import { ajax } from 'rxjs/ajax';
+import { useEffect, useRef, useState } from "react";
+import {
+  catchError,
+  filter,
+  fromEvent,
+  iif,
+  of,
+  pluck,
+  switchMap,
+  tap,
+  timer,
+} from "rxjs";
+import { ajax } from "rxjs/ajax";
 
-import { VisualNovel } from '../../Interfaces/visualNovelList';
-import cachesStore from '../../store/caches';
-import { homeStore } from '../../store/home';
-import { updateCaches } from '../../util/updateCaches';
-import RankingVNItem from '../RankingVNItem/RankingVNItem';
-import SkeletonLoading from '../SkeletonLoading/SkeletonLoading';
+import { VisualNovel } from "../../Interfaces/visualNovelList";
+import cachesStore from "../../store/caches";
+import { homeStore } from "../../store/home";
+import { updateCaches } from "../../util/updateCaches";
+import RankingVNItem from "../RankingVNItem/RankingVNItem";
+import SkeletonLoading from "../SkeletonLoading/SkeletonLoading";
 
 const RankingVN = () => {
   const [dataRankingVN, setDataRankingVN] = useState<VisualNovel[]>(
@@ -57,6 +67,7 @@ const RankingVN = () => {
         // debounceTime(500),
         filter(
           () =>
+            rankingVnContainerRef.current &&
             rankingVnContainerRef.current.getBoundingClientRect().height -
               window.innerHeight +
               rankingVnContainerRef.current.getBoundingClientRect().top <=
@@ -72,7 +83,7 @@ const RankingVN = () => {
         filter(() => false)
       )
     ).subscribe((v) => {
-      if (v &&!v.error) {
+      if (v && !v.error) {
         updateCaches(v, "VNs");
         setDataRankingVN([...dataRankingVN, ...v]);
         updateCaches([...dataRankingVN, ...v], "rankingVNs");
