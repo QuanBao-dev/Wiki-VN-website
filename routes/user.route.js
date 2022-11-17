@@ -20,7 +20,7 @@ async function removeToken(userId) {
   if (token) await token.remove();
 }
 
-router.get("/", async (req, res) => {
+router.get("/", verifyRole("Admin"), async (req, res) => {
   try {
     const users = await userModel.find({});
     await Promise.all(
