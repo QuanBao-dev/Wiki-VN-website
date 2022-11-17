@@ -64,21 +64,21 @@ router.get("/:vnId", async (req, res) => {
     ]);
     let validUsers = await filterValidUsers(voters);
     const validUsersLength = validUsers.length;
-    if (validUsersLength === 0) {
-      const vote = await voteModel.findOne({ vnId });
-      await vote.delete();
-    }
-    if (validUsersLength !== vote.votes) {
-      const vote = await voteModel.findOne({ vnId });
-      vote.votes = validUsersLength;
-      await vote.save();
-    }
+    // if (validUsersLength === 0) {
+    //   const vote = await voteModel.findOne({ vnId });
+    //   await vote.delete();
+    // }
+    // if (validUsersLength !== vote.votes) {
+    //   const vote = await voteModel.findOne({ vnId });
+    //   vote.votes = validUsersLength;
+    //   await vote.save();
+    // }
     let isIncreased = false;
     if (user && user.votedVnIdList) {
       if (user.votedVnIdList.includes(vnId)) isIncreased = true;
     }
     res.send({
-      message: { ...vote, isIncreased, votes: validUsersLength },
+      message: { ...vote, isIncreased },
     });
   } catch (error) {
     if (error) return res.status(400).send({ error: error.message });
