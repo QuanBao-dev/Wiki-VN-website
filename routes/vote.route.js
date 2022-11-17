@@ -39,17 +39,6 @@ router.get("/:vnId", async (req, res) => {
   const vnId = parseInt(req.params.vnId);
   const decode = jwt.decode(req.signedCookies.token, { json: true });
   try {
-    const users = await userModel.aggregate([
-      { $match: { votedVnIdList: parseInt(vnId) } },
-      { $project: { _id: 0, avatarImage: 1, username: 1, email: 1 } },
-    ]);
-    const validUsersLength = users.filter(({ email }) =>
-      isValidEmail(email)
-    ).length;
-    if (validUsersLength === 0) {
-      const vote = await voteModel.findOne({ vnId });
-      await vote.delete();
-    }
     if (!decode) {
       const vote = await voteModel
         .findOne({ vnId })
@@ -59,7 +48,7 @@ router.get("/:vnId", async (req, res) => {
         message: { ...vote, isIncreased: false },
       });
     }
-    const [vote, user] = await Promise.all([
+    const [vote, user, voters] = await Promise.all([
       voteModel
         .findOne({ vnId })
         .select({ _id: 0, vnId: 1, isTranslatable: 1, dataVN: 1, votes: 1 })
@@ -68,7 +57,18 @@ router.get("/:vnId", async (req, res) => {
         .findOne({ userId: decode.userId })
         .select({ _id: 0, votedVnIdList: 1 })
         .lean(),
+      userModel.aggregate([
+        { $match: { votedVnIdList: parseInt(vnId) } },
+        { $project: { _id: 0, email: 1 } },
+      ]),
     ]);
+    const validUsersLength = voters.filter(({ email }) =>
+      isValidEmail(email)
+    ).length;
+    if (validUsersLength === 0) {
+      const vote = await voteModel.findOne({ vnId });
+      await vote.delete();
+    }
     if (validUsersLength !== vote.votes) {
       const vote = await voteModel.findOne({ vnId });
       vote.votes = validUsersLength;

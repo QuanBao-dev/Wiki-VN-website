@@ -1,17 +1,10 @@
 const patchModel = require("../models/patch.model");
 const userModel = require("../models/user.model");
 const router = require("express").Router();
-const validEmailSuffixes = [
-  "@gmail.com",
-  "@yahoo.com",
-  "@hotmail.com",
-  "@icloud.com",
-  "@msn.com",
-];
 router.get("/", async (req, res) => {
   try {
     const [users, mtledVNLength, releases] = await Promise.all([
-      userModel.find({}),
+      userModel.aggregate([{ $match: { isVerified: true } }]),
       patchModel.countDocuments(),
       patchModel.aggregate([
         {
@@ -26,7 +19,7 @@ router.get("/", async (req, res) => {
     ]);
     res.send({
       message: {
-        usersLength: users.filter(({ email }) => isEmailValid(email)).length,
+        usersLength: users.length,
         mtledVNLength,
         releasesLength: releases[0].length,
       },
@@ -36,15 +29,5 @@ router.get("/", async (req, res) => {
     res.status(404).send({ error });
   }
 });
-
-function isEmailValid(email) {
-  let check = false;
-  validEmailSuffixes.forEach((suffix) => {
-    if (email.match(new RegExp("(" + suffix + ")$", "g"))) {
-      check = true;
-    }
-  });
-  return check;
-}
 
 module.exports = router;
