@@ -4,7 +4,6 @@ const voteModel = require("../models/vote.model");
 
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
-const filterValidUsers = require("../utils/filterValidUsers");
 
 router.get("/", async (req, res) => {
   const page = parseInt(req.query.page || 0);

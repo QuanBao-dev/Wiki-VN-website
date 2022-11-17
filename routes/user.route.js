@@ -28,7 +28,7 @@ router.get("/", verifyRole("Admin"), async (req, res) => {
         const createdAt = new Date(user.createdAt).getTime();
         if (
           (user && !(await isValidEmail(user.email))) ||
-          (Math.abs(Date.now() - createdAt) / (3600 * 24 * 1000) > 7 &&
+          (Math.abs(Date.now() - createdAt) / (3600 * 1 * 1000) > 1 &&
             user.isVerified === false)
         ) {
           await Promise.all([user.delete(), removeToken(user.userId)]);
