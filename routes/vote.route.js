@@ -4,7 +4,22 @@ const voteModel = require("../models/vote.model");
 
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
-
+const validEmailSuffixes = [
+  "@gmail.com",
+  "@yahoo.com",
+  "@hotmail.com",
+  "@icloud.com",
+  "@msn.com",
+];
+function isEmailValid(email) {
+  let check = false;
+  validEmailSuffixes.forEach((suffix) => {
+    if (email.match(new RegExp("(" + suffix + ")$", "g"))) {
+      check = true;
+    }
+  });
+  return check;
+}
 router.get("/", async (req, res) => {
   const page = parseInt(req.query.page || 0);
   try {
@@ -38,6 +53,17 @@ router.get("/:vnId", async (req, res) => {
   const vnId = parseInt(req.params.vnId);
   const decode = jwt.decode(req.signedCookies.token, { json: true });
   try {
+    const users = await userModel.aggregate([
+      { $match: { votedVnIdList: parseInt(vnId) } },
+      { $project: { _id: 0, avatarImage: 1, username: 1, email: 1 } },
+    ]);
+    const validUsersLength = users.filter(({ email }) =>
+      isEmailValid(email)
+    ).length;
+    if (validUsersLength === 0) {
+      const vote = await voteModel.findOne({ vnId });
+      await vote.delete();
+    }
     if (!decode) {
       const vote = await voteModel
         .findOne({ vnId })
@@ -57,12 +83,17 @@ router.get("/:vnId", async (req, res) => {
         .select({ _id: 0, votedVnIdList: 1 })
         .lean(),
     ]);
+    if (validUsersLength !== vote.votes) {
+      const vote = await voteModel.findOne({ vnId });
+      vote.votes = validUsersLength;
+      await vote.save();
+    }
     let isIncreased = false;
     if (user && user.votedVnIdList) {
       if (user.votedVnIdList.includes(vnId)) isIncreased = true;
     }
     res.send({
-      message: { ...vote, isIncreased },
+      message: { ...vote, isIncreased, votes: validUsersLength },
     });
   } catch (error) {
     if (error) return res.status(400).send({ error: error.message });
