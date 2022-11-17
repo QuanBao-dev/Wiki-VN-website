@@ -60,13 +60,15 @@ router.get("/:vnId", async (req, res) => {
       userModel.aggregate([{ $match: { votedVnIdList: parseInt(vnId) } }]),
     ]);
     const validUsersLength = voters.length;
-    if (validUsersLength === 0) {
+    if (validUsersLength === 0 && vote.isTranslatable) {
       const vote = await voteModel.findOne({ vnId });
-      await vote.delete();
-    } else if (validUsersLength !== vote.votes) {
+      if (vote) await vote.delete();
+    } else if (validUsersLength !== vote.votes && vote.isTranslatable) {
       const vote = await voteModel.findOne({ vnId });
-      vote.votes = validUsersLength;
-      await vote.save();
+      if (vote) {
+        vote.votes = validUsersLength;
+        await vote.save();
+      }
     }
     let isIncreased = false;
     if (user && user.votedVnIdList) {

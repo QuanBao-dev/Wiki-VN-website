@@ -41,7 +41,7 @@ export function useFetchApi<T>(
           if (isUpdatingCaches) updateCaches<T>(v as T[], type);
           setState(v as T);
         } else {
-          if (handleError) handleError();
+          if (handleError && typeof handleError === "function") handleError();
         }
         if (setIsLoading) setIsLoading(false);
       });
