@@ -44,9 +44,8 @@ router.get("/verify/:token", async (req, res) => {
         const user = await userModel.findOne({ userId });
         const createdAt = new Date(user.createdAt).getTime();
         if (
-          (user && !isValidEmail(user.email)) ||
-          (Math.abs(Date.now() - createdAt) / (3600 * 24 * 1000) > 7 &&
-            user.isVerified === false)
+          Math.abs(Date.now() - createdAt) / (3600 * 24 * 1000) > 7 &&
+          user.isVerified === false
         ) {
           await Promise.all([user.delete(), removeToken(user.userId)]);
         }

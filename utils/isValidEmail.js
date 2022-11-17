@@ -1,3 +1,4 @@
+const fetch = require("node-fetch");
 const validEmailSuffixes = [
   "gmail.com",
   "yahoo.com",
@@ -101,13 +102,22 @@ const validEmailSuffixes = [
   "bigpond.net.au",
 ];
 
-
-module.exports = function isValidEmail(email) {
+module.exports = async function isValidEmail(email) {
   let check = false;
   validEmailSuffixes.forEach((suffix) => {
     if (email.match(new RegExp("(" + suffix + ")$", "g"))) {
       check = true;
     }
   });
+  if (check === true) {
+    const data = await fetch("https://www.disify.com/api/email/" + email);
+    const json = await data.json();
+    check = !json.disposable;
+  }
+  console.log({
+    email,
+    url: "https://www.disify.com/api/email/" + email,
+    check,
+  });
   return check;
-}
+};

@@ -4,7 +4,7 @@ const voteModel = require("../models/vote.model");
 
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
-const isValidEmail = require("../utils/isValidEmail");
+const filterValidUsers = require("../utils/filterValidUsers");
 
 router.get("/", async (req, res) => {
   const page = parseInt(req.query.page || 0);
@@ -62,9 +62,8 @@ router.get("/:vnId", async (req, res) => {
         { $project: { _id: 0, email: 1 } },
       ]),
     ]);
-    const validUsersLength = voters.filter(({ email }) =>
-      isValidEmail(email)
-    ).length;
+    let validUsers = await filterValidUsers(voters);
+    const validUsersLength = validUsers.length;
     if (validUsersLength === 0) {
       const vote = await voteModel.findOne({ vnId });
       await vote.delete();

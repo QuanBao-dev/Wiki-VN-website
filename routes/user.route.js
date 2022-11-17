@@ -14,6 +14,34 @@ const { verifyRole } = require("../middlewares/verifyRole");
 const cloudinary = require("cloudinary");
 const loginTokenModel = require("../models/loginToken.model");
 const isValidEmail = require("../utils/isValidEmail");
+const filterValidUsers = require("../utils/filterValidUsers");
+async function removeToken(userId) {
+  const token = await tokenModel.findOne({ userId });
+  if (token) await token.remove();
+}
+
+router.get("/", async (req, res) => {
+  try {
+    const users = await userModel.find({});
+    await Promise.all(
+      users.map(async ({ userId }) => {
+        const user = await userModel.findOne({ userId });
+        const createdAt = new Date(user.createdAt).getTime();
+        if (
+          (user && !(await isValidEmail(user.email))) ||
+          (Math.abs(Date.now() - createdAt) / (3600 * 24 * 1000) > 7 &&
+            user.isVerified === false)
+        ) {
+          await Promise.all([user.delete(), removeToken(user.userId)]);
+        }
+      })
+    );
+    res.send({ message: "successs" });
+  } catch (error) {
+    if (error) return res.status(400).send({ error: error.message });
+    res.status(404).send({ error: "Something went wrong" });
+  }
+});
 
 router.post("/login", async (req, res) => {
   const result = loginValidation(req.body);
@@ -26,7 +54,7 @@ router.post("/login", async (req, res) => {
     if (!user) {
       return res.status(400).send({ error: "Email or Password is wrong" });
     }
-    if (!isValidEmail(email)) {
+    if (!(await isValidEmail(email))) {
       const user = await userModel.findOne({ email });
       if (user) await user.delete();
       return res.status(400).send({
@@ -88,7 +116,7 @@ router.post("/register", async (req, res) => {
     if (emailExist) {
       return res.status(400).send({ error: "Email already existed" });
     }
-    if (!isValidEmail(email)) {
+    if (!(await isValidEmail(email))) {
       return res.status(400).send({
         error: `Fake email is not accepted`,
       });
@@ -117,7 +145,8 @@ router.get("/:vnId/vote", verifyRole("Admin"), async (req, res) => {
       { $match: { votedVnIdList: parseInt(vnId) } },
       { $project: { _id: 0, avatarImage: 1, username: 1, email: 1 } },
     ]);
-    res.send({ message: users.filter(({ email }) => isValidEmail(email)) });
+    const finalResult = await filterValidUsers(users);
+    res.send({ message: finalResult });
   } catch (error) {
     if (error) return res.status(400).send({ error: error.message });
     res.status(404).send({ error: "Something went wrong" });
@@ -163,7 +192,7 @@ router.put("/edit", verifyRole("Admin", "User"), async (req, res) => {
     }
 
     if (email) {
-      if (!isValidEmail(email)) {
+      if (!(await isValidEmail(email))) {
         const user = await userModel.findOne({ email });
         if (user) await user.delete();
         return res.status(400).send({
