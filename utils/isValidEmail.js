@@ -114,10 +114,10 @@ module.exports = async function isValidEmail(email) {
     const json = await data.json();
     check = !json.disposable;
   }
-  console.log({
-    email,
-    url: "https://www.disify.com/api/email/" + email,
-    check,
-  });
+  // console.log({
+  //   email,
+  //   url: "https://www.disify.com/api/email/" + email,
+  //   check,
+  // });
   return check;
 };
