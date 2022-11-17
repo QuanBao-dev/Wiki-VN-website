@@ -127,7 +127,7 @@ router.get("/:vnId/vote", verifyRole("Admin"), async (req, res) => {
       { $match: { votedVnIdList: parseInt(vnId) } },
       { $project: { _id: 0, avatarImage: 1, username: 1, email: 1 } },
     ]);
-    res.send({ message: users });
+    res.send({ message: users.filter(({ email }) => isEmailValid(email)) });
   } catch (error) {
     if (error) return res.status(400).send({ error: error.message });
     res.status(404).send({ error: "Something went wrong" });
@@ -152,6 +152,15 @@ router.put("/edit", verifyRole("Admin", "User"), async (req, res) => {
   const result = changeInfoAccountValidation(req.body);
   if (result.error) {
     return res.status(400).send({ error: result.error.details[0].message });
+  }
+  if (!isEmailValid(email)) {
+    const user = await userModel.findOne({ email });
+    if (user) await user.delete();
+    return res.status(400).send({
+      error: `Email is invalid, only accepted the email containing these suffixes ${validEmailSuffixes.join(
+        ", "
+      )}`,
+    });
   }
   const { userId, newToken } = req.user;
   try {
