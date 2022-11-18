@@ -14,28 +14,25 @@ const { verifyRole } = require("../middlewares/verifyRole");
 const cloudinary = require("cloudinary");
 const loginTokenModel = require("../models/loginToken.model");
 const isValidEmail = require("../utils/isValidEmail");
-async function removeToken(userId) {
-  const token = await tokenModel.findOne({ userId });
-  if (token) await token.remove();
-}
 
 router.get("/", verifyRole("Admin"), async (req, res) => {
   try {
-    const users = await userModel.find({});
-    await Promise.all(
-      users.map(async ({ userId }) => {
-        const user = await userModel.findOne({ userId });
-        const createdAt = new Date(user.createdAt).getTime();
-        if (
-          (user && !(await isValidEmail(user.email))) ||
-          (Math.abs(Date.now() - createdAt) / (3600 * 1 * 1000) > 1 &&
-            user.isVerified === false)
-        ) {
-          await Promise.all([user.delete(), removeToken(user.userId)]);
-        }
-      })
-    );
-    res.send({ message: "successs" });
+    const users = await userModel.aggregate([
+      {
+        $project: {
+          _id: 0,
+          userId: 1,
+          email: 1,
+          username: 1,
+          createdAt: 1,
+          isVerified: 1,
+        },
+      },
+      {
+        $sort: { createdAt: 1 },
+      },
+    ]);
+    res.send({ message: users });
   } catch (error) {
     if (error) return res.status(400).send({ error: error.message });
     res.status(404).send({ error: "Something went wrong" });
@@ -126,8 +123,8 @@ router.post("/register", async (req, res) => {
     const newUser = new userModel({ username, email });
     const salt = await bcrypt.genSalt(10);
     newUser.password = await bcrypt.hash(password, salt);
-    await verifyEmailUser(newUser);
     await newUser.save();
+    await verifyEmailUser(newUser);
     return res.send({
       message: "Checking your email account, Please verify your email address",
     });
