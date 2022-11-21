@@ -3,6 +3,33 @@ const { verifyRole } = require("../middlewares/verifyRole");
 const Patch = require("../models/patch.model");
 const ouo = require("ouo.io")(process.env.OUO);
 const fetch = require("node-fetch");
+
+// route.get("/handle", async (req, res) => {
+//   const patches = await Patch.find({});
+//   try {
+//     await Promise.all(
+//       patches.map(async (patch) => {
+//         const linkDownloads = [...patch.shrinkEarnLinkDownloads];
+//         let temp = [];
+//         for (let j = 0; j < linkDownloads.length; j++) {
+//           const linkDownload = linkDownloads[j];
+//           const shrinkMeLinkDownload = {
+//             label: linkDownload.label,
+//             url: await urlShortenerShrinkme(linkDownload.url),
+//           };
+//           temp.push(shrinkMeLinkDownload);
+//         }
+//         patch.shrinkMeLinkDownloads = temp;
+//         await patch.save();
+//       })
+//     );
+//     res.send({ message: "success" });
+//   } catch (error) {
+//     if (error) return res.status(400).send({ error: error.message });
+//     res.status(404).send({ error });
+//   }
+// });
+
 route.get("/", async (req, res) => {
   const page = parseInt(req.query.page || 0);
   try {
@@ -45,15 +72,16 @@ route.get("/:id", async (req, res) => {
         vnId: 1,
         linkDownloads: 1,
         originalLinkDownloads: 1,
-        shrinkEarnLinkDownloads: 1,
+        shrinkMeLinkDownloads: 1,
       })
       .lean();
     if (!patch) return res.status(400).send({ error: "patch doesn't exist" });
+    console.log(patch.shrinkMeLinkDownloads);
     res.send({
       message: {
         ...patch,
         linkDownloads:
-          patch.shrinkEarnLinkDownloads || patch.originalLinkDownloads,
+          patch.shrinkMeLinkDownloads || patch.originalLinkDownloads,
       },
     });
   } catch (error) {
@@ -69,13 +97,13 @@ route.post("/", verifyRole("Admin"), async (req, res) => {
       label: linkDownload.label,
       url: await urlShortenerOuo(linkDownload.url),
     };
-    const shrinkMeLinkDownload = {
-      label: linkDownload.label,
-      url: await urlShortenerShrinkme(linkDownload.url),
-    };
     const shrinkEarnLinkDownload = {
       label: linkDownload.label,
       url: await urlShortenerShrinkEarn(linkDownload.url),
+    };
+    const shrinkMeLinkDownload = {
+      label: linkDownload.label,
+      url: await urlShortenerShrinkme(shrinkEarnLinkDownload.url),
     };
     const adShrinkLinkDownload = {
       label: linkDownload.label,
