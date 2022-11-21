@@ -37,7 +37,7 @@ module.exports.verifyRole = (...roles) => {
         },
         process.env.JWT_KEY,
         {
-          expiresIn: 20,
+          expiresIn: 1,
         }
       );
       loginToken.accessTokenList[0] = newToken;

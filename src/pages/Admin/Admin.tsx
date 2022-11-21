@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import ButtonDeleteUser from "../../components/ButtonDeleteUser/ButtonDeleteUser";
 import { User } from "../../Interfaces/users";
 import { useFetchApi } from "../Hooks/useFetchApi";
-import { catchError, fromEvent, of, pluck, switchMap } from "rxjs";
+import { catchError, fromEvent, of, pluck, switchMap, tap } from "rxjs";
 import { ajax } from "rxjs/ajax";
 import { userStore } from "../../store/user";
 
@@ -45,7 +45,7 @@ const Admin = () => {
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [isLoading]);
   if (isLoading || userStore.currentState().role !== "Admin")
     return (
       <div>
@@ -54,8 +54,9 @@ const Admin = () => {
     );
   return (
     <div className="admin-container">
-      <div className="update-button-container" ref={updateButtonContainerRef}>
+      <div className="update-button-container">
         <i
+          ref={updateButtonContainerRef}
           className={`fas fa-sync fa-2x${isSpin ? " fa-spin" : ""}`}
           onMouseEnter={() => {
             setIsSpin(true);
@@ -83,6 +84,7 @@ const Admin = () => {
             <th>isFreeAds</th>
             <th>becomingSupporterAt</th>
             <th>becomingMemberAt</th>
+            <th>cancelingMemberAt</th>
             <th></th>
           </tr>
         </thead>
@@ -98,6 +100,7 @@ const Admin = () => {
                 isFreeAds,
                 becomingMemberAt,
                 becomingSupporterAt,
+                cancelingMemberAt
               },
               key
             ) => (
@@ -107,7 +110,16 @@ const Admin = () => {
                 <td>{username}</td>
                 <td>{email}</td>
                 <td>{new Date(createdAt).toUTCString()}</td>
-                <td>{isVerified.toString()}</td>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={isVerified ? true : false}
+                    onChange={(e) => {
+                      const target = e.target as any;
+                      console.log(target.checked);
+                    }}
+                  />
+                </td>
                 <td>
                   <input
                     type="checkbox"
@@ -120,6 +132,7 @@ const Admin = () => {
                 </td>
                 <td>{becomingSupporterAt ? becomingSupporterAt : "none"}</td>
                 <td>{becomingMemberAt ? becomingMemberAt : "none"}</td>
+                <td>{cancelingMemberAt ? cancelingMemberAt : "none"}</td>
                 <td>
                   <ButtonDeleteUser
                     userId={userId}

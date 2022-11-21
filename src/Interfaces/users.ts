@@ -7,4 +7,5 @@ export interface User{
   isFreeAds: Boolean,
   becomingSupporterAt:string,
   becomingMemberAt:string,
+  cancelingMemberAt:string
 }

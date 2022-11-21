@@ -14,46 +14,81 @@ const { verifyRole } = require("../middlewares/verifyRole");
 const cloudinary = require("cloudinary");
 const loginTokenModel = require("../models/loginToken.model");
 const isValidEmail = require("../utils/isValidEmail");
-
-router.delete("/:userId", verifyRole("Admin"), async (req, res) => {
-  const userId = req.params.userId;
-  try {
-    const [user, loginToken] = await Promise.all([
-      userModel.findOne({ userId }),
-      loginTokenModel.findOne({ userId }),
-    ]);
-    if (user && loginToken) {
-      await Promise.all([user.delete(), loginToken.delete()]);
-    } else {
-      if (user) await user.delete();
-      if (loginToken) await loginToken.delete();
-    }
-    res.send({ message: "success" });
-  } catch (error) {
-    if (error) return res.status(400).send({ error });
-    return res.status(404).send({ error: "Something went wrong" });
-  }
-});
+const BMC = require("../utils");
 
 router.get("/", verifyRole("Admin"), async (req, res) => {
   try {
-    const users = await userModel.aggregate([
-      {
-        $project: {
-          _id: 0,
-          userId: 1,
-          email: 1,
-          username: 1,
-          createdAt: 1,
-          isVerified: 1,
-          isFreeAds: 1,
+    const BuyMeCoffee = new BMC(process.env.SUGOICOFFEETOKEN);
+    const [users, supporters, members] = await Promise.all([
+      userModel.aggregate([
+        {
+          $project: {
+            _id: 0,
+            userId: 1,
+            email: 1,
+            username: 1,
+            createdAt: 1,
+            isVerified: 1,
+            isFreeAds: 1,
+          },
         },
-      },
-      {
-        $sort: { createdAt: -1 },
-      },
+        {
+          $sort: { createdAt: -1 },
+        },
+      ]),
+      BuyMeCoffee.Supporters(),
+      BuyMeCoffee.Subscriptions(),
     ]);
-    res.send({ message: users });
+    let finalResult = [];
+    if (supporters.data)
+      finalResult = users.map((user) => {
+        for (let i = 0; i < supporters.data.length; i++) {
+          const supporter = supporters.data[i];
+          if (supporter.payer_email === user.email) {
+            const endFreeAdsDate =
+              new Date(supporter.support_updated_on).getTime() +
+              3600 * 1000 * 24 * 31;
+            if ((Date.now() - endFreeAdsDate) / (3600 * 1000 * 24 * 31) <= 1)
+              return {
+                ...user,
+                becomingSupporterAt: supporter.support_updated_on,
+                isFreeAds: true,
+              };
+            return {
+              ...user,
+              becomingSupporterAt: supporter.support_updated_on,
+              isFreeAds: false,
+            };
+          }
+        }
+        return user;
+      });
+    if (members.data)
+      finalResult = finalResult.map((user) => {
+        for (let i = 0; i < members.data.length; i++) {
+          const member = members.data[i];
+          if (member.payer_email === user.email) {
+            if (!member.subscription_is_cancelled)
+              return {
+                ...user,
+                becomingMemberAt: member.subscription_current_period_start,
+                cancelingMemberAt: member.subscription_current_period_end,
+                isFreeAds: true,
+              };
+            return {
+              ...user,
+              becomingMemberAt: member.subscription_current_period_start,
+              cancelingMemberAt: member.subscription_current_period_end,
+              isFreeAds: false,
+            };
+          }
+        }
+        return user;
+      });
+
+    res.send({
+      message: finalResult,
+    });
   } catch (error) {
     if (error) return res.status(400).send({ error: error.message });
     res.status(404).send({ error: "Something went wrong" });
@@ -97,7 +132,7 @@ router.post("/login", async (req, res) => {
       },
       process.env.JWT_KEY,
       {
-        expiresIn: 20,
+        expiresIn: 1,
       }
     );
     await addNewAccessToken(user, token);
@@ -179,6 +214,26 @@ router.delete("/logout", verifyRole("Admin", "User"), async (req, res) => {
   } catch (error) {
     if (error) return res.status(400).send({ error: error.message });
     res.status(404).send({ error: "Something went wrong" });
+  }
+});
+
+router.delete("/:userId", verifyRole("Admin"), async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    const [user, loginToken] = await Promise.all([
+      userModel.findOne({ userId }),
+      loginTokenModel.findOne({ userId }),
+    ]);
+    if (user && loginToken) {
+      await Promise.all([user.delete(), loginToken.delete()]);
+    } else {
+      if (user) await user.delete();
+      if (loginToken) await loginToken.delete();
+    }
+    res.send({ message: "success" });
+  } catch (error) {
+    if (error) return res.status(400).send({ error });
+    return res.status(404).send({ error: "Something went wrong" });
   }
 });
 
