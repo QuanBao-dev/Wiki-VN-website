@@ -206,7 +206,6 @@ router.get("/:vnId/vote", verifyRole("Admin"), async (req, res) => {
 
 router.delete("/logout", verifyRole("Admin", "User"), async (req, res) => {
   const { userId } = req.user;
-  console.log(userId);
   try {
     await loginTokenModel.findOneAndDelete({ userId }).lean();
     res.clearCookie("token", { path: "/" });
