@@ -1,0 +1,29 @@
+table{
+  border-spacing: 0;
+}
+
+.app-container.dark-mode .admin-container{
+  color:white;
+  overflow: auto;
+  width: 100%;
+}
+
+.app-container.dark-mode .admin-container th,
+.app-container.dark-mode .admin-container td{
+  padding: 0.5rem 1rem;
+  min-width:300px;
+  border: 1px solid white;
+}
+
+.admin-container th,
+.admin-container td{
+  padding: 0.5rem 1rem;
+  min-width:300px;
+  border: 1px solid black;
+}
+
+.update-button-container{
+  display: inline-block;
+  cursor: pointer;
+  margin: 1rem;
+}

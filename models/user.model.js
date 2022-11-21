@@ -26,6 +26,10 @@ const userSchema = mongoose.Schema({
     type: [Number],
     default: [],
   },
+  isFreeAds: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 module.exports = mongoose.model("user", userSchema);

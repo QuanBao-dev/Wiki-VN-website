@@ -20,6 +20,7 @@ const Login = React.lazy(() => import("./pages/Login/Login"));
 const Register = React.lazy(() => import("./pages/Register/Register"));
 const Detail = React.lazy(() => import("./pages/Detail/Detail"));
 const Verify = React.lazy(() => import("./pages/Verify/Verify"));
+const Admin = React.lazy(() => import("./pages/Admin/Admin"));
 
 function App() {
   const [userState, setUserState] = useState(userStore.currentState());
@@ -175,6 +176,7 @@ function App() {
               </Suspense>
             }
           ></Route>
+          <Route path="/admin" element={<Admin />} ></Route>
         </Routes>
       </div>
     </BrowserRouter>

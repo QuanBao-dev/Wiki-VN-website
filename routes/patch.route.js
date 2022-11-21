@@ -45,7 +45,7 @@ route.get("/:id", async (req, res) => {
         vnId: 1,
         linkDownloads: 1,
         originalLinkDownloads: 1,
-        adShrinkLinkDownloads: 1,
+        shrinkEarnLinkDownloads: 1,
       })
       .lean();
     if (!patch) return res.status(400).send({ error: "patch doesn't exist" });
@@ -53,7 +53,7 @@ route.get("/:id", async (req, res) => {
       message: {
         ...patch,
         linkDownloads:
-          patch.adShrinkLinkDownloads || patch.originalLinkDownloads,
+          patch.shrinkEarnLinkDownloads || patch.originalLinkDownloads,
       },
     });
   } catch (error) {

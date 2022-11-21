@@ -15,6 +15,26 @@ const cloudinary = require("cloudinary");
 const loginTokenModel = require("../models/loginToken.model");
 const isValidEmail = require("../utils/isValidEmail");
 
+router.delete("/:userId", verifyRole("Admin"), async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    const [user, loginToken] = await Promise.all([
+      userModel.findOne({ userId }),
+      loginTokenModel.findOne({ userId }),
+    ]);
+    if (user && loginToken) {
+      await Promise.all([user.delete(), loginToken.delete()]);
+    } else {
+      if (user) await user.delete();
+      if (loginToken) await loginToken.delete();
+    }
+    res.send({ message: "success" });
+  } catch (error) {
+    if (error) return res.status(400).send({ error });
+    return res.status(404).send({ error: "Something went wrong" });
+  }
+});
+
 router.get("/", verifyRole("Admin"), async (req, res) => {
   try {
     const users = await userModel.aggregate([
@@ -26,10 +46,11 @@ router.get("/", verifyRole("Admin"), async (req, res) => {
           username: 1,
           createdAt: 1,
           isVerified: 1,
+          isFreeAds: 1,
         },
       },
       {
-        $sort: { createdAt: 1 },
+        $sort: { createdAt: -1 },
       },
     ]);
     res.send({ message: users });
@@ -76,7 +97,7 @@ router.post("/login", async (req, res) => {
       },
       process.env.JWT_KEY,
       {
-        expiresIn: 1,
+        expiresIn: 20,
       }
     );
     await addNewAccessToken(user, token);
