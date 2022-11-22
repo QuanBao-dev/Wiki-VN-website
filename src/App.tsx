@@ -34,6 +34,8 @@ function App() {
   useInitStore(userStore, setUserState);
   document.body.style.backgroundImage = `url("${window.location.origin}/background.jpg")`;
   useEffect(() => {
+    console.log(userState.role);
+    if (userState.role === "") return;
     const subscription = interval(1000)
       .pipe(
         filter(
@@ -60,7 +62,7 @@ function App() {
     return () => {
       subscription.unsubscribe();
     };
-  }, [userState.exp, userState.iat]);
+  }, [userState.exp, userState.iat, userState.email]);
   useEffect(() => {
     if (userState.email === "") return;
     const subscription = ajax({
