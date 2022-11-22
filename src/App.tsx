@@ -62,7 +62,7 @@ function App() {
     return () => {
       subscription.unsubscribe();
     };
-  }, [userState.exp, userState.iat, userState.email]);
+  }, [userState.exp, userState.iat, userState.role]);
   useEffect(() => {
     if (userState.email === "") return;
     const subscription = ajax({
