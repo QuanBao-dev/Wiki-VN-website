@@ -76,7 +76,6 @@ route.get("/:id", async (req, res) => {
       })
       .lean();
     if (!patch) return res.status(400).send({ error: "patch doesn't exist" });
-    console.log(patch.shrinkMeLinkDownloads);
     res.send({
       message: {
         ...patch,

@@ -205,6 +205,9 @@ const NavBar = () => {
                 display: isShowDropdown ? "block" : "none",
               }}
             >
+              <Link className="link-account-setting" to={"/admin"}>
+                Admin Manager
+              </Link>
               <Link className="link-account-setting" to={"/account"}>
                 Account Settings
               </Link>

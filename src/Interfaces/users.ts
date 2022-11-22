@@ -4,8 +4,9 @@ export interface User{
   createdAt:string,
   isVerified:boolean,
   userId:string,
-  isFreeAds: Boolean,
+  isFreeAds: boolean,
   becomingSupporterAt:string,
   becomingMemberAt:string,
   cancelingMemberAt:string
+  isFreeAdsEdit:boolean
 }

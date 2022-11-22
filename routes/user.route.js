@@ -52,12 +52,12 @@ router.get("/", verifyRole("Admin"), async (req, res) => {
               return {
                 ...user,
                 becomingSupporterAt: supporter.support_updated_on,
-                isFreeAds: true,
+                isFreeAdsEdit: true,
               };
             return {
               ...user,
               becomingSupporterAt: supporter.support_updated_on,
-              isFreeAds: false,
+              isFreeAdsEdit: false,
             };
           }
         }
@@ -73,13 +73,13 @@ router.get("/", verifyRole("Admin"), async (req, res) => {
                 ...user,
                 becomingMemberAt: member.subscription_current_period_start,
                 cancelingMemberAt: member.subscription_current_period_end,
-                isFreeAds: true,
+                isFreeAdsEdit: true,
               };
             return {
               ...user,
               becomingMemberAt: member.subscription_current_period_start,
               cancelingMemberAt: member.subscription_current_period_end,
-              isFreeAds: false,
+              isFreeAdsEdit: false,
             };
           }
         }
@@ -132,7 +132,7 @@ router.post("/login", async (req, res) => {
       },
       process.env.JWT_KEY,
       {
-        expiresIn: 1,
+        expiresIn: 60 * 5,
       }
     );
     await addNewAccessToken(user, token);
@@ -232,6 +232,22 @@ router.delete("/:userId", verifyRole("Admin"), async (req, res) => {
     res.send({ message: "success" });
   } catch (error) {
     if (error) return res.status(400).send({ error });
+    return res.status(404).send({ error: "Something went wrong" });
+  }
+});
+
+router.put("/admin/edit", verifyRole("Admin"), async (req, res) => {
+  const { isFreeAds, isVerified, userId } = req.body;
+  try {
+    const user = await userModel.findOne({ userId });
+    if (user) {
+      user.isFreeAds = isFreeAds;
+      user.isVerified = isVerified;
+    }
+    await user.save();
+    return res.send({ message: "Success" });
+  } catch (error) {
+    if (error) return res.status(400).send({ error: error.message });
     return res.status(404).send({ error: "Something went wrong" });
   }
 });

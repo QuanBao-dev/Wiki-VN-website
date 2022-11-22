@@ -1,6 +1,6 @@
 import "./App.css";
 
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import NavBar from "./components/NavBar/NavBar";
@@ -9,6 +9,8 @@ import SkeletonLoading from "./components/SkeletonLoading/SkeletonLoading";
 import { useInitStore } from "./pages/Hooks/useInitStore";
 import { userStore } from "./store/user";
 import Stats from "./components/Stats/Stats";
+import { catchError, filter, interval, of, pluck, switchMap } from "rxjs";
+import { ajax } from "rxjs/ajax";
 
 const RandomVNList = React.lazy(
   () => import("./components/RandomVNList/RandomVNList")
@@ -26,6 +28,34 @@ function App() {
   const [userState, setUserState] = useState(userStore.currentState());
   useInitStore(userStore, setUserState);
   document.body.style.backgroundImage = `url("${window.location.origin}/background.jpg")`;
+  useEffect(() => {
+    const subscription = interval(1000)
+      .pipe(
+        filter(
+          (v) =>
+            userState.exp !== 0 &&
+            Date.now() / 1000 + v > userState.exp - 60 * 2
+        ),
+        switchMap(() =>
+          ajax({
+            url: "/api/token/renew",
+          }).pipe(
+            pluck("response", "message"),
+            catchError((error) => of(error).pipe(pluck("response")))
+          )
+        )
+      )
+      .subscribe((v) => {
+        if (!v.error) {
+          userStore.updateState({
+            trigger: !userStore.currentState().trigger,
+          });
+        }
+      });
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [userState.exp, userState.iat]);
   return (
     <BrowserRouter>
       <NavBar />
@@ -86,7 +116,9 @@ function App() {
             <Route
               path="/login"
               element={
-                <Suspense fallback={<h1 className="loading-3-dot">Loading...</h1>}>
+                <Suspense
+                  fallback={<h1 className="loading-3-dot">Loading...</h1>}
+                >
                   <Login />
                 </Suspense>
               }
@@ -96,7 +128,9 @@ function App() {
             <Route
               path="/register"
               element={
-                <Suspense fallback={<h1 className="loading-3-dot">Loading...</h1>}>
+                <Suspense
+                  fallback={<h1 className="loading-3-dot">Loading...</h1>}
+                >
                   <Register />
                 </Suspense>
               }
@@ -105,7 +139,9 @@ function App() {
           <Route
             path="/verify/:token"
             element={
-              <Suspense fallback={<h1 className="loading-3-dot">Loading...</h1>}>
+              <Suspense
+                fallback={<h1 className="loading-3-dot">Loading...</h1>}
+              >
                 <Verify />
               </Suspense>
             }
@@ -114,7 +150,9 @@ function App() {
             <Route
               path="/account"
               element={
-                <Suspense fallback={<h1 className="loading-3-dot">Loading...</h1>}>
+                <Suspense
+                  fallback={<h1 className="loading-3-dot">Loading...</h1>}
+                >
                   <Account />
                 </Suspense>
               }
@@ -171,12 +209,16 @@ function App() {
           <Route
             path="/*"
             element={
-              <Suspense fallback={<h1 className="loading-3-dot">Loading...</h1>}>
+              <Suspense
+                fallback={<h1 className="loading-3-dot">Loading...</h1>}
+              >
                 <NotFound />
               </Suspense>
             }
           ></Route>
-          <Route path="/admin" element={<Admin />} ></Route>
+          {userState.role === "Admin" && (
+            <Route path="/admin" element={<Admin />}></Route>
+          )}
         </Routes>
       </div>
     </BrowserRouter>

@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const loginTokenModel = require("../models/loginToken.model");
+const userModel = require("../models/user.model");
 module.exports.verifyRole = (...roles) => {
   return async (req, res, next) => {
     let token = req.signedCookies.token;
@@ -18,9 +19,19 @@ module.exports.verifyRole = (...roles) => {
       if (!roles.includes(req.user.role)) {
         return res.status(401).send({ error: "You don't have permission" });
       }
-      const loginToken = await loginTokenModel.findOne({
-        userId: decode.userId,
-      });
+      const [loginToken, user] = await Promise.all([
+        loginTokenModel.findOne({
+          userId: decode.userId,
+        }),
+        userModel
+          .findOne({ userId: decode.userId })
+          .select({ _id: false, username: 1 })
+          .lean(),
+      ]);
+      if (!user) {
+        await loginToken.delete();
+        return res.status(401).send({ error: "You don't have permission" });
+      }
       if (
         !loginToken ||
         !loginToken.accessTokenList ||
@@ -37,7 +48,7 @@ module.exports.verifyRole = (...roles) => {
         },
         process.env.JWT_KEY,
         {
-          expiresIn: 1,
+          expiresIn: 60 * 5,
         }
       );
       loginToken.accessTokenList[0] = newToken;

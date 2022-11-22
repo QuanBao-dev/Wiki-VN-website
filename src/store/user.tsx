@@ -9,6 +9,8 @@ interface UserStore {
   editMode: "username" | "email";
   isShowEditAccount: boolean;
   isDarkMode: boolean;
+  exp: number;
+  iat: number;
 }
 
 export const userStore = createStore<UserStore>({
@@ -21,4 +23,6 @@ export const userStore = createStore<UserStore>({
   editMode: "username",
   isShowEditAccount: false,
   isDarkMode: false,
+  exp: 0,
+  iat: 0,
 });

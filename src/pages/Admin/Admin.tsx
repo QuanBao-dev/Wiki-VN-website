@@ -8,6 +8,7 @@ import { useFetchApi } from "../Hooks/useFetchApi";
 import { catchError, fromEvent, of, pluck, switchMap } from "rxjs";
 import { ajax } from "rxjs/ajax";
 import { userStore } from "../../store/user";
+import ButtonEdit from "../../components/ButtonEdit/ButtonEdit";
 
 const Admin = () => {
   const [userList, setUserList] = useState<User[]>([]);
@@ -25,6 +26,7 @@ const Admin = () => {
     null
   );
   useEffect(() => {
+    if (!updateButtonContainerRef.current) return;
     const subscription = fromEvent(updateButtonContainerRef.current, "click")
       .pipe(
         switchMap(() =>
@@ -49,7 +51,13 @@ const Admin = () => {
   if (isLoading || userStore.currentState().role !== "Admin")
     return (
       <div>
-        <i className="fas fa-spinner fa-pulse"></i>
+        <i
+          className="fas fa-spinner fa-pulse fa-5x"
+          style={{
+            display: "inline-block",
+            margin: "auto",
+          }}
+        ></i>
       </div>
     );
   return (
@@ -81,11 +89,14 @@ const Admin = () => {
             <th>Email</th>
             <th>createdAt</th>
             <th>isVerified</th>
+            <th>isVerifiedEdit</th>
             <th>isFreeAds</th>
+            <th>isFreeAdsEdit</th>
             <th>becomingSupporterAt</th>
             <th>becomingMemberAt</th>
             <th>cancelingMemberAt</th>
-            <th></th>
+            <th>Delete</th>
+            <th>Save</th>
           </tr>
         </thead>
         <tbody>
@@ -98,49 +109,30 @@ const Admin = () => {
                 userId,
                 username,
                 isFreeAds,
+                isFreeAdsEdit,
                 becomingMemberAt,
                 becomingSupporterAt,
-                cancelingMemberAt
+                cancelingMemberAt,
               },
               key
             ) => (
-              <tr key={key}>
-                <td>{key + 1}</td>
-                <td>{userId}</td>
-                <td>{username}</td>
-                <td>{email}</td>
-                <td>{new Date(createdAt).toUTCString()}</td>
-                <td>
-                  <input
-                    type="checkbox"
-                    checked={isVerified ? true : false}
-                    onChange={(e) => {
-                      const target = e.target as any;
-                      console.log(target.checked);
-                    }}
-                  />
-                </td>
-                <td>
-                  <input
-                    type="checkbox"
-                    checked={isFreeAds ? true : false}
-                    onChange={(e) => {
-                      const target = e.target as any;
-                      console.log(target.checked);
-                    }}
-                  />
-                </td>
-                <td>{becomingSupporterAt ? becomingSupporterAt : "none"}</td>
-                <td>{becomingMemberAt ? becomingMemberAt : "none"}</td>
-                <td>{cancelingMemberAt ? cancelingMemberAt : "none"}</td>
-                <td>
-                  <ButtonDeleteUser
-                    userId={userId}
-                    userList={userList}
-                    setUserList={setUserList}
-                  />
-                </td>
-              </tr>
+              <RowTable
+                key={key}
+                index={key}
+                becomingMemberAt={becomingMemberAt}
+                becomingSupporterAt={becomingSupporterAt}
+                cancelingMemberAt={cancelingMemberAt}
+                isFreeAds={isFreeAds}
+                isFreeAdsEdit={isFreeAdsEdit}
+                username={username}
+                userId={userId}
+                createdAt={createdAt}
+                isVerified={isVerified}
+                isVerifiedEdit={isVerified}
+                email={email}
+                userList={userList}
+                setUserList={setUserList}
+              />
             )
           )}
         </tbody>
@@ -148,5 +140,87 @@ const Admin = () => {
     </div>
   );
 };
+interface RowTableProps {
+  key: number;
+  userId: string;
+  username: string;
+  email: string;
+  createdAt: string;
+  isVerified: boolean;
+  isVerifiedEdit: boolean;
+  isFreeAds: boolean;
+  becomingSupporterAt: string;
+  becomingMemberAt: string;
+  cancelingMemberAt: string;
+  isFreeAdsEdit: boolean;
+  userList: User[];
+  setUserList: React.Dispatch<React.SetStateAction<User[]>>;
+  index: number;
+}
+function RowTable({
+  index,
+  userId,
+  username,
+  email,
+  createdAt,
+  isVerified,
+  isVerifiedEdit,
+  isFreeAds,
+  becomingSupporterAt,
+  becomingMemberAt,
+  cancelingMemberAt,
+  isFreeAdsEdit,
+  userList,
+  setUserList,
+}: RowTableProps) {
+  const isFreeAdsEditRef = useRef(document.createElement("input"));
+  const isVerifiedEditRef = useRef(document.createElement("input"));
+  return (
+    <tr>
+      <td>{index + 1}</td>
+      <td>{userId}</td>
+      <td>{username}</td>
+      <td>{email}</td>
+      <td>{new Date(createdAt).toUTCString()}</td>
+      <td>{isVerified ? "true" : "false"}</td>
+      <td>
+        <input
+          type="checkbox"
+          defaultChecked={isVerifiedEdit ? true : false}
+          ref={isVerifiedEditRef}
+        />
+      </td>
+      <td>{isFreeAds ? "true" : "false"}</td>
+      <td>
+        <input
+          type="checkbox"
+          defaultChecked={isFreeAdsEdit ? true : false}
+          ref={isFreeAdsEditRef}
+          onChange={(e) => {
+            const target = e.target as any;
+            console.log(target.checked);
+          }}
+        />
+      </td>
+      <td>{becomingSupporterAt ? becomingSupporterAt : "none"}</td>
+      <td>{becomingMemberAt ? becomingMemberAt : "none"}</td>
+      <td>{cancelingMemberAt ? cancelingMemberAt : "none"}</td>
+      <td>
+        <ButtonDeleteUser
+          userId={userId}
+          userList={userList}
+          setUserList={setUserList}
+        />
+      </td>
+      <td>
+        <ButtonEdit
+          userId={userId}
+          isFreeAdsEditRef={isFreeAdsEditRef}
+          isVerifiedEditRef={isVerifiedEditRef}
+        />
+      </td>
+    </tr>
+  );
+}
 
 export default Admin;

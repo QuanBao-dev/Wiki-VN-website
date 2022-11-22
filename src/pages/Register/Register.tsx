@@ -6,6 +6,7 @@ import { ajax } from "rxjs/ajax";
 import {
   catchError,
   combineAll,
+  debounceTime,
   filter,
   pluck,
   startWith,
@@ -43,6 +44,7 @@ const Register = () => {
           ([eventClick, eventKeyDown]) =>
             eventClick !== "" || eventKeyDown !== ""
         ),
+        debounceTime(500),
         switchMap(() =>
           ajax({
             url: "/api/user/register",
