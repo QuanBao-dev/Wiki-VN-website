@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import ButtonDeleteUser from "../../components/ButtonDeleteUser/ButtonDeleteUser";
 import { User } from "../../Interfaces/users";
 import { useFetchApi } from "../Hooks/useFetchApi";
-import { catchError, fromEvent, of, pluck, switchMap, tap } from "rxjs";
+import { catchError, fromEvent, of, pluck, switchMap } from "rxjs";
 import { ajax } from "rxjs/ajax";
 import { userStore } from "../../store/user";
 
