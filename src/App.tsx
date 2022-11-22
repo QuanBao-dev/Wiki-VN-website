@@ -146,7 +146,17 @@ function App() {
               path="/login"
               element={
                 <Suspense
-                  fallback={<h1 className="loading-3-dot">Loading...</h1>}
+                  fallback={
+                    <h1 className="loading-3-dot">
+                      <i
+                        className="fas fa-spinner fa-pulse fa-5x"
+                        style={{
+                          display: "inline-block",
+                          margin: "auto",
+                        }}
+                      ></i>
+                    </h1>
+                  }
                 >
                   <Login />
                 </Suspense>
@@ -158,7 +168,17 @@ function App() {
               path="/register"
               element={
                 <Suspense
-                  fallback={<h1 className="loading-3-dot">Loading...</h1>}
+                  fallback={
+                    <h1 className="loading-3-dot">
+                      <i
+                        className="fas fa-spinner fa-pulse fa-5x"
+                        style={{
+                          display: "inline-block",
+                          margin: "auto",
+                        }}
+                      ></i>
+                    </h1>
+                  }
                 >
                   <Register />
                 </Suspense>
@@ -169,7 +189,17 @@ function App() {
             path="/verify/:token"
             element={
               <Suspense
-                fallback={<h1 className="loading-3-dot">Loading...</h1>}
+                fallback={
+                  <h1 className="loading-3-dot">
+                    <i
+                      className="fas fa-spinner fa-pulse fa-5x"
+                      style={{
+                        display: "inline-block",
+                        margin: "auto",
+                      }}
+                    ></i>
+                  </h1>
+                }
               >
                 <Verify />
               </Suspense>
@@ -180,7 +210,17 @@ function App() {
               path="/account"
               element={
                 <Suspense
-                  fallback={<h1 className="loading-3-dot">Loading...</h1>}
+                  fallback={
+                    <h1 className="loading-3-dot">
+                      <i
+                        className="fas fa-spinner fa-pulse fa-5x"
+                        style={{
+                          display: "inline-block",
+                          margin: "auto",
+                        }}
+                      ></i>
+                    </h1>
+                  }
                 >
                   <Account />
                 </Suspense>
@@ -239,7 +279,17 @@ function App() {
             path="/*"
             element={
               <Suspense
-                fallback={<h1 className="loading-3-dot">Loading...</h1>}
+                fallback={
+                  <h1 className="loading-3-dot">
+                    <i
+                      className="fas fa-spinner fa-pulse fa-5x"
+                      style={{
+                        display: "inline-block",
+                        margin: "auto",
+                      }}
+                    ></i>
+                  </h1>
+                }
               >
                 <NotFound />
               </Suspense>
@@ -250,7 +300,17 @@ function App() {
               path="/admin"
               element={
                 <Suspense
-                  fallback={<h1 className="loading-3-dot">Loading...</h1>}
+                  fallback={
+                    <h1 className="loading-3-dot">
+                      <i
+                        className="fas fa-spinner fa-pulse fa-5x"
+                        style={{
+                          display: "inline-block",
+                          margin: "auto",
+                        }}
+                      ></i>
+                    </h1>
+                  }
                 >
                   <Admin />
                 </Suspense>

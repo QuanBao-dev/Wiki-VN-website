@@ -2,9 +2,12 @@ table{
   border-spacing: 0;
 }
 
+.admin-container{
+  overflow: auto;
+}
+
 .app-container.dark-mode .admin-container{
   color:white;
-  overflow: auto;
   width: 100%;
 }
 

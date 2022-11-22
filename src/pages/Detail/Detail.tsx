@@ -390,7 +390,19 @@ const Detail = () => {
           <Votes vnId={detailState.id} dataVN={detailState} />
         )}
         {userStore.currentState().role === "Admin" && (
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense
+            fallback={
+              <div>
+                <i
+                  className="fas fa-spinner fa-pulse fa-5x"
+                  style={{
+                    display: "inline-block",
+                    margin: "auto",
+                  }}
+                ></i>
+              </div>
+            }
+          >
             <FormUpdatePatch
               dataVN={detailState}
               setTrigger={setTrigger}
@@ -399,12 +411,36 @@ const Detail = () => {
           </Suspense>
         )}
         {userStore.currentState().role === "Admin" && (
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense
+            fallback={
+              <div>
+                <i
+                  className="fas fa-spinner fa-pulse fa-5x"
+                  style={{
+                    display: "inline-block",
+                    margin: "auto",
+                  }}
+                ></i>
+              </div>
+            }
+          >
             <FormUpdateTranslatable dataVN={detailState} />
           </Suspense>
         )}
         {userStore.currentState().role === "Admin" && (
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense
+            fallback={
+              <div>
+                <i
+                  className="fas fa-spinner fa-pulse fa-5x"
+                  style={{
+                    display: "inline-block",
+                    margin: "auto",
+                  }}
+                ></i>
+              </div>
+            }
+          >
             <VoterList id={id} />
           </Suspense>
         )}
