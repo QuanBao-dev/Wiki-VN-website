@@ -11,6 +11,7 @@ import { userStore } from "./store/user";
 import Stats from "./components/Stats/Stats";
 import { catchError, filter, interval, of, pluck, switchMap } from "rxjs";
 import { ajax } from "rxjs/ajax";
+import PopupNotification from "./components/PopupNotification/PopupNotification";
 
 const RandomVNList = React.lazy(
   () => import("./components/RandomVNList/RandomVNList")
@@ -26,6 +27,10 @@ const Admin = React.lazy(() => import("./pages/Admin/Admin"));
 
 function App() {
   const [userState, setUserState] = useState(userStore.currentState());
+  const [notificationData, setNotificationData] = useState({
+    title: "",
+    message: "",
+  });
   useInitStore(userStore, setUserState);
   document.body.style.backgroundImage = `url("${window.location.origin}/background.jpg")`;
   useEffect(() => {
@@ -56,13 +61,36 @@ function App() {
       subscription.unsubscribe();
     };
   }, [userState.exp, userState.iat]);
+  useEffect(() => {
+    if (userState.email === "") return;
+    const subscription = ajax({
+      url: "/api/notification/",
+    })
+      .pipe(
+        pluck("response", "message"),
+        catchError((error) => of(error).pipe(pluck("response")))
+      )
+      .subscribe((v) => {
+        if (!v.error) {
+          setNotificationData(v);
+        }
+      });
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [userState.email]);
   return (
     <BrowserRouter>
       <NavBar />
       <ScrollToTop />
+
       <div
         className={`app-container${userState.isDarkMode ? " dark-mode" : ""}`}
       >
+        <PopupNotification
+          message={notificationData.message}
+          title={notificationData.title}
+        />
         <Routes>
           <Route
             path="/vns/:id"

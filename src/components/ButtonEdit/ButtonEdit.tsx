@@ -4,10 +4,9 @@ import { ajax } from "rxjs/ajax";
 import "./ButtonEdit.css";
 interface Props {
   userId: string;
-  isFreeAdsEditRef: React.MutableRefObject<HTMLInputElement>;
   isVerifiedEditRef: React.MutableRefObject<HTMLInputElement>;
 }
-const ButtonEdit = ({ userId, isFreeAdsEditRef, isVerifiedEditRef }: Props) => {
+const ButtonEdit = ({ userId, isVerifiedEditRef }: Props) => {
   const buttonEditRef = useRef(document.createElement("button"));
   useEffect(() => {
     const subscription = fromEvent(buttonEditRef.current, "click")
@@ -18,7 +17,6 @@ const ButtonEdit = ({ userId, isFreeAdsEditRef, isVerifiedEditRef }: Props) => {
             method: "PUT",
             body: {
               userId,
-              isFreeAds: isFreeAdsEditRef.current.checked,
               isVerified: isVerifiedEditRef.current.checked,
             },
           }).pipe(

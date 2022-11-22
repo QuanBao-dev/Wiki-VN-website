@@ -1,21 +1,13 @@
-import "./Login.css";
+import './Login.css';
 
-import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { from, fromEvent, of } from "rxjs";
-import { ajax } from "rxjs/ajax";
-import {
-  catchError,
-  combineAll,
-  filter,
-  pluck,
-  startWith,
-  switchMap,
-  tap,
-} from "rxjs/operators";
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { from, fromEvent, of } from 'rxjs';
+import { ajax } from 'rxjs/ajax';
+import { catchError, combineAll, exhaustMap, filter, pluck, startWith, tap } from 'rxjs/operators';
 
-import Input from "../../components/Input/Input";
-import { userStore } from "../../store/user";
+import Input from '../../components/Input/Input';
+import { userStore } from '../../store/user';
 
 const Login = () => {
   const emailRef = useRef(document.createElement("input"));
@@ -43,7 +35,7 @@ const Login = () => {
           ([eventClick, eventKeyDown]) =>
             eventClick !== "" || eventKeyDown !== ""
         ),
-        switchMap(() =>
+        exhaustMap(() =>
           ajax({
             url: "/api/user/login",
             method: "POST",

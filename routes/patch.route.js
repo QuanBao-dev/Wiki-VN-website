@@ -3,6 +3,8 @@ const { verifyRole } = require("../middlewares/verifyRole");
 const Patch = require("../models/patch.model");
 const ouo = require("ouo.io")(process.env.OUO);
 const fetch = require("node-fetch");
+const { verify } = require("jsonwebtoken");
+const userModel = require("../models/user.model");
 
 // route.get("/handle", async (req, res) => {
 //   const patches = await Patch.find({});
@@ -62,28 +64,43 @@ route.get("/stats", async (req, res) => {
     res.status(404).send({ error });
   }
 });
-
+async function isUserFreeAds(userId) {
+  const { isFreeAds } = await userModel
+    .findOne({ userId })
+    .select({ _id: 0, isFreeAds: 1 })
+    .lean();
+  return isFreeAds;
+}
 route.get("/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const patch = await Patch.findOne({ vnId: id })
-      .select({
-        _id: 0,
-        vnId: 1,
-        linkDownloads: 1,
-        originalLinkDownloads: 1,
-        shrinkMeLinkDownloads: 1,
-      })
-      .lean();
+    const { userId } = await verify(
+      req.signedCookies.token,
+      process.env.JWT_KEY
+    );
+    const [isFreeAds, patch] = await Promise.all([
+      isUserFreeAds(userId),
+      Patch.findOne({ vnId: id })
+        .select({
+          _id: 0,
+          vnId: 1,
+          linkDownloads: 1,
+          originalLinkDownloads: 1,
+          shrinkMeLinkDownloads: 1,
+        })
+        .lean(),
+    ]);
     if (!patch) return res.status(400).send({ error: "patch doesn't exist" });
     res.send({
       message: {
         ...patch,
-        linkDownloads:
-          patch.shrinkMeLinkDownloads || patch.originalLinkDownloads,
+        linkDownloads: !isFreeAds
+          ? patch.shrinkMeLinkDownloads
+          : patch.originalLinkDownloads,
       },
     });
   } catch (error) {
+    if (error) return res.status(400).send({ error: error.message });
     res.status(404).send({ error });
   }
 });

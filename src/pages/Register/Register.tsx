@@ -1,20 +1,12 @@
-import "./Register.css";
+import './Register.css';
 
-import { useEffect, useRef, useState } from "react";
-import { from, fromEvent, of } from "rxjs";
-import { ajax } from "rxjs/ajax";
-import {
-  catchError,
-  combineAll,
-  debounceTime,
-  filter,
-  pluck,
-  startWith,
-  switchMap,
-  tap,
-} from "rxjs/operators";
-import Input from "../../components/Input/Input";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { from, fromEvent, of } from 'rxjs';
+import { ajax } from 'rxjs/ajax';
+import { catchError, combineAll, exhaustMap, filter, pluck, startWith, tap } from 'rxjs/operators';
+
+import Input from '../../components/Input/Input';
 
 const Register = () => {
   const emailRef = useRef(document.createElement("input"));
@@ -44,8 +36,7 @@ const Register = () => {
           ([eventClick, eventKeyDown]) =>
             eventClick !== "" || eventKeyDown !== ""
         ),
-        debounceTime(500),
-        switchMap(() =>
+        exhaustMap(() =>
           ajax({
             url: "/api/user/register",
             method: "POST",

@@ -15,6 +15,7 @@ const cloudinary = require("cloudinary");
 const loginTokenModel = require("../models/loginToken.model");
 const isValidEmail = require("../utils/isValidEmail");
 const BMC = require("../utils");
+const notificationModel = require("../models/notification.model");
 
 router.get("/", verifyRole("Admin"), async (req, res) => {
   try {
@@ -30,6 +31,7 @@ router.get("/", verifyRole("Admin"), async (req, res) => {
             createdAt: 1,
             isVerified: 1,
             isFreeAds: 1,
+            role: 1,
           },
         },
         {
@@ -41,50 +43,123 @@ router.get("/", verifyRole("Admin"), async (req, res) => {
     ]);
     let finalResult = [];
     if (supporters.data)
-      finalResult = users.map((user) => {
-        for (let i = 0; i < supporters.data.length; i++) {
-          const supporter = supporters.data[i];
-          if (supporter.payer_email === user.email) {
-            const endFreeAdsDate =
-              new Date(supporter.support_updated_on).getTime() +
-              3600 * 1000 * 24 * 31;
-            if ((Date.now() - endFreeAdsDate) / (3600 * 1000 * 24 * 31) <= 1)
+      finalResult = await Promise.all(
+        users.map(async (user) => {
+          for (let i = 0; i < supporters.data.length; i++) {
+            const supporter = supporters.data[i];
+            if (supporter.payer_email === user.email) {
+              const endFreeAdsDate =
+                new Date(supporter.support_updated_on).getTime() +
+                3600 * 1000 * 24 * 31;
+              if (
+                (Date.now() - endFreeAdsDate) / (3600 * 1000 * 24 * 31) <=
+                1
+              ) {
+                if (user.isFreeAds !== true) {
+                  let [userData, notification] = await Promise.all([
+                    userModel.findOne({
+                      userId: user.userId,
+                    }),
+                    notificationModel.findOne({
+                      userId: user.userId,
+                    }),
+                  ]);
+                  userData.isFreeAds = true;
+                  if (!notification) {
+                    notification = new notificationModel({
+                      userId: user.userId,
+                      title: "",
+                      message: "",
+                    });
+                  }
+                  notification.title = "Thank you for your support";
+                  notification.message = `Hi ${
+                    user.username
+                  }! Now you can freely download the patches on this website without ads for 1 month since the day you supported. This will be end at ${new Date(
+                    endFreeAdsDate
+                  ).toUTCString()}`;
+                  await Promise.all([userData.save(), notification.save()]);
+                }
+                return {
+                  ...user,
+                  becomingSupporterAt: supporter.support_updated_on,
+                  endFreeAdsDate: new Date(endFreeAdsDate).toUTCString(),
+                  isFreeAds: true,
+                };
+              }
+              if (user.isFreeAds !== false) {
+                const userData = await userModel.findOne({
+                  userId: user.userId,
+                });
+                userData.isFreeAds = false;
+                await userData.save();
+              }
               return {
                 ...user,
                 becomingSupporterAt: supporter.support_updated_on,
-                isFreeAdsEdit: true,
+                isFreeAds: false,
+                endFreeAdsDate: new Date(endFreeAdsDate).toUTCString(),
               };
-            return {
-              ...user,
-              becomingSupporterAt: supporter.support_updated_on,
-              isFreeAdsEdit: false,
-            };
+            }
           }
-        }
-        return user;
-      });
+          return user;
+        })
+      );
     if (members.data)
-      finalResult = finalResult.map((user) => {
-        for (let i = 0; i < members.data.length; i++) {
-          const member = members.data[i];
-          if (member.payer_email === user.email) {
-            if (!member.subscription_is_cancelled)
+      finalResult = await Promise.all(
+        finalResult.map(async (user) => {
+          for (let i = 0; i < members.data.length; i++) {
+            const member = members.data[i];
+            if (member.payer_email === user.email) {
+              if (!member.subscription_is_cancelled) {
+                if (user.isFreeAds !== true) {
+                  let [userData, notification] = await Promise.all([
+                    userModel.findOne({
+                      userId: user.userId,
+                    }),
+                    notificationModel.findOne({
+                      userId: user.userId,
+                    }),
+                  ]);
+                  userData.isFreeAds = true;
+                  if (!notification) {
+                    notification = new notificationModel({
+                      userId: user.userId,
+                      title: "",
+                      message: "",
+                    });
+                  }
+                  notification.title = "Thank you for your support";
+                  notification.message = `Hi ${user.username}! Now you can freely download the patches on this website without ads as long as you are still a membership`;
+                  await Promise.all([userData.save(), notification.save()]);
+                }
+                return {
+                  ...user,
+                  becomingMemberAt: member.subscription_current_period_start,
+                  cancelingMemberAt: member.subscription_current_period_end,
+                  endFreeAdsDate: member.subscription_current_period_end,
+                  isFreeAds: true,
+                };
+              }
+              if (user.isFreeAds !== false) {
+                const userData = await userModel.findOne({
+                  userId: user.userId,
+                });
+                userData.isFreeAds = false;
+                await userData.save();
+              }
               return {
                 ...user,
                 becomingMemberAt: member.subscription_current_period_start,
                 cancelingMemberAt: member.subscription_current_period_end,
-                isFreeAdsEdit: true,
+                endFreeAdsDate: member.subscription_current_period_end,
+                isFreeAds: false,
               };
-            return {
-              ...user,
-              becomingMemberAt: member.subscription_current_period_start,
-              cancelingMemberAt: member.subscription_current_period_end,
-              isFreeAdsEdit: false,
-            };
+            }
           }
-        }
-        return user;
-      });
+          return user;
+        })
+      );
 
     res.send({
       message: finalResult,

@@ -8,5 +8,6 @@ export interface User{
   becomingSupporterAt:string,
   becomingMemberAt:string,
   cancelingMemberAt:string
-  isFreeAdsEdit:boolean
+  endFreeAdsDate:string,
+  role:string
 }
