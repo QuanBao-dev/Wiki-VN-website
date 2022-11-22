@@ -65,19 +65,22 @@ route.get("/stats", async (req, res) => {
   }
 });
 async function isUserFreeAds(userId) {
-  const { isFreeAds } = await userModel
+  const user = await userModel
     .findOne({ userId })
     .select({ _id: 0, isFreeAds: 1 })
     .lean();
-  return isFreeAds;
+  if (!user) return false;
+  return user.isFreeAds;
 }
 route.get("/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const { userId } = await verify(
-      req.signedCookies.token,
-      process.env.JWT_KEY
-    );
+    let userId = "";
+    try {
+      const user = await verify(req.signedCookies.token, process.env.JWT_KEY);
+      userId = user.userId;
+    } catch (error) {
+    }
     const [isFreeAds, patch] = await Promise.all([
       isUserFreeAds(userId),
       Patch.findOne({ vnId: id })
