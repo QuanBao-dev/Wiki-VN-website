@@ -217,7 +217,16 @@ function App() {
             }
           ></Route>
           {userState.role === "Admin" && (
-            <Route path="/admin" element={<Admin />}></Route>
+            <Route
+              path="/admin"
+              element={
+                <Suspense
+                  fallback={<h1 className="loading-3-dot">Loading...</h1>}
+                >
+                  <Admin />
+                </Suspense>
+              }
+            />
           )}
         </Routes>
       </div>
