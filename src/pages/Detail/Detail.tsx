@@ -121,7 +121,7 @@ const Detail = () => {
       <Popup
         title={"Thank you!"}
         description={
-          "If you like these free translation patches on this website and want to say thanks, or encourage me to do more, you can consider buying me a coffee! After becoming a supporter, you can freely access the content on this website without ads for 1 month since the last day you supported a coffee"
+          "If you like these free translation patches on this website and want to say thanks, or encourage me to do more, you can consider buying me a coffee! After becoming a supporter, you can freely access the content on this website without ads for 1 month since the last day you supported a coffee. (NOTE: Please make sure you used the same email as the one you used on this website when buying me a coffee so I can identify the right person to give the privilege)"
         }
         url={url}
         isHide={isHide}
