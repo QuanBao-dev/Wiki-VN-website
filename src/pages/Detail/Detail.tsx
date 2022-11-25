@@ -224,6 +224,21 @@ const Detail = () => {
                   <th>Rating</th>
                   <td>{detailState.rating}</td>
                 </tr>
+                <tr>
+                  <th>VNDB</th>
+                  <td>
+                    <a
+                      href={`https://vndb.org/v${id}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Link{" "}
+                      <i className="fas fa-external-link-alt" style={{
+                        fontSize:"0.8rem"
+                      }}></i>
+                    </a>
+                  </td>
+                </tr>
               </tbody>
             </table>
           </fieldset>

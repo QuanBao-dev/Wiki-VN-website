@@ -50,20 +50,22 @@ const Admin = () => {
       subscription.unsubscribe();
     };
   }, [isLoading]);
+  if (isLoading || userStore.currentState().role !== "Admin") {
+    return (
+      <div>
+        <i
+          className="fas fa-spinner fa-pulse fa-5x"
+          style={{
+            display: "inline-block",
+            margin: "auto",
+          }}
+        ></i>
+      </div>
+    );
+  }
   return (
     <div className="admin-container">
       <PopupNotificationForm />
-      {(isLoading || userStore.currentState().role !== "Admin") && (
-        <div>
-          <i
-            className="fas fa-spinner fa-pulse fa-5x"
-            style={{
-              display: "inline-block",
-              margin: "auto",
-            }}
-          ></i>
-        </div>
-      )}
       <div
         className="admin-wrapper"
         style={{
@@ -221,10 +223,7 @@ function RowTable({
         />
       </td>
       <td>
-        <ButtonEdit
-          userId={userId}
-          isVerifiedEditRef={isVerifiedEditRef}
-        />
+        <ButtonEdit userId={userId} isVerifiedEditRef={isVerifiedEditRef} />
       </td>
       <td>
         <button

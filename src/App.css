@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Cookie&family=Merriweather:ital@1&family=Roboto&family=Source+Serif+Pro:wght@600&display=swap');
 
+.app-container.dark-mode a{
+  color: rgb(146, 162, 255);
+}
+
 a{
   text-decoration: none;
   color: blue;

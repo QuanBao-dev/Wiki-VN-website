@@ -129,10 +129,6 @@ legend {
   list-style-type: square;
 }
 
-.app-container.dark-mode .detail-relation-list a{
-  color: rgb(146, 162, 255);
-}
-
 .screenshots-container {
   display: flex;
   flex-wrap: wrap;
