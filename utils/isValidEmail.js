@@ -104,8 +104,8 @@ const validEmailSuffixes = [
 
 module.exports = async function isValidEmail(email) {
   let check = false;
-  if (email.includes("+")) {
-    check = false;
+  if (!email.includes("+")) {
+    check = true;
   }
   if (check) {
     validEmailSuffixes.forEach((suffix) => {
