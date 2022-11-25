@@ -40,20 +40,20 @@ router.get("/token/renew", verifyRole("Admin", "User"), async (req, res) => {
     await loginToken.delete();
     return res.status(401).send({ error: "You don't have permission" });
   }
-  const newToken = jwt.sign(
-    {
-      userId: decode.userId,
-      createdAt: Date.now(),
-      isVerified: decode.isVerified,
-      role: decode.role,
-    },
-    process.env.JWT_KEY,
-    {
-      expiresIn: 60 * 5,
-    }
-  );
-  loginToken.accessTokenList[0] = newToken;
   try {
+    const newToken = jwt.sign(
+      {
+        userId: decode.userId,
+        createdAt: Date.now(),
+        isVerified: decode.isVerified,
+        role: decode.role,
+      },
+      process.env.JWT_KEY,
+      {
+        expiresIn: 60 * 5,
+      }
+    );
+    loginToken.accessTokenList[0] = newToken;
     res.cookie("token", newToken, {
       httpOnly: true,
       expires: new Date(Date.now() + 86400000),

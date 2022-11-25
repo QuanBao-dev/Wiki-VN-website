@@ -104,11 +104,16 @@ const validEmailSuffixes = [
 
 module.exports = async function isValidEmail(email) {
   let check = false;
-  validEmailSuffixes.forEach((suffix) => {
-    if (email.match(new RegExp("(" + suffix + ")$", "g"))) {
-      check = true;
-    }
-  });
+  if (email.includes("+")) {
+    check = false;
+  }
+  if (check) {
+    validEmailSuffixes.forEach((suffix) => {
+      if (email.match(new RegExp("(" + suffix + ")$", "g"))) {
+        check = true;
+      }
+    });
+  }
   if (check === true) {
     const data = await fetch("https://www.disify.com/api/email/" + email);
     const json = await data.json();

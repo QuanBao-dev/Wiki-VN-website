@@ -56,6 +56,8 @@ function App() {
           userStore.updateState({
             trigger: !userStore.currentState().trigger,
           });
+        } else {
+          subscription.unsubscribe();
         }
       });
     return () => {
