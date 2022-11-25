@@ -29,7 +29,7 @@ module.exports.verifyRole = (...roles) => {
           .lean(),
       ]);
       if (!user) {
-        await loginToken.delete();
+        if (loginToken) await loginToken.delete();
         return res.status(401).send({ error: "You don't have permission" });
       }
       if (
