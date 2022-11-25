@@ -36,7 +36,10 @@ router.get("/vns/:vnId", async (req, res) => {
     });
     fileContent = fileContent
       .replace(titleReg, title)
-      .replace(descriptionReg, description.replace(/"/g, "'"))
+      .replace(
+        descriptionReg,
+        description ? description.replace(/"/g, "'") : "No description"
+      )
       .replace(imageReg, image)
       .replace(/\n/g, "");
     res.send(fileContent);
