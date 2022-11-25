@@ -143,6 +143,7 @@ const NavBar = () => {
         if (posY2.current < -2 && window.scrollY > 50) {
           navbarContainerRef.current.className = "navbar-container hide";
           setIsShowDropDown2(false);
+          setIsShowDropDown(false);
         }
       }
       posY1.current = window.scrollY;
