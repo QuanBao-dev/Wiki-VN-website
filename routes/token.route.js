@@ -37,7 +37,7 @@ router.get("/token/renew", verifyRole("Admin", "User"), async (req, res) => {
       .lean(),
   ]);
   if (!user) {
-    await loginToken.delete();
+    if (loginToken) await loginToken.delete();
     return res.status(401).send({ error: "You don't have permission" });
   }
   try {
