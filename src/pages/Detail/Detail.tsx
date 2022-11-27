@@ -65,7 +65,7 @@ const Detail = () => {
     return () => {
       document.title = "Sugoi Visual Novel | SVN"
     }
-  },[detailState.title])
+  },[detailState])
   useEffect(() => {
     setDetailState(
       (cachesStore.currentState().caches.VNs
