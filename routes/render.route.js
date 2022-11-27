@@ -25,7 +25,7 @@ router.get("/vns/:vnId", async (req, res) => {
     const filePath = path.join(__dirname, "../build", "index.html");
     const descriptionHTML =
       "A visual novel database where you will get the latest information of all kind of visual novels.";
-    const titleHTML = "Sugoi Visual Novel | SVN";
+    const titleHTML = "(Sugoi Visual Novel \\| SVN)";
     const imageHTML = "/background.jpg";
     const titleReg = new RegExp(titleHTML, "g");
     const descriptionReg = new RegExp(descriptionHTML, "g");
