@@ -61,6 +61,12 @@ const Detail = () => {
   const backupObj = useRef({ x: 0, y: 0, width: 0, height: 0 });
   const timeoutRef = useRef<any>();
   useEffect(() => {
+    document.title = detailState.title;
+    return () => {
+      document.title = "Sugoi Visual Novel | SVN"
+    }
+  },[detailState.title])
+  useEffect(() => {
     setDetailState(
       (cachesStore.currentState().caches.VNs
         ? cachesStore.currentState().caches.VNs[id as string]
