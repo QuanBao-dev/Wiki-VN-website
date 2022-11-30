@@ -2,7 +2,7 @@ const notificationModel = require("../models/notification.model");
 const { verifyRole } = require("../middlewares/verifyRole");
 const router = require("express").Router();
 
-router.get("/", verifyRole("User", "Admin"), async (req, res) => {
+router.get("/", verifyRole("User","Supporter", "Admin"), async (req, res) => {
   const { userId } = req.user;
   try {
     const notification = await notificationModel
@@ -21,7 +21,7 @@ router.get("/", verifyRole("User", "Admin"), async (req, res) => {
     return res.status(404).send({ error: "Something went wrong" });
   }
 });
-router.put("/:userId", verifyRole("User", "Admin"), async (req, res) => {
+router.put("/:userId", verifyRole("User", "Supporter", "Admin"), async (req, res) => {
   const { userId } = req.params;
   const { message, title } = req.body;
   try {
@@ -43,7 +43,7 @@ router.put("/:userId", verifyRole("User", "Admin"), async (req, res) => {
   }
 });
 
-router.delete("/", verifyRole("Admin","User"), async (req, res) => {
+router.delete("/", verifyRole("Admin","Supporter","User"), async (req, res) => {
   const { userId } = req.user;
   try {
     const notification = await notificationModel.findOne({ userId });

@@ -105,7 +105,7 @@ router.put("/:vnId/translatable", verifyRole("Admin"), async (req, res) => {
   }
 });
 
-router.put("/:vnId", verifyRole("User", "Admin"), async (req, res) => {
+router.put("/:vnId", verifyRole("User","Supporter", "Admin"), async (req, res) => {
   const vnId = +req.params.vnId;
   let { dataVN, isDownVotes } = req.body;
   const { userId } = req.user;

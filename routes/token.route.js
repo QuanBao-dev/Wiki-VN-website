@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const router = require("express").Router();
 const tokenModel = require("../models/token.model");
 const loginTokenModel = require("../models/loginToken.model");
-router.get("/", verifyRole("Admin", "User"), async (req, res) => {
+router.get("/", verifyRole("Admin","Supporter", "User"), async (req, res) => {
   const { userId } = req.user;
   try {
     const user = await userModel.findOne({ userId }).lean().select({
@@ -25,7 +25,7 @@ router.get("/", verifyRole("Admin", "User"), async (req, res) => {
   }
 });
 
-router.get("/token/renew", verifyRole("Admin", "User"), async (req, res) => {
+router.get("/token/renew", verifyRole("Admin","Supporter", "User"), async (req, res) => {
   const decode = req.user;
   const [loginToken, user] = await Promise.all([
     loginTokenModel.findOne({

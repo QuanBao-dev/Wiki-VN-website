@@ -85,6 +85,7 @@ router.get("/", verifyRole("Admin"), async (req, res) => {
                   becomingSupporterAt: supporter.support_updated_on,
                   endFreeAdsDate: new Date(endFreeAdsDate).toUTCString(),
                   isFreeAds: true,
+                  role: "Supporter",
                 };
               }
               if (user.isFreeAds !== false) {
@@ -99,6 +100,7 @@ router.get("/", verifyRole("Admin"), async (req, res) => {
                 becomingSupporterAt: supporter.support_updated_on,
                 isFreeAds: false,
                 endFreeAdsDate: new Date(endFreeAdsDate).toUTCString(),
+                role: "User",
               };
             }
           }
@@ -112,7 +114,7 @@ router.get("/", verifyRole("Admin"), async (req, res) => {
             const member = members.data[i];
             if (member.payer_email === user.email) {
               if (!member.subscription_is_cancelled) {
-                if (user.isFreeAds !== true) {
+                if (user.isFreeAds !== true || user.role !== "Supporter") {
                   let [userData, notification] = await Promise.all([
                     userModel.findOne({
                       userId: user.userId,
@@ -139,6 +141,7 @@ router.get("/", verifyRole("Admin"), async (req, res) => {
                   cancelingMemberAt: member.subscription_current_period_end,
                   endFreeAdsDate: member.subscription_current_period_end,
                   isFreeAds: true,
+                  role: "Supporter",
                 };
               }
               if (user.isFreeAds !== false) {
@@ -154,6 +157,7 @@ router.get("/", verifyRole("Admin"), async (req, res) => {
                 cancelingMemberAt: member.subscription_current_period_end,
                 endFreeAdsDate: member.subscription_current_period_end,
                 isFreeAds: false,
+                role: "User",
               };
             }
           }
@@ -279,17 +283,21 @@ router.get("/:vnId/vote", verifyRole("Admin"), async (req, res) => {
   }
 });
 
-router.delete("/logout", verifyRole("Admin", "User"), async (req, res) => {
-  const { userId } = req.user;
-  try {
-    await loginTokenModel.findOneAndDelete({ userId }).lean();
-    res.clearCookie("token", { path: "/" });
-    res.send({ message: "success" });
-  } catch (error) {
-    if (error) return res.status(400).send({ error: error.message });
-    res.status(404).send({ error: "Something went wrong" });
+router.delete(
+  "/logout",
+  verifyRole("Admin", "Supporter", "User"),
+  async (req, res) => {
+    const { userId } = req.user;
+    try {
+      await loginTokenModel.findOneAndDelete({ userId }).lean();
+      res.clearCookie("token", { path: "/" });
+      res.send({ message: "success" });
+    } catch (error) {
+      if (error) return res.status(400).send({ error: error.message });
+      res.status(404).send({ error: "Something went wrong" });
+    }
   }
-});
+);
 
 router.delete("/:userId", verifyRole("Admin"), async (req, res) => {
   const userId = req.params.userId;
@@ -327,80 +335,84 @@ router.put("/admin/edit", verifyRole("Admin"), async (req, res) => {
   }
 });
 
-router.put("/edit", verifyRole("Admin", "User"), async (req, res) => {
-  const { username, email, password, avatarImage } = req.body;
-  const result = changeInfoAccountValidation(req.body);
-  if (result.error) {
-    return res.status(400).send({ error: result.error.details[0].message });
-  }
-  const { userId, newToken } = req.user;
-  try {
-    const user = await userModel.findOne({ userId });
-    if (!user) return res.status(400).send({ error: "User doesn't exist" });
-
-    if (username) {
-      const isExactPassword = await compare(password, user.password);
-      if (!isExactPassword)
-        return res.status(400).send({ error: "Wrong Password" });
-      const isUsernameExisted = await userModel.findOne({ username });
-      if (isUsernameExisted)
-        return res.status(400).send({ error: "Username existed" });
-      user.username = username;
-      await user.save();
-      return res.send({
-        message: { newToken },
-      });
+router.put(
+  "/edit",
+  verifyRole("Admin", "Supporter", "User"),
+  async (req, res) => {
+    const { username, email, password, avatarImage } = req.body;
+    const result = changeInfoAccountValidation(req.body);
+    if (result.error) {
+      return res.status(400).send({ error: result.error.details[0].message });
     }
+    const { userId, newToken } = req.user;
+    try {
+      const user = await userModel.findOne({ userId });
+      if (!user) return res.status(400).send({ error: "User doesn't exist" });
 
-    if (email) {
-      if (!(await isValidEmail(email))) {
-        const user = await userModel.findOne({ email });
-        if (user) await user.delete();
-        return res.status(400).send({
-          error: `Fake email is not accepted`,
+      if (username) {
+        const isExactPassword = await compare(password, user.password);
+        if (!isExactPassword)
+          return res.status(400).send({ error: "Wrong Password" });
+        const isUsernameExisted = await userModel.findOne({ username });
+        if (isUsernameExisted)
+          return res.status(400).send({ error: "Username existed" });
+        user.username = username;
+        await user.save();
+        return res.send({
+          message: { newToken },
         });
       }
-      const isExactPassword = await compare(password, user.password);
-      if (!isExactPassword)
-        return res.status(400).send({ error: "Wrong Password" });
-      const isEmailExisted = await userModel.findOne({ email });
-      if (isEmailExisted) {
-        return res
-          .status(400)
-          .send({ error: "Email is already used by other accounts" });
-      }
-      user.email = email;
-      user.isVerified = false;
-      await verifyEmailUser(user);
-      return res.status(401).send({
-        error: "Checking your email account, Please verify your new email",
-      });
-    }
 
-    if (avatarImage) {
-      const result = await cloudinary.v2.uploader.upload(avatarImage, {
-        width: 500,
-        height: 500,
-        overwrite: true,
-        folder: "sugoi-visual-novel/avatar-user",
-        public_id: user.userId,
-        invalidate: true,
-      });
-      user.avatarImage = result.secure_url;
-      user.avatarImage = user.avatarImage.replace(
-        "upload/",
-        "upload/f_auto,q_auto/"
-      );
-      await user.save();
-      res.send({
-        message: { newToken },
-      });
+      if (email) {
+        if (!(await isValidEmail(email))) {
+          const user = await userModel.findOne({ email });
+          if (user) await user.delete();
+          return res.status(400).send({
+            error: `Fake email is not accepted`,
+          });
+        }
+        const isExactPassword = await compare(password, user.password);
+        if (!isExactPassword)
+          return res.status(400).send({ error: "Wrong Password" });
+        const isEmailExisted = await userModel.findOne({ email });
+        if (isEmailExisted) {
+          return res
+            .status(400)
+            .send({ error: "Email is already used by other accounts" });
+        }
+        user.email = email;
+        user.isVerified = false;
+        await verifyEmailUser(user);
+        return res.status(401).send({
+          error: "Checking your email account, Please verify your new email",
+        });
+      }
+
+      if (avatarImage) {
+        const result = await cloudinary.v2.uploader.upload(avatarImage, {
+          width: 500,
+          height: 500,
+          overwrite: true,
+          folder: "sugoi-visual-novel/avatar-user",
+          public_id: user.userId,
+          invalidate: true,
+        });
+        user.avatarImage = result.secure_url;
+        user.avatarImage = user.avatarImage.replace(
+          "upload/",
+          "upload/f_auto,q_auto/"
+        );
+        await user.save();
+        res.send({
+          message: { newToken },
+        });
+      }
+    } catch (error) {
+      if (error) return res.status(400).send({ error: error.message });
+      res.status(404).send({ error: "Something went wrong" });
     }
-  } catch (error) {
-    if (error) return res.status(400).send({ error: error.message });
-    res.status(404).send({ error: "Something went wrong" });
   }
-});
+);
 
 async function addNewAccessToken(user, token) {
   let loginToken = await loginTokenModel.findOne({
