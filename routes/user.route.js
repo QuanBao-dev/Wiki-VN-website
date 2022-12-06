@@ -152,7 +152,7 @@ router.get("/:vnId/vote", verifyRole("Admin"), async (req, res) => {
 
 router.delete(
   "/logout",
-  verifyRole("Admin", "Supporter", "User"),
+  verifyRole("Admin", "Supporter","Member", "User"),
   async (req, res) => {
     const { userId } = req.user;
     try {
@@ -204,7 +204,7 @@ router.put("/admin/edit", verifyRole("Admin"), async (req, res) => {
 
 router.put(
   "/edit",
-  verifyRole("Admin", "Supporter", "User"),
+  verifyRole("Admin", "Supporter","Member", "User"),
   async (req, res) => {
     const { username, email, password, avatarImage } = req.body;
     const result = changeInfoAccountValidation(req.body);
@@ -374,7 +374,7 @@ async function updateAllBMC() {
           const member = members.data[i];
           if (member.payer_email === user.email) {
             if (!member.subscription_is_cancelled) {
-              if (user.isFreeAds !== true || user.role !== "Supporter") {
+              if (user.isFreeAds !== true || user.role !== "Member") {
                 let [userData, notification] = await Promise.all([
                   userModel.findOne({
                     userId: user.userId,
@@ -401,7 +401,7 @@ async function updateAllBMC() {
                 cancelingMemberAt: member.subscription_current_period_end,
                 endFreeAdsDate: member.subscription_current_period_end,
                 isFreeAds: true,
-                role: "Supporter",
+                role: "Member",
               };
             }
             if (user.isFreeAds !== false) {
