@@ -4,10 +4,14 @@ const validEmailSuffixes = [
   "yahoo.com",
   "protonmail.com",
   "hotmail.com",
+  "outlook.com",
   "aol.com",
   "hotmail.co.uk",
   "hotmail.fr",
   "msn.com",
+  "icloud.com",
+  "pm.com",
+  "zoho.com",
   "yahoo.fr",
   "wanadoo.fr",
   "orange.fr",
@@ -101,6 +105,12 @@ const validEmailSuffixes = [
   "live.ca",
   "aim.com",
   "bigpond.net.au",
+  "yandex.com",
+  "titan.email",
+  "gmx.com",
+  "hubspot.com",
+  "mail.com",
+  "tutanota.com"
 ];
 
 module.exports = async function isValidEmail(email) {
