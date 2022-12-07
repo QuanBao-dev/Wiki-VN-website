@@ -2,6 +2,7 @@ const fetch = require("node-fetch");
 const validEmailSuffixes = [
   "gmail.com",
   "yahoo.com",
+  "protonmail.com",
   "hotmail.com",
   "aol.com",
   "hotmail.co.uk",
