@@ -274,6 +274,7 @@ router.put(
           message: { newToken },
         });
       }
+      await updateAllBMC();
     } catch (error) {
       if (error) return res.status(400).send({ error: error.message });
       res.status(404).send({ error: "Something went wrong" });
