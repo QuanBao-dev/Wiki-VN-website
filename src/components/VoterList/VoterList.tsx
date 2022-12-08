@@ -12,7 +12,7 @@ const VoterList = ({ id }: Props) => {
     "/api/user/" + id + "/vote",
     setUserList,
     "userVotes",
-    [],
+    [id],
     true,
     true,
     undefined
