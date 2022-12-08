@@ -5,16 +5,19 @@ class BMC {
         this.access_token = access_token;
     }
 
-    Supporters() {
-        return this._sendRequest('supporters');
+    Supporters(page) {
+        if(!page) return this._sendRequest('supporters');
+        return this._sendRequest(`supporters?page=${page}`);
     }
 
-    Subscriptions() {
-        return this._sendRequest('subscriptions');
+    Subscriptions(page) {
+        if(!page) return this._sendRequest('subscriptions');
+        return this._sendRequest(`subscriptions?page=${page}`);
     }
 
-    Extras() {
-        return this._sendRequest('extras');
+    Extras(page) {
+        if(!page) return this._sendRequest('extras');
+        return this._sendRequest(`extras?page=${page}`);
     }
 
     async _sendRequest(path) {

@@ -40,6 +40,27 @@ router.get("/", verifyRole("Admin"), async (req, res) => {
   }
 });
 
+async function getAllSupporters() {
+  const BuyMeCoffee = new BMC(process.env.SUGOICOFFEETOKEN);
+  const { last_page } = await BuyMeCoffee.Supporters();
+  const data = [];
+  for (let i = 1; i <= last_page; i++) {
+    const dataEachPage = await BuyMeCoffee.Supporters(i);
+    data.push(...dataEachPage.data);
+  }
+  return {data};
+}
+async function getAllSubscriptions() {
+  const BuyMeCoffee = new BMC(process.env.SUGOICOFFEETOKEN);
+  const { last_page } = await BuyMeCoffee.Subscriptions();
+  const data = [];
+  for (let i = 1; i <= last_page; i++) {
+    const dataEachPage = await BuyMeCoffee.Subscriptions(i);
+    data.push(...dataEachPage.data);
+  }
+  return {data};
+}
+
 router.post("/login", async (req, res) => {
   const result = loginValidation(req.body);
   if (result.error) {
@@ -152,7 +173,7 @@ router.get("/:vnId/vote", verifyRole("Admin"), async (req, res) => {
 
 router.delete(
   "/logout",
-  verifyRole("Admin", "Supporter","Member", "User"),
+  verifyRole("Admin", "Supporter", "Member", "User"),
   async (req, res) => {
     const { userId } = req.user;
     try {
@@ -204,7 +225,7 @@ router.put("/admin/edit", verifyRole("Admin"), async (req, res) => {
 
 router.put(
   "/edit",
-  verifyRole("Admin", "Supporter","Member", "User"),
+  verifyRole("Admin", "Supporter", "Member", "User"),
   async (req, res) => {
     const { username, email, password, avatarImage } = req.body;
     const result = changeInfoAccountValidation(req.body);
@@ -283,7 +304,6 @@ router.put(
 );
 
 async function updateAllBMC() {
-  const BuyMeCoffee = new BMC(process.env.SUGOICOFFEETOKEN);
   const [users, supporters, members] = await Promise.all([
     userModel.aggregate([
       {
@@ -302,8 +322,8 @@ async function updateAllBMC() {
         $sort: { createdAt: -1 },
       },
     ]),
-    BuyMeCoffee.Supporters(),
-    BuyMeCoffee.Subscriptions(),
+    getAllSupporters(),
+    getAllSubscriptions(),
   ]);
   let finalResult = [];
   if (supporters.data)
