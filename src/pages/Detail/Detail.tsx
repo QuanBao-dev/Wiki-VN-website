@@ -412,7 +412,7 @@ const Detail = () => {
             </ul>
           </fieldset>
         )}
-        {patch.affiliateLinks && (
+        {patch.affiliateLinks && patch.affiliateLinks.length > 0 && (
           <fieldset>
             <legend>Shop (Support the dev)</legend>
             {patch.affiliateLinks.map((data, key) => (
