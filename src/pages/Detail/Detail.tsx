@@ -124,7 +124,6 @@ const Detail = () => {
       },
       {}
     );
-  console.log(patch);
   return (
     <div className="app-wrapper">
       <Popup
