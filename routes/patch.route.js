@@ -79,8 +79,7 @@ route.get("/:id", async (req, res) => {
     try {
       const user = await verify(req.signedCookies.token, process.env.JWT_KEY);
       userId = user.userId;
-    } catch (error) {
-    }
+    } catch (error) {}
     const [isFreeAds, patch] = await Promise.all([
       isUserFreeAds(userId),
       Patch.findOne({ vnId: id })
@@ -90,16 +89,18 @@ route.get("/:id", async (req, res) => {
           linkDownloads: 1,
           originalLinkDownloads: 1,
           shrinkMeLinkDownloads: 1,
+          affiliateLinks: 1,
         })
         .lean(),
     ]);
     if (!patch) return res.status(400).send({ error: "patch doesn't exist" });
     res.send({
       message: {
-        ...patch,
+        vnId: patch.vnId,
         linkDownloads: !isFreeAds
           ? patch.shrinkMeLinkDownloads
           : patch.originalLinkDownloads,
+        affiliateLinks: patch.affiliateLinks,
       },
     });
   } catch (error) {
@@ -109,49 +110,64 @@ route.get("/:id", async (req, res) => {
 });
 
 route.post("/", verifyRole("Admin"), async (req, res) => {
-  const { vnId, linkDownload, dataVN, isAddingNewPatch } = req.body;
+  const { vnId, type, linkDownload, dataVN, isAddingNewPatch } = req.body;
   try {
     let newPatch = await Patch.findOne({ vnId: parseInt(vnId) });
-    const ouoLinkDownload = {
-      label: linkDownload.label,
-      url: await urlShortenerOuo(linkDownload.url),
-    };
-    const shrinkEarnLinkDownload = {
-      label: linkDownload.label,
-      url: await urlShortenerShrinkEarn(linkDownload.url),
-    };
-    const shrinkMeLinkDownload = {
-      label: linkDownload.label,
-      url: await urlShortenerShrinkme(shrinkEarnLinkDownload.url),
-    };
-    const adShrinkLinkDownload = {
-      label: linkDownload.label,
-      url: await urlShortenerAdShrink(shrinkEarnLinkDownload.url),
-    };
-    if (!newPatch) {
-      newPatch = new Patch({
-        vnId,
-        linkDownloads: [ouoLinkDownload],
-        originalLinkDownloads: [linkDownload],
-        shrinkMeLinkDownloads: [shrinkMeLinkDownload],
-        shrinkEarnLinkDownloads: [shrinkEarnLinkDownload],
-        adShrinkLinkDownloads: [adShrinkLinkDownload],
-        dataVN,
-      });
+    if (type === "download") {
+      const ouoLinkDownload = {
+        label: linkDownload.label,
+        url: await urlShortenerOuo(linkDownload.url),
+      };
+      const shrinkEarnLinkDownload = {
+        label: linkDownload.label,
+        url: await urlShortenerShrinkEarn(linkDownload.url),
+      };
+      const shrinkMeLinkDownload = {
+        label: linkDownload.label,
+        url: await urlShortenerShrinkme(shrinkEarnLinkDownload.url),
+      };
+      const adShrinkLinkDownload = {
+        label: linkDownload.label,
+        url: await urlShortenerAdShrink(shrinkEarnLinkDownload.url),
+      };
+      if (!newPatch) {
+        newPatch = new Patch({
+          vnId,
+          linkDownloads: [ouoLinkDownload],
+          originalLinkDownloads: [linkDownload],
+          shrinkMeLinkDownloads: [shrinkMeLinkDownload],
+          shrinkEarnLinkDownloads: [shrinkEarnLinkDownload],
+          adShrinkLinkDownloads: [adShrinkLinkDownload],
+          dataVN,
+        });
+      }
+      if (newPatch.linkDownloads) {
+        if (!isAddingNewPatch) {
+          newPatch.linkDownloads = [ouoLinkDownload];
+          newPatch.originalLinkDownloads = [linkDownload];
+          newPatch.shrinkMeLinkDownloads = [shrinkMeLinkDownload];
+          newPatch.shrinkEarnLinkDownloads = [shrinkEarnLinkDownload];
+          newPatch.adShrinkLinkDownloads = [adShrinkLinkDownload];
+        } else {
+          newPatch.linkDownloads.push(ouoLinkDownload);
+          newPatch.originalLinkDownloads.push(linkDownload);
+          newPatch.shrinkMeLinkDownloads.push(shrinkMeLinkDownload);
+          newPatch.shrinkEarnLinkDownloads.push(shrinkEarnLinkDownload);
+          newPatch.adShrinkLinkDownloads.push(adShrinkLinkDownload);
+        }
+      }
     }
-    if (newPatch.linkDownloads) {
-      if (!isAddingNewPatch) {
-        newPatch.linkDownloads = [ouoLinkDownload];
-        newPatch.originalLinkDownloads = [linkDownload];
-        newPatch.shrinkMeLinkDownloads = [shrinkMeLinkDownload];
-        newPatch.shrinkEarnLinkDownloads = [shrinkEarnLinkDownload];
-        newPatch.adShrinkLinkDownloads = [adShrinkLinkDownload];
+    if (type === "affiliate") {
+      if (!newPatch) {
+        newPatch = new Patch({
+          vnId,
+          dataVN,
+        });
+      }
+      if (isAddingNewPatch) {
+        newPatch.affiliateLinks.push(linkDownload);
       } else {
-        newPatch.linkDownloads.push(ouoLinkDownload);
-        newPatch.originalLinkDownloads.push(linkDownload);
-        newPatch.shrinkMeLinkDownloads.push(shrinkMeLinkDownload);
-        newPatch.shrinkEarnLinkDownloads.push(shrinkEarnLinkDownload);
-        newPatch.adShrinkLinkDownloads.push(adShrinkLinkDownload);
+        newPatch.affiliateLinks = [linkDownload];
       }
     }
     await newPatch.save();

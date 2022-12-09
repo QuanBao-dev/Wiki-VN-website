@@ -14,6 +14,7 @@ const FormUpdatePatch = ({ dataVN, setTrigger, trigger }: Props) => {
   const patchReleaseUrlInputRef = useRef(document.createElement("input"));
   const checkBoxRef = useRef(document.createElement("input"));
   const buttonRef = useRef(document.createElement("button"));
+  const selectRef = useRef(document.createElement("select"));
   useEffect(() => {
     const subscription = fromEvent(buttonRef.current, "click")
       .pipe(
@@ -22,6 +23,7 @@ const FormUpdatePatch = ({ dataVN, setTrigger, trigger }: Props) => {
             url: "/api/patch/",
             method: "POST",
             body: {
+              type: selectRef.current.value,
               linkDownload: {
                 label: labelInputRef.current.value,
                 url: patchReleaseUrlInputRef.current.value,
@@ -49,6 +51,16 @@ const FormUpdatePatch = ({ dataVN, setTrigger, trigger }: Props) => {
   return (
     <fieldset>
       <legend>Form Update Patch</legend>
+      <select
+        name=""
+        id=""
+        ref={selectRef}
+        defaultValue={"download"}
+        className="select-type-link"
+      >
+        <option value="download">Link Download</option>
+        <option value="affiliate">Affiliate Link</option>
+      </select>
       <Input label="Label Patch" type="text" inputRef={labelInputRef} />
       <Input
         label="Patch Release Url"

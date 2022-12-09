@@ -38,7 +38,7 @@ interface AnimeItem {
   type: string;
 }
 
-interface Screen {
+export interface Screen {
   image: string;
   rid: number;
   nsfw: boolean;

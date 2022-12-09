@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-target-blank */
 import "./Detail.css";
 
 import React, { Suspense, useEffect, useRef, useState } from "react";
@@ -11,6 +12,7 @@ import { useFetchApi } from "../Hooks/useFetchApi";
 import Votes from "../../components/Votes/Votes";
 import { userStore } from "../../store/user";
 import Popup from "../../components/Popup/Popup";
+import Gif from "../../components/Gif/Gif";
 
 const VoterList = React.lazy(
   () => import("../../components/VoterList/VoterList")
@@ -63,9 +65,9 @@ const Detail = () => {
   useEffect(() => {
     document.title = detailState.title || "Sugoi Visual Novel | SVN";
     return () => {
-      document.title = "Sugoi Visual Novel | SVN"
-    }
-  },[detailState])
+      document.title = "Sugoi Visual Novel | SVN";
+    };
+  }, [detailState]);
   useEffect(() => {
     setDetailState(
       (cachesStore.currentState().caches.VNs
@@ -122,6 +124,7 @@ const Detail = () => {
       },
       {}
     );
+  console.log(patch);
   return (
     <div className="app-wrapper">
       <Popup
@@ -239,9 +242,12 @@ const Detail = () => {
                       rel="noreferrer"
                     >
                       Link{" "}
-                      <i className="fas fa-external-link-alt" style={{
-                        fontSize:"0.8rem"
-                      }}></i>
+                      <i
+                        className="fas fa-external-link-alt"
+                        style={{
+                          fontSize: "0.8rem",
+                        }}
+                      ></i>
                     </a>
                   </td>
                 </tr>
@@ -405,6 +411,39 @@ const Detail = () => {
                 );
               })}
             </ul>
+          </fieldset>
+        )}
+        {patch.affiliateLinks && (
+          <fieldset>
+            <legend>Shop (Support the dev)</legend>
+            {patch.affiliateLinks.map((data, key) => (
+              <a
+                key={key}
+                rel="noopener sponsored"
+                href={data.url}
+                target="_blank"
+                className="affiliate-link-item target_type"
+              >
+                {detailState.screens.length <= 1 && (
+                  <img
+                    src={
+                      !detailState.image_nsfw
+                        ? detailState.image
+                        : detailState.screens &&
+                          detailState.screens.filter(({ nsfw }) => !nsfw)[0]
+                        ? detailState.screens.filter(({ nsfw }) => !nsfw)[0]
+                            .image
+                        : "/nsfw-warning.webp"
+                    }
+                    alt={""}
+                  ></img>
+                )}
+                {detailState.screens.length > 1 && (
+                  <Gif screens={detailState.screens} isNsfw={false} />
+                )}
+                <label htmlFor="">{data.label}</label>
+              </a>
+            ))}
           </fieldset>
         )}
         {detailState.id && isLoading === false && (

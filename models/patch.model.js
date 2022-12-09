@@ -23,6 +23,16 @@ const patchSchema = mongoose.Schema({
   },
   vnId: { type: Number, require: true },
   dataVN: { type: Map, require: true },
+  affiliateLinks: {
+    type: [
+      {
+        label: String,
+        url: String,
+        _id: false,
+      },
+    ],
+    default: [],
+  },
   createdAt: {
     type: Date,
     default: Date.now,

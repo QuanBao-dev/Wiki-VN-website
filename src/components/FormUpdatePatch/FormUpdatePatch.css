@@ -1,4 +1,4 @@
-.form-update-patch-button{
+.form-update-patch-button {
   margin: 0 0 0 auto;
   display: block;
   padding: 0.5rem 1rem;
@@ -10,6 +10,16 @@
   transition: 0.5s;
 }
 
-.form-update-patch-button:hover{
+.form-update-patch-button:hover {
   background-color: rgb(167, 9, 146);
+}
+
+.select-type-link {
+  padding: 0.5rem;
+  display: block;
+  background-color: rgb(141, 34, 118);
+  color: white;
+  outline: none;
+  border: none;
+  box-shadow: 0 0 5px 1px rgb(43, 42, 42);
 }

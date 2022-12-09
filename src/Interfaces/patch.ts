@@ -1,6 +1,7 @@
 export interface Patch{
   linkDownloads: LinkPatch[],
-  vnId:number
+  vnId:number,
+  affiliateLinks:LinkPatch[],
 }
 
 interface LinkPatch{
