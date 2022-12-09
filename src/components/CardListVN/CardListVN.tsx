@@ -32,9 +32,7 @@ const CardListVN = () => {
   const [dbStats, setDbStats] = useState<Partial<Dbstats>>(
     cachesStore.currentState().caches.dbStats || {}
   );
-  const [patchStats, setPatchStats] = useState<Partial<Dbstats>>(
-    cachesStore.currentState().caches.patchStats || {}
-  );
+
   const [isLoading, setIsLoading] = useState(
     indexActive === 1
       ? (cachesStore.currentState() as any).caches.VNs &&
@@ -49,6 +47,7 @@ const CardListVN = () => {
               }, {}) as any
           )[page * 10]
   );
+  // useInitStore(homeStore,setHomeState);
   useEffect(() => {
     if (window.innerWidth > 1130) {
       setNumberOfColumn(3);
@@ -79,7 +78,6 @@ const CardListVN = () => {
       subscription.unsubscribe();
     };
   }, [trigger]);
-
   useFetchApi(
     "/api/vndb/stats",
     setDbStats,
@@ -90,16 +88,16 @@ const CardListVN = () => {
       (cachesStore.currentState() as any).caches.dbStats &&
       !(cachesStore.currentState() as any).caches.dbStats.vn
   );
-  useFetchApi(
-    "/api/patch/stats",
-    setPatchStats,
-    "patchStats",
-    [],
-    true,
-    indexActive === 0 &&
-      (cachesStore.currentState() as any).caches.patchStats &&
-      !(cachesStore.currentState() as any).caches.patchStats.vn
-  );
+  // useFetchApi(
+  //   "/api/patch/stats",
+  //   setPatchStats,
+  //   "patchStats",
+  //   [],
+  //   true,
+  //   indexActive === 0 &&
+  //     (cachesStore.currentState() as any).caches.patchStats &&
+  //     !(cachesStore.currentState() as any).caches.patchStats.vn
+  // );
 
   useFetchApi(
     `/api/vndb?id=${page * 10 + 1}&isLarger=true`,
@@ -156,7 +154,9 @@ const CardListVN = () => {
       });
     } else {
       homeStore.updateState({
-        lastPage: Math.ceil((patchStats.vn || 0) / 10),
+        lastPage: Math.ceil(
+          (homeStore.currentState().stats.mtledVNLength || 0) / 10
+        ),
         patchesPage: page,
       });
     }
@@ -191,10 +191,10 @@ const CardListVN = () => {
         );
       }
     }
-  }, [patchStats.vn, dbStats.vn, page, indexActive, visualNovelList.length]);
+  }, [dbStats.vn, page, indexActive, visualNovelList.length]);
   let lastPage = 0;
   if (indexActive === 1) lastPage = Math.ceil(((dbStats.vn || 0) + 1646) / 10);
-  if (indexActive === 0) lastPage = Math.ceil((patchStats.vn || 0) / 10);
+  if (indexActive === 0) lastPage = Math.ceil((homeStore.currentState().stats.mtledVNLength || 0) / 10);
   return (
     <div className="card-list-vn-container">
       <div className="card-list-toggle-mode">

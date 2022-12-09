@@ -35,15 +35,18 @@ const userModel = require("../models/user.model");
 route.get("/", async (req, res) => {
   const page = parseInt(req.query.page || 0);
   try {
-    const patches = (
-      await Patch.find({}).select({ _id: 0, createdAt: 1, dataVN: 1 }).lean()
-    )
-      .sort(
-        (a, b) =>
-          new Date(new Date(b.createdAt).toUTCString()).getTime() -
-          new Date(new Date(a.createdAt).toUTCString()).getTime()
-      )
-      .slice(page * 10, (page + 1) * 10);
+    const patches = await Patch.aggregate([
+      {
+        $group: {
+          _id: { $toDate: "$createdAt" },
+          dataVN: { $first: "$dataVN" },
+        },
+      },
+      { $sort: { _id: -1 } },
+      { $skip: 10 * page },
+      { $limit: 10 },
+    ]);
+
     res.send({
       message: patches.map((v, key) => {
         v.dataVN.createdAt = v.createdAt;
@@ -54,16 +57,7 @@ route.get("/", async (req, res) => {
     res.status(404).send({ error });
   }
 });
-route.get("/stats", async (req, res) => {
-  try {
-    const patches = await Patch.find({}).select({ _id: 0 }).lean();
-    res.send({
-      message: { vn: patches.length },
-    });
-  } catch (error) {
-    res.status(404).send({ error });
-  }
-});
+
 async function isUserFreeAds(userId) {
   const user = await userModel
     .findOne({ userId })

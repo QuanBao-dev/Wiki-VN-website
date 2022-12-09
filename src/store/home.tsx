@@ -1,3 +1,4 @@
+import { SugoiVNDBStats } from "../Interfaces/dbstats";
 import { createStore } from "./createStore";
 interface HomeStore {
   lastPage: number;
@@ -7,8 +8,9 @@ interface HomeStore {
   maxVotes: number;
   isStopFetching: boolean;
   votesPage: number;
-  isLoading:boolean;
-  trigger:boolean;
+  isLoading: boolean;
+  trigger: boolean;
+  stats: SugoiVNDBStats;
 }
 
 export const homeStore = createStore<HomeStore>({
@@ -16,9 +18,14 @@ export const homeStore = createStore<HomeStore>({
   page: 0,
   indexActive: 0,
   patchesPage: 0,
+  stats: {
+    usersLength: 0,
+    mtledVNLength: 0,
+    releasesLength: 0,
+  },
   maxVotes: 0,
   isStopFetching: false,
   votesPage: 0,
-  isLoading:true,
-  trigger:false
+  isLoading: true,
+  trigger: false,
 });

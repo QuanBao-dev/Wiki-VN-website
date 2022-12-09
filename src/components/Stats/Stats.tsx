@@ -1,10 +1,11 @@
 import "./Stats.css";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { SugoiVNDBStats } from "../../Interfaces/dbstats";
 import { useFetchApi } from "../../pages/Hooks/useFetchApi";
 import SkeletonLoading from "../SkeletonLoading/SkeletonLoading";
+import { homeStore } from "../../store/home";
 
 const Stats = () => {
   const [stats, setStats] = useState<SugoiVNDBStats>();
@@ -19,6 +20,13 @@ const Stats = () => {
     setIsLoading,
     null
   );
+  useEffect(() => {
+    if(!stats) return;
+    homeStore.updateState({
+      stats,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stats]);
   if (isLoading) {
     return (
       <SkeletonLoading
