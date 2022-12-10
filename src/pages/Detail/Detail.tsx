@@ -395,6 +395,8 @@ const Detail = () => {
                           detailState.screens.filter(({ nsfw }) => !nsfw)[0]
                         ? detailState.screens.filter(({ nsfw }) => !nsfw)[0]
                             .image
+                        : isShowExplicitImage
+                        ? detailState.image
                         : "/nsfw-warning.webp"
                     }
                     alt={""}
