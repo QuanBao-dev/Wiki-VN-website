@@ -12,13 +12,11 @@ const Gif = ({ screens, isNsfw = false }: Props) => {
     const filteredScreens = screens.filter(({ nsfw }) =>
       !isNsfw ? nsfw === isNsfw : true
     );
-    if (!filteredScreens[index]) setIndex(0);
+    if(!filteredScreens[index]) setIndex(0);
     const subscription = interval(1000)
       .pipe(takeWhile(() => filteredScreens.length - 1 !== 0))
       .subscribe(() => {
-        setIndex(
-          generateUnrepeatedRandomNumber() * (filteredScreens.length - 1)
-        );
+        setIndex(generateUnrepeatedRandomNumber(filteredScreens.length - 1));
       });
     return () => {
       subscription.unsubscribe();
@@ -42,10 +40,10 @@ const Gif = ({ screens, isNsfw = false }: Props) => {
 };
 
 let temp = 1000;
-function generateUnrepeatedRandomNumber() {
-  let rand = Math.round(Math.random());
+function generateUnrepeatedRandomNumber(range:number) {
+  let rand = Math.round(Math.random()*range);
   while (temp === rand) {
-    rand = Math.round(Math.random());
+    rand = Math.round(Math.random()*range);
   }
   temp = rand;
   return rand;
