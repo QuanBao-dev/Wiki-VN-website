@@ -69,10 +69,7 @@ const Votes = ({ vnId, dataVN }: Props) => {
           setVotes(++temp);
           setTrigger(!trigger);
         } else {
-          if (v && v.error === "Access Denied") {
-            return alert("Require login to use this feature");
-          }
-          alert(v.error);
+          return alert("Require login to use this feature");
         }
       });
     return () => {
