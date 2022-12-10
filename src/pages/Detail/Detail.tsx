@@ -375,6 +375,39 @@ const Detail = () => {
             </div>
           </fieldset>
         )}
+        {patch.affiliateLinks && patch.affiliateLinks.length > 0 && (
+          <fieldset>
+            <legend>Shop (Support the dev)</legend>
+            {patch.affiliateLinks.map((data, key) => (
+              <a
+                key={key}
+                rel="noopener sponsored"
+                href={data.url}
+                target="_blank"
+                className="affiliate-link-item target_type"
+              >
+                {detailState.screens && detailState.screens.length <= 1 && (
+                  <img
+                    src={
+                      !detailState.image_nsfw
+                        ? detailState.image
+                        : detailState.screens &&
+                          detailState.screens.filter(({ nsfw }) => !nsfw)[0]
+                        ? detailState.screens.filter(({ nsfw }) => !nsfw)[0]
+                            .image
+                        : "/nsfw-warning.webp"
+                    }
+                    alt={""}
+                  ></img>
+                )}
+                {detailState.screens && detailState.screens.length > 1 && (
+                  <Gif screens={detailState.screens} isNsfw={filterMode > 0} />
+                )}
+                <label htmlFor="">{data.label}</label>
+              </a>
+            ))}
+          </fieldset>
+        )}
         {patch && patch.linkDownloads && (
           <fieldset className="release-container">
             {userStore.currentState().role === "Admin" && (
@@ -398,51 +431,9 @@ const Detail = () => {
                   >
                     <li>{label}</li>
                   </div>
-                  // <a
-                  //   className="button-download"
-                  //   key={key}
-                  //   href={url}
-                  //   target={"_blank"}
-                  //   rel="noreferrer"
-                  // >
-                  //   {label}
-                  // </a>
                 );
               })}
             </ul>
-          </fieldset>
-        )}
-        {patch.affiliateLinks && patch.affiliateLinks.length > 0 && (
-          <fieldset>
-            <legend>Shop (Support the dev)</legend>
-            {patch.affiliateLinks.map((data, key) => (
-              <a
-                key={key}
-                rel="noopener sponsored"
-                href={data.url}
-                target="_blank"
-                className="affiliate-link-item target_type"
-              >
-                {detailState.screens.length <= 1 && (
-                  <img
-                    src={
-                      !detailState.image_nsfw
-                        ? detailState.image
-                        : detailState.screens &&
-                          detailState.screens.filter(({ nsfw }) => !nsfw)[0]
-                        ? detailState.screens.filter(({ nsfw }) => !nsfw)[0]
-                            .image
-                        : "/nsfw-warning.webp"
-                    }
-                    alt={""}
-                  ></img>
-                )}
-                {detailState.screens.length > 1 && (
-                  <Gif screens={detailState.screens} isNsfw={false} />
-                )}
-                <label htmlFor="">{data.label}</label>
-              </a>
-            ))}
           </fieldset>
         )}
         {detailState.id && isLoading === false && (

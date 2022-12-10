@@ -47,11 +47,11 @@ function App() {
             url: "/api/token/renew",
           }).pipe(
             pluck("response", "message"),
-            catchError((error) => of(error).pipe(pluck("response")))
+            catchError((error) => of({error}))
           )
         )
       )
-      .subscribe((v) => {
+      .subscribe((v:any) => {
         if (!v.error) {
           userStore.updateState({
             trigger: !userStore.currentState().trigger,
