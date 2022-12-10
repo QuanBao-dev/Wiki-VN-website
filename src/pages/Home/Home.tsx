@@ -1,5 +1,5 @@
 import "./Home.css";
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
 import SkeletonLoading from "../../components/SkeletonLoading/SkeletonLoading";
 
 const SearchVN = React.lazy(() => import("../../components/SearchVN/SearchVN"));

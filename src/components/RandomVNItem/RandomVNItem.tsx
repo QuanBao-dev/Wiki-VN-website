@@ -4,6 +4,8 @@ import { useEffect, useRef } from "react";
 
 import { VisualNovel } from "../../Interfaces/visualNovelList";
 import { Link } from "react-router-dom";
+import { parseDescription } from "../../util/parseDescription";
+import { generateUnrepeatedRandomNumber } from "../../util/generateRandomNumber";
 
 interface Props extends VisualNovel {}
 const RandomVNItem = ({
@@ -15,21 +17,26 @@ const RandomVNItem = ({
   screens,
 }: Partial<Props>) => {
   const descriptionRef = useRef(document.createElement("p"));
+  const randomRef = useRef(0);
   useEffect(() => {
-    descriptionRef.current.innerHTML = description
-      ? description
-          .replace("[From", "From")
-          .replace(/url/g, "a href")
-          .replace(/\](\])?/g, ">")
-          .replace(/\[/g, "<")
-          .split(" ")
-          .slice(0, 40)
-          .join(" ") + "..."
-      : "No description";
+    descriptionRef.current.innerHTML =
+      parseDescription(description as string)
+        .split(" ")
+        .slice(0, 40)
+        .join(" ") +
+      (parseDescription(description as string).split(" ").length > 40
+        ? "..."
+        : "");
+    if (screens)
+      randomRef.current = generateUnrepeatedRandomNumber(
+        screens.filter(({ nsfw }) => !nsfw).length - 1
+      );
     descriptionRef.current.style.marginBottom = description
       ? descriptionRef.current.style.marginBottom
       : "5rem";
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [description]);
+
   return (
     <Link
       to={"/vns/" + id}
@@ -43,8 +50,9 @@ const RandomVNItem = ({
           src={
             !image_nsfw
               ? image
-              : screens && screens.filter(({ nsfw }) => !nsfw)[0]
-              ? screens.filter(({ nsfw }) => !nsfw)[0].image
+              : screens &&
+                screens.filter(({ nsfw }) => !nsfw)[randomRef.current]
+              ? screens.filter(({ nsfw }) => !nsfw)[randomRef.current].image
               : "/nsfw-warning.webp"
           }
           alt=""

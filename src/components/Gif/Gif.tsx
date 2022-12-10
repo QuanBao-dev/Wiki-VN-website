@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { interval, takeWhile } from "rxjs";
 import { Screen } from "../../Interfaces/visualNovelList";
+import { generateUnrepeatedRandomNumber } from "../../util/generateRandomNumber";
 
 interface Props {
   screens: Partial<Screen>[];
@@ -38,15 +39,5 @@ const Gif = ({ screens, isNsfw = false }: Props) => {
     ></img>
   );
 };
-
-let temp = 1000;
-function generateUnrepeatedRandomNumber(range:number) {
-  let rand = Math.round(Math.random()*range);
-  while (temp === rand) {
-    rand = Math.round(Math.random()*range);
-  }
-  temp = rand;
-  return rand;
-}
 
 export default Gif;

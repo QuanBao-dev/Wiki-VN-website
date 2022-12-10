@@ -52,7 +52,6 @@ const CardListVN = () => {
     if (window.innerWidth > 1130) {
       setNumberOfColumn(3);
     }
-
     if (window.innerWidth <= 1130) {
       setNumberOfColumn(2);
     }
@@ -194,7 +193,10 @@ const CardListVN = () => {
   }, [dbStats.vn, page, indexActive, visualNovelList.length]);
   let lastPage = 0;
   if (indexActive === 1) lastPage = Math.ceil(((dbStats.vn || 0) + 1646) / 10);
-  if (indexActive === 0) lastPage = Math.ceil((homeStore.currentState().stats.mtledVNLength || 0) / 10);
+  if (indexActive === 0)
+    lastPage = Math.ceil(
+      (homeStore.currentState().stats.mtledVNLength || 0) / 10
+    );
   return (
     <div className="card-list-vn-container">
       <div className="card-list-toggle-mode">
