@@ -138,6 +138,9 @@ const CardListVN = () => {
     numberOfColumn
   );
   useEffect(() => {
+    homeStore.updateState({
+      currentScrollTop: 0,
+    });
     selectPageRef.current.value = (page + 1).toString();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);

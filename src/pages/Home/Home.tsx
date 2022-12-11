@@ -1,6 +1,10 @@
-import "./Home.css";
-import React, { Suspense } from "react";
-import SkeletonLoading from "../../components/SkeletonLoading/SkeletonLoading";
+import './Home.css';
+
+import React, { Suspense, useEffect } from 'react';
+import { fromEvent } from 'rxjs';
+
+import SkeletonLoading from '../../components/SkeletonLoading/SkeletonLoading';
+import { homeStore } from '../../store/home';
 
 const SearchVN = React.lazy(() => import("../../components/SearchVN/SearchVN"));
 const CardListVN = React.lazy(
@@ -8,6 +12,16 @@ const CardListVN = React.lazy(
 );
 
 const Home = () => {
+  useEffect(() => {
+    const subscription = fromEvent(window, "scroll").subscribe(() => {
+      homeStore.updateState({
+        currentScrollTop: window.scrollY,
+      });
+    });
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
   return (
     <div className="app-wrapper">
       <Suspense

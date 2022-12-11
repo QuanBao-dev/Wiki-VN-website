@@ -1,3 +1,4 @@
+import { homeStore } from "./../../store/home";
 import { VisualNovel } from "./../../Interfaces/visualNovelList";
 import { useEffect } from "react";
 export function useCardListVNPosition(
@@ -54,10 +55,7 @@ async function handleCardItem(
             i * numberOfColumn + columnIndex
           ] as HTMLElement;
           const temp2 = listChild[rowIndex * numberOfColumn + columnIndex];
-          if (
-            columnIndex === 0 &&
-            temp3.querySelector(".description")
-          ) {
+          if (columnIndex === 0 && temp3.querySelector(".description")) {
             (
               temp3.querySelector(".description") as HTMLElement
             ).style.webkitLineClamp = "5";
@@ -74,6 +72,9 @@ async function handleCardItem(
         Math.max(...sumColumnList) > 0
           ? `${Math.max(...sumColumnList)}px`
           : "fit-content";
+      window.scroll({
+        top: homeStore.currentState().currentScrollTop,
+      });
       res("Done");
     }, 100);
   });

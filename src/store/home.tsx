@@ -11,6 +11,7 @@ interface HomeStore {
   isLoading: boolean;
   trigger: boolean;
   stats: SugoiVNDBStats;
+  currentScrollTop: number;
 }
 
 export const homeStore = createStore<HomeStore>({
@@ -28,4 +29,5 @@ export const homeStore = createStore<HomeStore>({
   votesPage: 0,
   isLoading: true,
   trigger: false,
+  currentScrollTop: 0,
 });
