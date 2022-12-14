@@ -69,7 +69,13 @@ io.on("connection", (socket) => {
   //   socket.broadcast.emit("new-user-out", `${username} has been left the chat`);
   // });
   socket.on("new-message", async (message, username, role, avatarImage) => {
-    console.log(message, username, role, avatarImage);
+    const token = socket.request.headers.cookie
+      .replace("token=s%3A", "")
+      .split(".")
+      .slice(0, 3)
+      .join(".");
+    console.log(token);
+
     const { userId } = await userModel
       .findOne({ username })
       .select({ _id: 0, userId: 1 })
