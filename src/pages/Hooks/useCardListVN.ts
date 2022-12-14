@@ -28,6 +28,7 @@ async function handleCardItem(
 ) {
   return new Promise((res, rej) => {
     setTimeout(() => {
+      if (!cardListVnContainerRef.current) rej("error");
       const listChild = [...cardListVnContainerRef.current.children];
       let rowIndex = -1;
       let columnIndex = 0;

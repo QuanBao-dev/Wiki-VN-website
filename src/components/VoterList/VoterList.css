@@ -9,6 +9,7 @@
 .container-voter-item span{
   width: 50%;
   font-weight: 600;
+  text-align: end;
 }
 
 .container-voter-item span:nth-child(1){

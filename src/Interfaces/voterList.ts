@@ -1,5 +1,6 @@
-export interface Voters{
-  username:string,
-  email:string,
-  avatarImage?:string
+export interface Voters {
+  username: string;
+  email: string;
+  avatarImage?: string;
+  boost: number;
 }

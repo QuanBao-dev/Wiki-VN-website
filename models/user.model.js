@@ -30,6 +30,10 @@ const userSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  boost: {
+    type: Number,
+    default: 1,
+  },
 });
 
 module.exports = mongoose.model("user", userSchema);

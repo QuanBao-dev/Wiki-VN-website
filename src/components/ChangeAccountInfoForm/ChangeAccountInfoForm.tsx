@@ -18,6 +18,8 @@ import { ajax } from "rxjs/ajax";
 import { useInitStore } from "../../pages/Hooks/useInitStore";
 import { userStore } from "../../store/user";
 import Input from "../Input/Input";
+import { chatStore } from "../../store/Chat";
+import { updateCaches } from "../../util/updateCaches";
 
 const ChangeAccountInfoForm = () => {
   const inputUsernameEmailRef = useRef(document.createElement("input"));
@@ -96,7 +98,11 @@ const ChangeAccountInfoForm = () => {
         switchMap((res) => {
           if (res.error) {
             setErrorMessage(res.error);
-            if (res.error.includes("Checking your email account, Please verify your new email")) {
+            if (
+              res.error.includes(
+                "Checking your email account, Please verify your new email"
+              )
+            ) {
               return ajax({
                 method: "DELETE",
                 url: "/api/user/logout",
@@ -111,9 +117,21 @@ const ChangeAccountInfoForm = () => {
       )
       .subscribe((res: any) => {
         if (!res.error) {
+          inputPasswordRef.current.value = "";
           userStore.updateState({
             trigger: !userStore.currentState().trigger,
+            isShowEditAccount: false,
           });
+          if (["Admin", "Member"].includes(userStore.currentState().role)) {
+            chatStore.updateState({
+              isStopFetching: false,
+              isLoading: true,
+              page: 1,
+              ratio: 1,
+              scrollTop: 1000000,
+            });
+            updateCaches([], "messages");
+          }
         }
       });
     return () => {

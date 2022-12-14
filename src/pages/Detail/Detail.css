@@ -222,6 +222,7 @@ legend {
 
 .affiliate-link-item img {
   width: 100%;
+  display: block;
 }
 
 .affiliate-link-item label{

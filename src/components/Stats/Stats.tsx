@@ -6,9 +6,12 @@ import { SugoiVNDBStats } from "../../Interfaces/dbstats";
 import { useFetchApi } from "../../pages/Hooks/useFetchApi";
 import SkeletonLoading from "../SkeletonLoading/SkeletonLoading";
 import { homeStore } from "../../store/home";
+import cachesStore from "../../store/caches";
 
 const Stats = () => {
-  const [stats, setStats] = useState<SugoiVNDBStats>();
+  const [stats, setStats] = useState<SugoiVNDBStats>(
+    cachesStore.currentState().caches["SugoiVNDB"] || {}
+  );
   const [isLoading, setIsLoading] = useState(false);
   useFetchApi(
     "/api/stats",
@@ -16,12 +19,12 @@ const Stats = () => {
     "SugoiVNDB",
     [],
     true,
-    true,
+    !cachesStore.currentState().caches["SugoiVNDB"],
     setIsLoading,
     null
   );
   useEffect(() => {
-    if(!stats) return;
+    if (!stats) return;
     homeStore.updateState({
       stats,
     });

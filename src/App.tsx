@@ -12,6 +12,7 @@ import Stats from "./components/Stats/Stats";
 import { catchError, filter, interval, of, pluck, switchMap } from "rxjs";
 import { ajax } from "rxjs/ajax";
 import PopupNotification from "./components/PopupNotification/PopupNotification";
+import Chat from "./pages/Chat/Chat";
 
 const RandomVNList = React.lazy(
   () => import("./components/RandomVNList/RandomVNList")
@@ -47,11 +48,11 @@ function App() {
             url: "/api/token/renew",
           }).pipe(
             pluck("response", "message"),
-            catchError((error) => of({error}))
+            catchError((error) => of({ error }))
           )
         )
       )
-      .subscribe((v:any) => {
+      .subscribe((v: any) => {
         if (!v.error) {
           userStore.updateState({
             trigger: !userStore.currentState().trigger,
@@ -315,6 +316,28 @@ function App() {
                   }
                 >
                   <Admin />
+                </Suspense>
+              }
+            />
+          )}
+          {["Admin", "Member"].includes(userState.role) && (
+            <Route
+              path="/chat"
+              element={
+                <Suspense
+                  fallback={
+                    <h1 className="loading-3-dot">
+                      <i
+                        className="fas fa-spinner fa-pulse fa-5x"
+                        style={{
+                          display: "inline-block",
+                          margin: "auto",
+                        }}
+                      ></i>
+                    </h1>
+                  }
+                >
+                  <Chat />
                 </Suspense>
               }
             />

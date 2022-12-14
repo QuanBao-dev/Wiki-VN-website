@@ -377,7 +377,7 @@ const Detail = () => {
         )}
         {patch.affiliateLinks && patch.affiliateLinks.length > 0 && (
           <fieldset>
-            <legend>Shop (Support the dev)</legend>
+            <legend>Shop</legend>
             {patch.affiliateLinks.map((data, key) => (
               <a
                 key={key}

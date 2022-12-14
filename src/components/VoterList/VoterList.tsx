@@ -1,18 +1,22 @@
 import { useState } from "react";
 import { Voters } from "../../Interfaces/voterList";
 import { useFetchApi } from "../../pages/Hooks/useFetchApi";
+import { useInitStore } from "../../pages/Hooks/useInitStore";
+import { homeStore } from "../../store/home";
 import "./VoterList.css";
 interface Props {
   id?: string;
 }
 const VoterList = ({ id }: Props) => {
   const [userList, setUserList] = useState<Voters[]>([]);
+  const [homeState, setHomeState] = useState(homeStore.currentState());
   const [page, setPage] = useState(0);
+  useInitStore(homeStore,setHomeState);
   useFetchApi(
     "/api/user/" + id + "/vote",
     setUserList,
     "userVotes",
-    [id],
+    [id, homeState],
     true,
     true,
     undefined
@@ -26,7 +30,7 @@ const VoterList = ({ id }: Props) => {
           <div>
             {userList
               .slice(0, (page + 1) * 10)
-              .map(({ username, email, avatarImage }) => (
+              .map(({ username, email, avatarImage, boost }) => (
                 <div key={username} className="container-voter-item">
                   <span>
                     {avatarImage && (
@@ -35,6 +39,7 @@ const VoterList = ({ id }: Props) => {
                     <div>{username}</div>
                   </span>
                   <span>{email}</span>
+                  <span>x{boost}</span>
                 </div>
               ))}
           </div>

@@ -100,6 +100,7 @@ const Admin = () => {
               <th>userId</th>
               <th>Username</th>
               <th>Role</th>
+              <th>Boost</th>
               <th>Email</th>
               <th>createdAt</th>
               <th>isVerified</th>
@@ -129,6 +130,7 @@ const Admin = () => {
                   cancelingMemberAt,
                   endFreeAdsDate,
                   role,
+                  boost,
                 },
                 key
               ) => (
@@ -142,6 +144,7 @@ const Admin = () => {
                   isFreeAds={isFreeAds}
                   endFreeAdsDate={endFreeAdsDate}
                   username={username}
+                  boost={boost}
                   userId={userId}
                   createdAt={createdAt}
                   isVerified={isVerified}
@@ -173,6 +176,7 @@ interface RowTableProps {
   becomingMemberAt: string;
   cancelingMemberAt: string;
   userList: User[];
+  boost:number;
   setUserList: React.Dispatch<React.SetStateAction<User[]>>;
   index: number;
 }
@@ -181,6 +185,7 @@ function RowTable({
   userId,
   username,
   email,
+  boost,
   createdAt,
   isVerified,
   isVerifiedEdit,
@@ -194,12 +199,30 @@ function RowTable({
   endFreeAdsDate,
 }: RowTableProps) {
   const isVerifiedEditRef = useRef(document.createElement("input"));
+  const roleRef = useRef(document.createElement("select"));
+  const boostRef = useRef(document.createElement("select"));
   return (
     <tr>
       <td>{index + 1}</td>
       <td>{userId}</td>
       <td>{username}</td>
-      <td>{role}</td>
+      <td>
+        <select defaultValue={role} ref={roleRef}>
+          <option value="Admin">Admin</option>
+          <option value="Supporter">Supporter</option>
+          <option value="Member">Member</option>
+          <option value="User">User</option>
+        </select>
+      </td>
+      <td>
+      <select defaultValue={(boost || 1).toString()} ref={boostRef}>
+          <option value="1">1</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+        </select>
+      </td>
       <td>{email}</td>
       <td>{new Date(createdAt).toUTCString()}</td>
       <td>{isVerified ? "true" : "false"}</td>
@@ -223,7 +246,12 @@ function RowTable({
         />
       </td>
       <td>
-        <ButtonEdit userId={userId} isVerifiedEditRef={isVerifiedEditRef} />
+        <ButtonEdit
+          userId={userId}
+          isVerifiedEditRef={isVerifiedEditRef}
+          roleRef={roleRef}
+          boostRef={boostRef}
+        />
       </td>
       <td>
         <button

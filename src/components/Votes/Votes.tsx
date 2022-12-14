@@ -14,6 +14,7 @@ import { VisualNovel } from "../../Interfaces/visualNovelList";
 import { useFetchApi } from "../../pages/Hooks/useFetchApi";
 import { homeStore } from "../../store/home";
 import { updateCaches } from "../../util/updateCaches";
+import { userStore } from "../../store/user";
 interface Props {
   vnId: number;
   dataVN: VisualNovel;
@@ -25,6 +26,7 @@ const Votes = ({ vnId, dataVN }: Props) => {
   const upVotesRef = useRef(document.createElement("i"));
   const downVotesRef = useRef(document.createElement("i"));
   const votesParagraphRef = useRef(document.createElement("div"));
+  const isIncreasedRef = useRef<boolean | null>(null);
   const [isHide, setIsHide] = useState(true);
   useFetchApi(
     "/api/vote/" + vnId,
@@ -37,7 +39,14 @@ const Votes = ({ vnId, dataVN }: Props) => {
     100
   );
   useEffect(() => {
-    setVotes(data.votes || 0);
+    if (!data.votes) return setVotes(0);
+    setVotes(data.votes);
+    if (isIncreasedRef.current === true) {
+      setVotes(data.votes - 1 + userStore.currentState().boost);
+    }
+    if (isIncreasedRef.current === false) {
+      setVotes(data.votes + 1 - userStore.currentState().boost);
+    }
   }, [data.votes]);
   useEffect(() => {
     if (!upVotesRef.current) return;
@@ -65,8 +74,9 @@ const Votes = ({ vnId, dataVN }: Props) => {
             isLoading: true,
             votesPage: 0,
           });
+          isIncreasedRef.current = true;
           let temp = votes;
-          setVotes(++temp);
+          setVotes(temp + userStore.currentState().boost);
           setTrigger(!trigger);
         } else {
           return alert("Require login to use this feature");
@@ -104,8 +114,9 @@ const Votes = ({ vnId, dataVN }: Props) => {
             isLoading: true,
             votesPage: 0,
           });
+          isIncreasedRef.current = false;
           let temp = votes;
-          setVotes(--temp);
+          setVotes(temp - userStore.currentState().boost);
           setTrigger(!trigger);
         } else {
           if (v.error === "Access Denied") {
@@ -120,6 +131,7 @@ const Votes = ({ vnId, dataVN }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vnId, votes]);
   useEffect(() => {
+    if (!votesParagraphRef.current) return;
     if (isHide) votesParagraphRef.current.style.display = "none";
     if (!isHide) votesParagraphRef.current.style.display = "block";
   }, [isHide]);

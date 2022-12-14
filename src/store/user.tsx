@@ -11,6 +11,7 @@ interface UserStore {
   isDarkMode: boolean;
   exp: number;
   iat: number;
+  boost:number
 }
 
 export const userStore = createStore<UserStore>({
@@ -25,4 +26,5 @@ export const userStore = createStore<UserStore>({
   isDarkMode: false,
   exp: 0,
   iat: 0,
+  boost:1
 });

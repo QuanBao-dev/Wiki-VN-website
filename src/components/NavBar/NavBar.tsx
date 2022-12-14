@@ -214,6 +214,11 @@ const NavBar = () => {
               <Link className="link-account-setting" to={"/account"}>
                 Account Settings
               </Link>
+              {(userState.role === "Admin" || userState.role === "Member") && (
+                <Link className="link-account-setting" to={"/chat"}>
+                  Messages
+                </Link>
+              )}
               <div ref={logoutButtonRef}>Logout</div>
               <a
                 className="link-account-setting"

@@ -5,8 +5,15 @@ import "./ButtonEdit.css";
 interface Props {
   userId: string;
   isVerifiedEditRef: React.MutableRefObject<HTMLInputElement>;
+  roleRef: React.MutableRefObject<HTMLSelectElement>;
+  boostRef: React.MutableRefObject<HTMLSelectElement>;
 }
-const ButtonEdit = ({ userId, isVerifiedEditRef }: Props) => {
+const ButtonEdit = ({
+  userId,
+  isVerifiedEditRef,
+  roleRef,
+  boostRef,
+}: Props) => {
   const buttonEditRef = useRef(document.createElement("button"));
   useEffect(() => {
     const subscription = fromEvent(buttonEditRef.current, "click")
@@ -18,6 +25,8 @@ const ButtonEdit = ({ userId, isVerifiedEditRef }: Props) => {
             body: {
               userId,
               isVerified: isVerifiedEditRef.current.checked,
+              role: roleRef.current.value,
+              boost: +boostRef.current.value,
             },
           }).pipe(
             pluck("response", "message"),

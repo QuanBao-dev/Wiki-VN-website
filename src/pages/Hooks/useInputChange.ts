@@ -1,5 +1,5 @@
 import { VisualNovel } from "./../../Interfaces/visualNovelList";
-import { pluck, tap, filter, catchError } from "rxjs/operators";
+import { pluck, tap, takeWhile, catchError } from "rxjs/operators";
 import { ajax } from "rxjs/ajax";
 import { useEffect } from "react";
 import { debounceTime, fromEvent, of, switchMap } from "rxjs";
@@ -11,7 +11,7 @@ export const useInputChange = (
   setIndexActive: React.Dispatch<React.SetStateAction<number | null>>
 ) => {
   useEffect(() => {
-    const subscription = fromEvent(inputRef.current, "input")
+    const subscription = fromEvent(inputRef.current, "keyup")
       .pipe(
         debounceTime(500),
         pluck("target", "value"),
@@ -19,7 +19,7 @@ export const useInputChange = (
           setSuggestionList([]);
           setIndexActive(null);
         }),
-        filter((v) => (v as string).trim() !== ""),
+        takeWhile((v) => (v as string).trim() !== ""),
         switchMap((value) =>
           ajax({
             url: url.replace("{text}", value as string),
@@ -31,6 +31,8 @@ export const useInputChange = (
       )
       .subscribe((res) => {
         if (res && !res.error) {
+          console.log(inputRef.current.value)
+          if (inputRef.current.value === "") return;
           setSuggestionList(res as VisualNovel[]);
           updateCaches(res as any, "VNs");
         }

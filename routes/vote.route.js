@@ -61,17 +61,21 @@ router.get("/:vnId", async (req, res) => {
         { $match: { votedVnIdList: parseInt(vnId), isVerified: true } },
       ]),
     ]);
-    const validUsersLength = voters.length;
-    if (validUsersLength === 0 && vote.isTranslatable) {
-      const vote = await voteModel.findOne({ vnId });
-      if (vote) await vote.delete();
-    } else if (validUsersLength !== vote.votes && vote.isTranslatable) {
-      const vote = await voteModel.findOne({ vnId });
-      if (vote) {
-        vote.votes = validUsersLength;
-        await vote.save();
+    const validUsersLength = voters.reduce((ans, curr) => {
+      ans += curr.boost || 1;
+      return ans;
+    }, 0);
+    if (vote)
+      if (validUsersLength === 0 && vote.isTranslatable) {
+        const vote = await voteModel.findOne({ vnId });
+        if (vote) await vote.delete();
+      } else if (validUsersLength !== vote.votes && vote.isTranslatable) {
+        if (vote) {
+          const vote = await voteModel.findOne({ vnId });
+          vote.votes = validUsersLength;
+          await vote.save();
+        }
       }
-    }
     let isIncreased = false;
     if (user && user.votedVnIdList) {
       if (user.votedVnIdList.includes(vnId)) isIncreased = true;
@@ -108,7 +112,7 @@ router.put("/:vnId/translatable", verifyRole("Admin"), async (req, res) => {
 
 router.put(
   "/:vnId",
-  verifyRole("User", "Supporter", "Admin"),
+  verifyRole("User", "Supporter", "Member", "Admin"),
   async (req, res) => {
     const vnId = +req.params.vnId;
     let { dataVN, isDownVotes } = req.body;

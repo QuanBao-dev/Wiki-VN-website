@@ -41,7 +41,7 @@ const Account = () => {
         if (!res.error) {
           userStore.updateState({
             trigger: !userStore.currentState().trigger,
-            isShowEditAccount: !userStore.currentState().isShowEditAccount,
+            isShowEditAccount: false,
           });
         } else {
           console.error(res.error);
@@ -51,7 +51,7 @@ const Account = () => {
       subscription.unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [userState.isShowEditAccount]);
   return (
     <div className="account-setting-container">
       <div className="account-setting-wrapper">

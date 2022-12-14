@@ -48,7 +48,7 @@ async function getAllSupporters() {
     const dataEachPage = await BuyMeCoffee.Supporters(i);
     data.push(...dataEachPage.data);
   }
-  return {data};
+  return { data };
 }
 async function getAllSubscriptions() {
   const BuyMeCoffee = new BMC(process.env.SUGOICOFFEETOKEN);
@@ -58,7 +58,7 @@ async function getAllSubscriptions() {
     const dataEachPage = await BuyMeCoffee.Subscriptions(i);
     data.push(...dataEachPage.data);
   }
-  return {data};
+  return { data };
 }
 
 router.post("/login", async (req, res) => {
@@ -162,9 +162,14 @@ router.get("/:vnId/vote", verifyRole("Admin"), async (req, res) => {
     const { vnId } = req.params;
     const users = await userModel.aggregate([
       { $match: { votedVnIdList: parseInt(vnId), isVerified: true } },
-      { $project: { _id: 0, avatarImage: 1, username: 1, email: 1 } },
+      { $project: { _id: 0, avatarImage: 1, username: 1, email: 1, boost: 1 } },
     ]);
-    res.send({ message: users });
+    res.send({
+      message: users.map((user) => {
+        if (!user.boost) return { ...user, boost: 1 };
+        return user;
+      }),
+    });
   } catch (error) {
     if (error) return res.status(400).send({ error: error.message });
     res.status(404).send({ error: "Something went wrong" });
@@ -208,12 +213,14 @@ router.delete("/:userId", verifyRole("Admin"), async (req, res) => {
 });
 
 router.put("/admin/edit", verifyRole("Admin"), async (req, res) => {
-  const { isFreeAds, isVerified, userId } = req.body;
+  const { isFreeAds, isVerified, userId, role, boost } = req.body;
   try {
     const user = await userModel.findOne({ userId });
     if (user) {
+      user.role = role;
       user.isFreeAds = isFreeAds;
       user.isVerified = isVerified;
+      user.boost = boost;
     }
     await user.save();
     return res.send({ message: "Success" });
@@ -316,6 +323,7 @@ async function updateAllBMC() {
           isVerified: 1,
           isFreeAds: 1,
           role: 1,
+          boost: 1,
         },
       },
       {
@@ -325,6 +333,8 @@ async function updateAllBMC() {
     getAllSupporters(),
     getAllSubscriptions(),
   ]);
+  console.log(JSON.stringify(members));
+
   let finalResult = [];
   if (supporters.data)
     finalResult = await Promise.all(
@@ -413,7 +423,12 @@ async function updateAllBMC() {
                   });
                 }
                 notification.title = "Thank you for your support";
-                notification.message = `Hi ${user.username}! Now you can freely download the patches on this website without ads as long as you are still a membership`;
+                notification.message = `Hi ${
+                  user.username
+                }! Now you can freely download the patches on this website without ads as long as you are still a membership and your votes is now boosted by x${parseInt(
+                  member.subscription_coffee_price
+                )}`;
+                userData.boost = parseInt(member.subscription_coffee_price);
                 await Promise.all([userData.save(), notification.save()]);
               }
               return {
@@ -422,10 +437,14 @@ async function updateAllBMC() {
                 cancelingMemberAt: member.subscription_current_period_end,
                 endFreeAdsDate: member.subscription_current_period_end,
                 isFreeAds: true,
+                boost: parseInt(member.subscription_coffee_price),
                 role: "Member",
               };
             }
-            if (user.isFreeAds !== false) {
+            if (
+              user.isFreeAds !== false ||
+              user.boost !== member.subscription_coffee_price
+            ) {
               const userData = await userModel.findOne({
                 userId: user.userId,
               });
@@ -438,6 +457,7 @@ async function updateAllBMC() {
               cancelingMemberAt: member.subscription_current_period_end,
               endFreeAdsDate: member.subscription_current_period_end,
               isFreeAds: false,
+              boost: 1,
               role: "User",
             };
           }

@@ -1,4 +1,11 @@
-import { catchError, delay, filter, mergeMapTo, pluck, tap } from "rxjs/operators";
+import {
+  catchError,
+  delay,
+  filter,
+  mergeMapTo,
+  pluck,
+  tap,
+} from "rxjs/operators";
 import { ajax } from "rxjs/ajax";
 import { useEffect } from "react";
 import { of, timer } from "rxjs";
@@ -38,7 +45,7 @@ export function useFetchApi<T>(
       .subscribe((v: any) => {
         if (v && !v.error) {
           if (isUpdatingCaches) updateCaches<T>(v as T[], type);
-          setState(v as T);
+          if (setState) setState(v as T);
         } else {
           if (handleError && typeof handleError === "function") handleError();
         }

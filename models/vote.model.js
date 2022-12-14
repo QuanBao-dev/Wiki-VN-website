@@ -17,6 +17,9 @@ const voteSchema = mongoose.Schema({
     type: Map,
     default: {},
   },
+  reason: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("vote", voteSchema);

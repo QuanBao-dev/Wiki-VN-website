@@ -1,0 +1,43 @@
+.chat-container{
+  width: 100%;
+}
+
+.chat-app-container{
+  position: relative;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-send-message{
+  padding: 1rem 1rem;
+  margin: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  box-shadow: 0 0 4px 1px rgba(141, 140, 140, 0.473);
+  margin-bottom: 1rem;
+  cursor: text;
+}
+
+.form-send-message input{
+  width: 96%;
+  height: 100%;
+  background-color: transparent;
+  border: 0;
+  color: black;
+  font-size: 1.2rem;
+  outline: none;
+}
+
+.form-send-message button{
+  background-color: transparent;
+  color: white;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.dark-mode .form-send-message input{
+  color: white;
+}

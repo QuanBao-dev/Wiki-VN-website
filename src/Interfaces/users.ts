@@ -9,5 +9,6 @@ export interface User{
   becomingMemberAt:string,
   cancelingMemberAt:string
   endFreeAdsDate:string,
-  role:string
+  role:string,
+  boost:number
 }
