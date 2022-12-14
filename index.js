@@ -62,15 +62,12 @@ io.use(async (socket, next) => {
 ////////Handle chat/////////////
 const chatTextModel = require("./models/chatText.model");
 io.on("connection", (socket) => {
-  socket.on("test", () => {
-    console.log("hello");
-  });
-  socket.on("user-join", (username) => {
-    socket.broadcast.emit("new-user-join", `${username} has joined group chat`);
-  });
-  socket.on("user-out", (username) => {
-    socket.broadcast.emit("new-user-out", `${username} has been left the chat`);
-  });
+  // socket.on("user-join", (username) => {
+  //   socket.broadcast.emit("new-user-join", `${username} has joined group chat`);
+  // });
+  // socket.on("user-out", (username) => {
+  //   socket.broadcast.emit("new-user-out", `${username} has been left the chat`);
+  // });
   socket.on("new-message", async (message, username, role, avatarImage) => {
     const { userId } = socket.request.user;
     if (!userId) {
@@ -82,7 +79,7 @@ io.on("connection", (socket) => {
       text: message,
     });
     await newMessage.save();
-    socket.broadcast.emit("new-message", message, username, role, avatarImage);
+    socket.broadcast.emit("send-message-other-users", message, username, role, avatarImage);
   });
 });
 

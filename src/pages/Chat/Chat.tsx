@@ -106,7 +106,7 @@ const Chat = () => {
       }px`;
     });
     socket.on(
-      "new-message",
+      "send-message-other-users",
       (
         message: string,
         username: string,
