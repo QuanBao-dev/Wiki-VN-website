@@ -93,9 +93,12 @@ const Chat = () => {
     }
     document.body.style.overflowY = "hidden";
     window.scroll({ top: 0 });
-    chatMessagesListRef.current.scroll({
-      top: chatStore.currentState().scrollTop,
-    });
+    setTimeout(() => {
+      console.log(chatStore.currentState().scrollTop);
+      chatMessagesListRef.current.scroll({
+        top: chatStore.currentState().scrollTop,
+      });
+    }, 10);
 
     chatContainerRef.current.style.height = `${
       window.innerHeight - chatContainerRef.current.getBoundingClientRect().y
@@ -131,6 +134,9 @@ const Chat = () => {
         tap(() => {
           chatStore.updateState({
             scrollTop: chatMessagesListRef.current.scrollTop,
+            ratio:
+              chatMessagesListRef.current.scrollHeight /
+              chatMessagesListRef.current.scrollTop,
           });
         }),
         filter(
