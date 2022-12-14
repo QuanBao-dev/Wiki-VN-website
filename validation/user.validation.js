@@ -22,7 +22,7 @@ const changeInfoAccountValidation = (data) => {
   const schema = Joi.object({
     email: Joi.string().min(6).email(),
     password: Joi.string().min(6),
-    username: Joi.string().min(1).required(),
+    username: Joi.string().min(1),
     avatarImage: Joi.string().min(6),
   });
   return schema.validate(data);
