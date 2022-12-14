@@ -37,27 +37,30 @@ const limiter = rateLimit({
   legacyHeaders: false,
 });
 const jwt = require("jsonwebtoken");
+const cookie = require("cookie");
 
 /////////////////////////////
 ///////Middleware////
-// io.use(async (socket, next) => {
-//   if (!socket.request.headers.cookie) return next(new Error("invalid"));
-//   const token = socket.request.headers.cookie
-//     .replace("token=s%3A", "")
-//     .split(".")
-//     .slice(0, 3)
-//     .join(".");
-//   try {
-//     const decode = jwt.verify(token, process.env.JWT_KEY);
-//     if (!["Member", "Admin"].includes(decode.role)) {
-//       return next(new Error("invalid"));
-//     }
-//     socket.request.user = decode;
-//     return next();
-//   } catch (error) {
-//     return next(new Error("invalid"));
-//   }
-// });
+io.use(async (socket, next) => {
+  if (!socket.request.headers.cookie) return next(new Error("invalid"));
+  const parsedCookies = cookie.parse(socket.request.headers.cookie);
+  const token = parsedCookies.token
+    .replace("s%3A", "")
+    .replace("s:", "")
+    .split(".")
+    .slice(0, 3)
+    .join(".");
+  try {
+    const decode = jwt.verify(token, process.env.JWT_KEY);
+    if (!["Member", "Admin"].includes(decode.role)) {
+      return next(new Error("invalid"));
+    }
+    socket.request.user = decode;
+    return next();
+  } catch (error) {
+    return next(new Error("invalid"));
+  }
+});
 
 ////////Handle chat/////////////
 const chatTextModel = require("./models/chatText.model");
@@ -69,22 +72,11 @@ io.on("connection", (socket) => {
   //   socket.broadcast.emit("new-user-out", `${username} has been left the chat`);
   // });
   socket.on("new-message", async (message, username, role, avatarImage) => {
-    const token = socket.request.headers.cookie
-      .replace("token=s%3A", "")
-      .split(".")
-      .slice(0, 3)
-      .join(".");
-    console.log(token);
-
-    const { userId } = await userModel
-      .findOne({ username })
-      .select({ _id: 0, userId: 1 })
-      .lean();
+    const { userId } = socket.request.user;
     if (!userId) {
       console.log("error");
       return;
     }
-
     const newMessage = new chatTextModel({
       userId,
       text: message,
@@ -125,7 +117,6 @@ const voteRoute = require("./routes/vote.route");
 const statsRoute = require("./routes/stat.route");
 const notificationRoute = require("./routes/notification.route");
 const chatRoute = require("./routes/chat.route");
-const userModel = require("./models/user.model");
 
 app.use("/api/vndb", vndbRoute);
 app.use("/api/patch", patchRoute);
