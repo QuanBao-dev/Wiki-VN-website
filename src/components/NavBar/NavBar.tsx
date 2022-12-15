@@ -186,6 +186,17 @@ const NavBar = () => {
             {!userState.isDarkMode && <span>🌜</span>}
             {userState.isDarkMode && <span>🌞</span>}
           </div>
+          {!isHide && (
+            <NavLink
+              className="right-side-link"
+              to="/About"
+              style={{
+                marginRight: "0.2rem",
+              }}
+            >
+              About
+            </NavLink>
+          )}
           {userState.role === "" && !isHide && (
             <NavLink className="right-side-link" to="/login">
               Login
@@ -229,6 +240,15 @@ const NavBar = () => {
                 <span>Buy SVN a Coffee</span>
                 <Donate />
               </a>
+              <NavLink
+                className="link-account-setting"
+                to="/About"
+                style={{
+                  marginRight: "0.2rem",
+                }}
+              >
+                About
+              </NavLink>
             </div>
           </div>
           {userState.role === "" && !isHide && (
@@ -271,6 +291,15 @@ const NavBar = () => {
                   <span style={{ whiteSpace: "nowrap" }}>Buy SVN a Coffee</span>
                   <Donate />
                 </a>
+                <NavLink
+                  className="right-side-link"
+                  to="/About"
+                  style={{
+                    marginRight: "0.2rem",
+                  }}
+                >
+                  About
+                </NavLink>
               </div>
             )}
           </div>

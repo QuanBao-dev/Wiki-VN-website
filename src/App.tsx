@@ -13,6 +13,7 @@ import { catchError, filter, interval, of, pluck, switchMap } from "rxjs";
 import { ajax } from "rxjs/ajax";
 import PopupNotification from "./components/PopupNotification/PopupNotification";
 import Chat from "./pages/Chat/Chat";
+import About from "./pages/About/About";
 
 const RandomVNList = React.lazy(
   () => import("./components/RandomVNList/RandomVNList")
@@ -342,6 +343,7 @@ function App() {
               }
             />
           )}
+          <Route path="/about" element={<About />}></Route>
         </Routes>
       </div>
     </BrowserRouter>
