@@ -44,12 +44,15 @@ const cookie = require("cookie");
 io.use(async (socket, next) => {
   if (!socket.request.headers.cookie) return next(new Error("invalid"));
   const parsedCookies = cookie.parse(socket.request.headers.cookie);
-  const token = parsedCookies.token
-    .replace("s%3A", "")
-    .replace("s:", "")
-    .split(".")
-    .slice(0, 3)
-    .join(".");
+  let token = parsedCookies.token;
+  if (token)
+    token
+      .replace("s%3A", "")
+      .replace("s:", "")
+      .split(".")
+      .slice(0, 3)
+      .join(".");
+  else return next(new Error("invalid"));
   try {
     const decode = jwt.verify(token, process.env.JWT_KEY);
     if (!["Member", "Admin"].includes(decode.role)) {
