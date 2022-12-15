@@ -46,7 +46,7 @@ io.use(async (socket, next) => {
   const parsedCookies = cookie.parse(socket.request.headers.cookie);
   let token = parsedCookies.token;
   if (token)
-    token
+    token = token
       .replace("s%3A", "")
       .replace("s:", "")
       .split(".")
