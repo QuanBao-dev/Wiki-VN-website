@@ -14,7 +14,7 @@ const About = () => {
         Basically, I collected multiple tools to extract the text files from
         game, then create translation text files by my programing skills with
         the help of Sugoi Model and then repack it into a patch. Shout out to
-        these people who provide me with all the necessary stuffs to translate:
+        these people who provide me with the necessary stuffs to translate:
         <ul>
           <li>
             MingShiba (Sugoi model). This is his{" "}
