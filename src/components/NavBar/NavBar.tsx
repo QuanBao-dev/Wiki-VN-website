@@ -186,7 +186,7 @@ const NavBar = () => {
             {!userState.isDarkMode && <span>🌜</span>}
             {userState.isDarkMode && <span>🌞</span>}
           </div>
-          {!isHide && (
+          {userState.role === "" && !isHide && (
             <NavLink
               className="right-side-link"
               to="/About"
