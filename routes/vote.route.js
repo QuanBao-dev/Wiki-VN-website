@@ -10,7 +10,9 @@ router.get("/", async (req, res) => {
   try {
     let votes = await voteModel.aggregate([
       { $match: { isTranslatable: true } },
-      { $sort: { votes: -1 } },
+      { $sort: { votes: -1, _id: 1 } },
+      { $skip: 10 * page },
+      { $limit: 10 },
       {
         $project: {
           vnId: 1,
@@ -20,8 +22,6 @@ router.get("/", async (req, res) => {
           _id: 0,
         },
       },
-      { $skip: 10 * page },
-      { $limit: 10 },
     ]);
     if (votes.length === 0) {
       return res.status(400).send({ error: "It has reached its last page" });
