@@ -2,25 +2,12 @@ import "./ChatMessagesList.css";
 
 import { ChatText } from "../../Interfaces/ChatText";
 import { userStore } from "../../store/user";
+import { parseDate } from "../../util/parseDate";
 
 interface Props {
   chatTexts: ChatText[];
   chatMessagesListRef: React.MutableRefObject<HTMLUListElement>;
 }
-const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
 
 const ChatMessagesList = ({ chatTexts, chatMessagesListRef }: Props) => {
   return (
@@ -31,7 +18,7 @@ const ChatMessagesList = ({ chatTexts, chatMessagesListRef }: Props) => {
             if (
               new Date(createdAt).getTime() -
                 new Date(chatTexts[key - 1].createdAt).getTime() <
-              3600000/4
+              3600000 / 4
             ) {
               return {
                 text,
@@ -59,14 +46,7 @@ const ChatMessagesList = ({ chatTexts, chatMessagesListRef }: Props) => {
           <li key={key}>
             {createdAt && (
               <div className="time-zone-message">
-                <span>
-                  {new Date(createdAt).getDate()}{" "}
-                  {months[new Date(createdAt).getMonth()]} ,{" "}
-                  {new Date(createdAt).getFullYear()} -{" "}
-                  {parseNumber(new Date(createdAt).getHours())}:
-                  {parseNumber(new Date(createdAt).getMinutes())}:
-                  {parseNumber(new Date(createdAt).getSeconds())}
-                </span>
+                <span>{parseDate(createdAt)}</span>
               </div>
             )}
             <div
@@ -96,9 +76,5 @@ const ChatMessagesList = ({ chatTexts, chatMessagesListRef }: Props) => {
     </ul>
   );
 };
-
-function parseNumber(number: number) {
-  return number < 10 ? "0" + number : number;
-}
 
 export default ChatMessagesList;

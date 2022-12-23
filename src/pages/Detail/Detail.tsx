@@ -410,7 +410,7 @@ const Detail = () => {
             ))}
           </fieldset>
         )}
-        {patch && patch.linkDownloads && (
+        {patch && patch.linkDownloads && patch.linkDownloads.length > 0 && (
           <fieldset className="release-container">
             {userStore.currentState().role === "Admin" && (
               <DeletePatch
@@ -436,6 +436,22 @@ const Detail = () => {
                 );
               })}
             </ul>
+          </fieldset>
+        )}
+        {patch && patch.linkDownloads && patch.linkDownloads.length > 0 && (
+          <fieldset>
+            <legend>Guide to apply the patch</legend>
+            <ol>
+              <li>Install the game. (if required)</li>
+              <li>Download the patch.</li>
+              <li>
+                Extract the patch. (if the patch is in .rar or .zip format)
+              </li>
+              <li>
+                Put all files into the game folder and overwrite the destination
+                to apply.
+              </li>
+            </ol>
           </fieldset>
         )}
         {detailState.id && isLoading === false && (
