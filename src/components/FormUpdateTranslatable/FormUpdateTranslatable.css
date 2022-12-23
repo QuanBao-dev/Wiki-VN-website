@@ -1,12 +1,56 @@
-.form-update-translatable{
+.form-update-translatable {
   padding: 1rem;
 }
 
-.form-update-translatable section{
+.form-update-translatable section {
   display: flex;
   justify-content: space-between;
 }
 
-.form-update-translatable label{
+.form-update-translatable label {
   font-weight: 600;
+}
+
+.list-options-container {
+  list-style-type: none;
+  margin: 0;
+}
+
+.list-options-container li label{
+  cursor: pointer;
+  margin: 3px 0;
+  font-size: 1rem;
+}
+
+.list-options-container li div {
+  display: flex;
+  align-items: center;
+}
+
+.list-options-container li span {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  display: inline-block;
+  border-radius: 50%;
+  background-color: white;
+  position: relative;
+  cursor: pointer;
+}
+
+.list-options-container li span::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background-color: red;
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  transition: 0.5s;
+}
+
+.list-options-container li span.active::before {
+  transform: translate(-50%, -50%) scale(1);
 }

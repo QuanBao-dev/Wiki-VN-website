@@ -1,6 +1,7 @@
 export interface VisualNovel {
   aliases: string;
   description: string;
+  reason?:string;
   id: number;
   image: string;
   image_flagging: ImageFlagging;

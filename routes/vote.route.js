@@ -51,7 +51,14 @@ router.get("/:vnId", async (req, res) => {
     const [vote, user, voters] = await Promise.all([
       voteModel
         .findOne({ vnId })
-        .select({ _id: 0, vnId: 1, isTranslatable: 1, dataVN: 1, votes: 1 })
+        .select({
+          _id: 0,
+          vnId: 1,
+          isTranslatable: 1,
+          dataVN: 1,
+          votes: 1,
+          reason: 1,
+        })
         .lean(),
       userModel
         .findOne({ userId: decode.userId })
@@ -90,7 +97,7 @@ router.get("/:vnId", async (req, res) => {
 });
 
 router.put("/:vnId/translatable", verifyRole("Admin"), async (req, res) => {
-  const { isTranslatable, dataVN } = req.body;
+  const { isTranslatable, dataVN, reason } = req.body;
   const { vnId } = req.params;
   try {
     let vote = await voteModel.findOne({ vnId });
@@ -102,6 +109,7 @@ router.put("/:vnId/translatable", verifyRole("Admin"), async (req, res) => {
       });
     }
     vote.isTranslatable = isTranslatable;
+    if (reason && reason.trim().length > 0) vote.reason = reason.trim();
     await vote.save();
     res.send({ message: "success" });
   } catch (error) {

@@ -19,6 +19,7 @@ const voteSchema = mongoose.Schema({
   },
   reason: {
     type: String,
+    default:"",
   },
 });
 
