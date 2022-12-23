@@ -10,5 +10,6 @@ export interface User{
   cancelingMemberAt:string
   endFreeAdsDate:string,
   role:string,
-  boost:number
+  boost:number,
+  votedVnIdList:number[]
 }

@@ -11,6 +11,7 @@ import { userStore } from "../../store/user";
 import ButtonEdit from "../../components/ButtonEdit/ButtonEdit";
 import { notificationStore } from "../../store/notification";
 import PopupNotificationForm from "../../components/PopupNotificationForm/PopupNotificationForm";
+import { Link } from "react-router-dom";
 
 const Admin = () => {
   const [userList, setUserList] = useState<User[]>([]);
@@ -110,6 +111,7 @@ const Admin = () => {
               <th>becomingMemberAt</th>
               <th>cancelingMemberAt</th>
               <th>endFreeAdsDate</th>
+              <th>votedVnIdList</th>
               <th>Delete</th>
               <th>Save</th>
               <th>Send Message</th>
@@ -131,6 +133,7 @@ const Admin = () => {
                   endFreeAdsDate,
                   role,
                   boost,
+                  votedVnIdList,
                 },
                 key
               ) => (
@@ -152,6 +155,7 @@ const Admin = () => {
                   email={email}
                   userList={userList}
                   setUserList={setUserList}
+                  votedVnIdList={votedVnIdList}
                 />
               )
             )}
@@ -176,9 +180,10 @@ interface RowTableProps {
   becomingMemberAt: string;
   cancelingMemberAt: string;
   userList: User[];
-  boost:number;
+  boost: number;
   setUserList: React.Dispatch<React.SetStateAction<User[]>>;
   index: number;
+  votedVnIdList: number[];
 }
 function RowTable({
   index,
@@ -197,6 +202,7 @@ function RowTable({
   setUserList,
   role,
   endFreeAdsDate,
+  votedVnIdList,
 }: RowTableProps) {
   const isVerifiedEditRef = useRef(document.createElement("input"));
   const roleRef = useRef(document.createElement("select"));
@@ -215,7 +221,7 @@ function RowTable({
         </select>
       </td>
       <td>
-      <select defaultValue={(boost || 1).toString()} ref={boostRef}>
+        <select defaultValue={(boost || 1).toString()} ref={boostRef}>
           <option value="1">1</option>
           <option value="10">10</option>
           <option value="20">20</option>
@@ -238,6 +244,18 @@ function RowTable({
       <td>{becomingMemberAt ? becomingMemberAt : "none"}</td>
       <td>{cancelingMemberAt ? cancelingMemberAt : "none"}</td>
       <td>{endFreeAdsDate ? endFreeAdsDate : "none"}</td>
+      <td
+        style={{
+          maxWidth: 100,
+        }}
+      >
+        {votedVnIdList.map((v, key) => (
+          <span key={key}>
+            <Link to={`/vns/${v}`}>{v}</Link>
+            {", "}
+          </span>
+        ))}
+      </td>
       <td>
         <ButtonDeleteUser
           userId={userId}

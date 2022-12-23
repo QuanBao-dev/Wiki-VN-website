@@ -324,6 +324,7 @@ async function updateAllBMC() {
           isFreeAds: 1,
           role: 1,
           boost: 1,
+          votedVnIdList: 1,
         },
       },
       {
