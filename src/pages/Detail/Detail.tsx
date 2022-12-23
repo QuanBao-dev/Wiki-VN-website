@@ -448,8 +448,8 @@ const Detail = () => {
                 Extract the patch. (if the patch is in .rar or .zip format)
               </li>
               <li>
-                Put all files into the game folder and overwrite the destination
-                to apply.
+                Put all files and folders into the game folder and overwrite the
+                destination to apply.
               </li>
             </ol>
           </fieldset>
