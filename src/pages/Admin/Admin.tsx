@@ -12,10 +12,15 @@ import ButtonEdit from "../../components/ButtonEdit/ButtonEdit";
 import { notificationStore } from "../../store/notification";
 import PopupNotificationForm from "../../components/PopupNotificationForm/PopupNotificationForm";
 import { Link } from "react-router-dom";
+import cachesStore from "../../store/caches";
 
 const Admin = () => {
-  const [userList, setUserList] = useState<User[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [userList, setUserList] = useState<User[]>(
+    cachesStore.currentState().caches.users
+      ? cachesStore.currentState().caches.users
+      : []
+  );
+  const [isLoading, setIsLoading] = useState(userList.length === 0);
   const [isSpin, setIsSpin] = useState(false);
   const updateButtonContainerRef = useRef(document.createElement("div"));
   useFetchApi(
@@ -24,10 +29,12 @@ const Admin = () => {
     "users",
     [],
     true,
-    true,
+    cachesStore.currentState().caches.users &&
+      cachesStore.currentState().caches.users.length === 0,
     setIsLoading,
     null
   );
+
   useEffect(() => {
     if (!updateButtonContainerRef.current) return;
     const subscription = fromEvent(updateButtonContainerRef.current, "click")
@@ -98,6 +105,7 @@ const Admin = () => {
           <thead>
             <tr>
               <th>STT</th>
+              <th>votedVnIdList</th>
               <th>userId</th>
               <th>Username</th>
               <th>Role</th>
@@ -111,7 +119,6 @@ const Admin = () => {
               <th>becomingMemberAt</th>
               <th>cancelingMemberAt</th>
               <th>endFreeAdsDate</th>
-              <th>votedVnIdList</th>
               <th>Delete</th>
               <th>Save</th>
               <th>Send Message</th>
@@ -210,6 +217,18 @@ function RowTable({
   return (
     <tr>
       <td>{index + 1}</td>
+      <td
+        style={{
+          maxWidth: 100,
+        }}
+      >
+        {votedVnIdList.map((v, key) => (
+          <span key={key}>
+            <Link to={`/vns/${v}`}>{v}</Link>
+            {", "}
+          </span>
+        ))}
+      </td>
       <td>{userId}</td>
       <td>{username}</td>
       <td>
@@ -244,18 +263,6 @@ function RowTable({
       <td>{becomingMemberAt ? becomingMemberAt : "none"}</td>
       <td>{cancelingMemberAt ? cancelingMemberAt : "none"}</td>
       <td>{endFreeAdsDate ? endFreeAdsDate : "none"}</td>
-      <td
-        style={{
-          maxWidth: 100,
-        }}
-      >
-        {votedVnIdList.map((v, key) => (
-          <span key={key}>
-            <Link to={`/vns/${v}`}>{v}</Link>
-            {", "}
-          </span>
-        ))}
-      </td>
       <td>
         <ButtonDeleteUser
           userId={userId}

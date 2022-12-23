@@ -18,7 +18,6 @@ const BMC = require("../utils");
 const notificationModel = require("../models/notification.model");
 
 router.post("/BMC/", async (req, res) => {
-  console.log(req.headers, req.body);
   try {
     await updateAllBMC();
     res.send({ message: "Success" });
