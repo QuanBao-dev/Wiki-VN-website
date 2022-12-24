@@ -135,7 +135,7 @@ const Votes = ({ vnId, dataVN }: Props) => {
     if (isHide) votesParagraphRef.current.style.display = "none";
     if (!isHide) votesParagraphRef.current.style.display = "block";
   }, [isHide]);
-  if (data && data.reason !== "" && data.isTranslatable === false)
+  if (data && data.reason && data.reason.trim() !== "" && !data.isTranslatable)
     return (
       <fieldset>
         <legend>Reason for not translating this game</legend>
