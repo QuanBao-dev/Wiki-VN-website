@@ -1,6 +1,6 @@
 export interface Voters {
   username: string;
-  email: string;
+  role: string;
   avatarImage?: string;
   boost: number;
 }

@@ -156,18 +156,39 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.get("/:vnId/vote", verifyRole("Admin"), async (req, res) => {
+router.get("/:vnId/vote", async (req, res) => {
   try {
     const { vnId } = req.params;
-    const users = await userModel.aggregate([
-      { $match: { votedVnIdList: parseInt(vnId), isVerified: true } },
-      { $project: { _id: 0, avatarImage: 1, username: 1, email: 1, boost: 1 } },
+    const page = req.query.page || 0;
+    const [users, [{ length }]] = await Promise.all([
+      userModel.aggregate([
+        { $match: { votedVnIdList: parseInt(vnId), isVerified: true } },
+        { $sort: { boost: -1, _id: 1 } },
+        { $skip: 10 * parseInt(page) },
+        { $limit: 10 },
+        {
+          $project: { _id: 0, avatarImage: 1, username: 1, role: 1, boost: 1 },
+        },
+      ]),
+      userModel.aggregate([
+        { $match: { votedVnIdList: parseInt(vnId), isVerified: true } },
+        {
+          $group: {
+            _id: null,
+            length: { $sum: 1 },
+          },
+        },
+        { $project: { _id: 0, length: 1 } },
+      ]),
     ]);
     res.send({
-      message: users.map((user) => {
-        if (!user.boost) return { ...user, boost: 1 };
-        return user;
-      }),
+      message: {
+        data: users.map((user) => {
+          if (!user.boost) return { ...user, boost: 1 };
+          return user;
+        }),
+        lastPage: length,
+      },
     });
   } catch (error) {
     if (error) return res.status(400).send({ error: error.message });
@@ -356,6 +377,7 @@ async function updateAllBMC() {
                   }),
                 ]);
                 userData.isFreeAds = true;
+                userData.role = "Supporter";
                 if (!notification) {
                   notification = new notificationModel({
                     userId: user.userId,
@@ -384,6 +406,7 @@ async function updateAllBMC() {
                 userId: user.userId,
               });
               userData.isFreeAds = false;
+              userData.role = "User";
               await userData.save();
             }
             return {
@@ -429,6 +452,7 @@ async function updateAllBMC() {
                   member.subscription_coffee_price
                 )}`;
                 userData.boost = parseInt(member.subscription_coffee_price);
+                userData.role = "Member";
                 await Promise.all([userData.save(), notification.save()]);
               }
               return {
@@ -449,6 +473,7 @@ async function updateAllBMC() {
                 userId: user.userId,
               });
               userData.isFreeAds = false;
+              userData.role = "User";
               await userData.save();
             }
             return {

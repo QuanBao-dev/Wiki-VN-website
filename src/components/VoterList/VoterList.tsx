@@ -11,12 +11,17 @@ const VoterList = ({ id }: Props) => {
   const [userList, setUserList] = useState<Voters[]>([]);
   const [homeState, setHomeState] = useState(homeStore.currentState());
   const [page, setPage] = useState(0);
-  useInitStore(homeStore,setHomeState);
+  const [lastPage, setLastPage] = useState(0);
+  useInitStore(homeStore, setHomeState);
   useFetchApi(
-    "/api/user/" + id + "/vote",
-    setUserList,
+    `/api/user/${id}/vote?page=${page}`,
+    (v: any) => {
+      const { data, lastPage } = v;
+      setUserList([...userList, ...data]);
+      setLastPage(lastPage);
+    },
     "userVotes",
-    [id, homeState],
+    [id, page, homeState],
     true,
     true,
     undefined
@@ -25,26 +30,39 @@ const VoterList = ({ id }: Props) => {
   return (
     <div className="voter-list-container">
       <fieldset>
-        <legend>Voters ({userList.length})</legend>
+        <legend>Voters ({lastPage})</legend>
         {userList && (
-          <div>
-            {userList
-              .slice(0, (page + 1) * 10)
-              .map(({ username, email, avatarImage, boost }) => (
-                <div key={username} className="container-voter-item">
-                  <span>
-                    {avatarImage && (
-                      <img src={avatarImage} alt="" width={"40px"} />
-                    )}
-                    <div>{username}</div>
-                  </span>
-                  <span>{email}</span>
-                  <span>x{boost}</span>
-                </div>
-              ))}
-          </div>
+          <table className="voter-list-wrapper">
+            <thead>
+              <tr className="container-voter-item">
+                <th>Avatar</th>
+                <th>username</th>
+                <th>role</th>
+                <th>boost</th>
+              </tr>
+            </thead>
+            <tbody>
+              {userList
+                .slice(0, (page + 1) * 10)
+                .map(({ username, role, avatarImage, boost }) => (
+                  <tr key={username} className="container-voter-item">
+                    <td>
+                      {avatarImage && (
+                        <img src={avatarImage} alt="" width={"40px"} />
+                      )}
+                      {!avatarImage && (
+                        <img src={"/avatar.webp"} alt="" width={"40px"} />
+                      )}
+                    </td>
+                    <td>{username}</td>
+                    <td>{role}</td>
+                    <td>x{boost}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
         )}
-        {(page + 1) * 10 < userList.length && (
+        {lastPage !== userList.length && (
           <button
             className="show-more-button"
             onClick={() => {

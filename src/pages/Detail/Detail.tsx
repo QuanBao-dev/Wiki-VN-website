@@ -13,6 +13,7 @@ import Votes from "../../components/Votes/Votes";
 import { userStore } from "../../store/user";
 import Popup from "../../components/Popup/Popup";
 import Gif from "../../components/Gif/Gif";
+import { useInitStore } from "../Hooks/useInitStore";
 
 const VoterList = React.lazy(
   () => import("../../components/VoterList/VoterList")
@@ -60,6 +61,7 @@ const Detail = () => {
   const imageZoomContainerRef = useRef(document.createElement("div"));
   const blackBackgroundRef = useRef(document.createElement("div"));
   const chosenImageRef = useRef(document.createElement("img"));
+  const [cachesState, setCachesState] = useState(cachesStore.currentState());
   const backupObj = useRef({ x: 0, y: 0, width: 0, height: 0 });
   const timeoutRef = useRef<any>();
   useEffect(() => {
@@ -68,6 +70,7 @@ const Detail = () => {
       document.title = "Sugoi Visual Novel | SVN";
     };
   }, [detailState]);
+  useInitStore(cachesStore, setCachesState);
   useEffect(() => {
     setDetailState(
       (cachesStore.currentState().caches.VNs
@@ -123,7 +126,7 @@ const Detail = () => {
         return ans;
       },
       {}
-    );    
+    );
   return (
     <div className="app-wrapper">
       <Popup
@@ -495,23 +498,25 @@ const Detail = () => {
             <FormUpdateTranslatable dataVN={detailState} />
           </Suspense>
         )}
-        {userStore.currentState().role === "Admin" && (
-          <Suspense
-            fallback={
-              <div>
-                <i
-                  className="fas fa-spinner fa-pulse fa-5x"
-                  style={{
-                    display: "inline-block",
-                    margin: "auto",
-                  }}
-                ></i>
-              </div>
-            }
-          >
-            <VoterList id={id} />
-          </Suspense>
-        )}
+        {(!patch.linkDownloads || patch.linkDownloads.length === 0) &&
+          cachesState.caches["patches"] &&
+          !cachesState.caches["patches"].reason && (
+            <Suspense
+              fallback={
+                <div>
+                  <i
+                    className="fas fa-spinner fa-pulse fa-5x"
+                    style={{
+                      display: "inline-block",
+                      margin: "auto",
+                    }}
+                  ></i>
+                </div>
+              }
+            >
+              <VoterList id={id} />
+            </Suspense>
+          )}
       </div>
     </div>
   );
