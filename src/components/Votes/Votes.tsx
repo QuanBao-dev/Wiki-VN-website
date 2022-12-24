@@ -135,6 +135,22 @@ const Votes = ({ vnId, dataVN }: Props) => {
     if (isHide) votesParagraphRef.current.style.display = "none";
     if (!isHide) votesParagraphRef.current.style.display = "block";
   }, [isHide]);
+  if (data && data.reason !== "" && data.isTranslatable === false)
+    return (
+      <fieldset>
+        <legend>Reason for not translating this game</legend>
+        <h3
+          style={{
+            color: "red",
+            padding: "1rem",
+            borderRadius: "10px",
+            textTransform: "uppercase",
+          }}
+        >
+          {data.reason}
+        </h3>
+      </fieldset>
+    );
   if (data.isTranslatable === false) return <div></div>;
   return (
     <fieldset className="votes-container">

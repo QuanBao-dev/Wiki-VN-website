@@ -109,7 +109,7 @@ router.put("/:vnId/translatable", verifyRole("Admin"), async (req, res) => {
       });
     }
     vote.isTranslatable = isTranslatable;
-    if (reason && reason.trim().length > 0) vote.reason = reason.trim();
+    vote.reason = reason.trim();
     await vote.save();
     res.send({ message: "success" });
   } catch (error) {

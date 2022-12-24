@@ -48,7 +48,7 @@ const FormUpdateTranslatable = ({ dataVN }: Props) => {
       subscription.unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataVN.id]);
+  }, [dataVN.id, indexActive]);
   return (
     <fieldset className="form-update-translatable">
       <legend>Form update vote</legend>

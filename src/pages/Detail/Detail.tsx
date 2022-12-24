@@ -454,21 +454,6 @@ const Detail = () => {
             </ol>
           </fieldset>
         )}
-        {detailState.reason && detailState.reason.trim() !== "" && (
-          <fieldset>
-            <legend>Reason for not translating this game</legend>
-            <h3
-              style={{
-                color: "red",
-                padding: "1rem",
-                borderRadius: "10px",
-                textTransform: "uppercase",
-              }}
-            >
-              {detailState.reason}
-            </h3>
-          </fieldset>
-        )}
         {detailState.id && isLoading === false && (
           <Votes vnId={detailState.id} dataVN={detailState} />
         )}
