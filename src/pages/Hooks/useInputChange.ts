@@ -1,5 +1,6 @@
+import { homeStore } from "./../../store/home";
 import { VisualNovel } from "./../../Interfaces/visualNovelList";
-import { pluck, tap, takeWhile, catchError } from "rxjs/operators";
+import { pluck, tap, catchError, filter } from "rxjs/operators";
 import { ajax } from "rxjs/ajax";
 import { useEffect } from "react";
 import { debounceTime, fromEvent, of, switchMap } from "rxjs";
@@ -15,11 +16,22 @@ export const useInputChange = (
       .pipe(
         debounceTime(500),
         pluck("target", "value"),
-        tap(() => {
-          setSuggestionList([]);
-          setIndexActive(null);
+        tap((v) => {
+          if (v !== homeStore.currentState().textSearch) {
+            setSuggestionList([]);
+            setIndexActive(null);
+          }
         }),
-        takeWhile((v) => (v as string).trim() !== ""),
+        filter(
+          (v) =>
+            (v as string).trim() !== "" &&
+            v !== homeStore.currentState().textSearch
+        ),
+        tap((v) => {
+          homeStore.updateState({
+            textSearch: v as string,
+          });
+        }),
         switchMap((value) =>
           ajax({
             url: url.replace("{text}", value as string),
@@ -31,7 +43,7 @@ export const useInputChange = (
       )
       .subscribe((res) => {
         if (res && !res.error) {
-          console.log(inputRef.current.value)
+          console.log(inputRef.current.value);
           if (inputRef.current.value === "") return;
           setSuggestionList(res as VisualNovel[]);
           updateCaches(res as any, "VNs");
