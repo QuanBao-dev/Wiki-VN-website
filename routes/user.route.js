@@ -428,7 +428,11 @@ async function updateAllBMC() {
           const member = members.data[i];
           if (member.payer_email === user.email) {
             if (!member.subscription_is_cancelled) {
-              if (user.isFreeAds !== true || user.role !== "Member") {
+              if (
+                user.isFreeAds !== true ||
+                user.role !== "Member" ||
+                user.boost !== parseInt(member.subscription_coffee_price)
+              ) {
                 let [userData, notification] = await Promise.all([
                   userModel.findOne({
                     userId: user.userId,
