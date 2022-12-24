@@ -157,4 +157,8 @@
   .right-side-link.account-detail{
     margin-left: 3px!important;
   }
+
+  .logo{
+    font-size: 1.7rem;
+  }
 }

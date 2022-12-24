@@ -25,6 +25,7 @@
 .list-options-container li div {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .list-options-container li span {
