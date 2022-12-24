@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
 const patchSchema = mongoose.Schema({
-  linkDownloads: {
-    type: [{ label: String, url: String, _id: false }],
-    require: true,
-  },
+  // linkDownloads: {
+  //   type: [{ label: String, url: String, _id: false }],
+  //   require: true,
+  // },
   originalLinkDownloads: {
     type: [{ label: String, url: String, _id: false }],
     require: true,
@@ -14,10 +14,6 @@ const patchSchema = mongoose.Schema({
     default: [],
   },
   shrinkEarnLinkDownloads: {
-    type: [{ label: String, url: String, _id: false }],
-    default: [],
-  },
-  adShrinkLinkDownloads: {
     type: [{ label: String, url: String, _id: false }],
     default: [],
   },
