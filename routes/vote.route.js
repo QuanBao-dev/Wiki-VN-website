@@ -42,7 +42,14 @@ router.get("/:vnId", async (req, res) => {
     if (!decode) {
       const vote = await voteModel
         .findOne({ vnId })
-        .select({ _id: 0, vnId: 1, isTranslatable: 1, dataVN: 1, votes: 1 })
+        .select({
+          _id: 0,
+          vnId: 1,
+          isTranslatable: 1,
+          dataVN: 1,
+          votes: 1,
+          reason: 1,
+        })
         .lean();
       return res.send({
         message: { ...vote, isIncreased: false },
