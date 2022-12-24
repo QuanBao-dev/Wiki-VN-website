@@ -123,7 +123,7 @@ const Detail = () => {
         return ans;
       },
       {}
-    );
+    );    
   return (
     <div className="app-wrapper">
       <Popup

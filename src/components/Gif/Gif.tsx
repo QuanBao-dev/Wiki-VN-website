@@ -13,7 +13,7 @@ const Gif = ({ screens, isNsfw = false }: Props) => {
     const filteredScreens = screens.filter(({ nsfw }) =>
       !isNsfw ? nsfw === isNsfw : true
     );
-    if(!filteredScreens[index]) setIndex(0);
+    if (!filteredScreens[index]) setIndex(0);
     const subscription = interval(1000)
       .pipe(takeWhile(() => filteredScreens.length - 1 !== 0))
       .subscribe(() => {
@@ -28,7 +28,11 @@ const Gif = ({ screens, isNsfw = false }: Props) => {
     !screens ||
     !screens.filter(({ nsfw }) => (!isNsfw ? nsfw === isNsfw : true))[index]
   )
-    return <div></div>;
+    return (
+      <div>
+        <img src="/nsfw-warning.webp" alt="" />
+      </div>
+    );
   return (
     <img
       src={

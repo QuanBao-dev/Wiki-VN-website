@@ -1,7 +1,7 @@
 const route = require("express").Router();
 const { verifyRole } = require("../middlewares/verifyRole");
 const Patch = require("../models/patch.model");
-const ouo = require("ouo.io")(process.env.OUO);
+// const ouo = require("ouo.io")(process.env.OUO);
 const fetch = require("node-fetch");
 const { verify } = require("jsonwebtoken");
 const userModel = require("../models/user.model");
@@ -179,13 +179,13 @@ route.delete("/:vnId", verifyRole("Admin"), async (req, res) => {
   }
 });
 
-function urlShortenerOuo(string) {
-  return new Promise((res, rej) => {
-    ouo.short(string, function (sUrl) {
-      res(sUrl);
-    });
-  });
-}
+// function urlShortenerOuo(string) {
+//   return new Promise((res, rej) => {
+//     ouo.short(string, function (sUrl) {
+//       res(sUrl);
+//     });
+//   });
+// }
 
 async function urlShortenerShrinkme(string) {
   const data = await fetch(
