@@ -51,6 +51,9 @@ export const useInputChange = (
       });
     return () => {
       subscription.unsubscribe();
+      homeStore.updateState({
+        textSearch: "",
+      });
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
