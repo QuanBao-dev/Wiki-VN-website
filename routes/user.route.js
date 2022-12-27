@@ -188,6 +188,7 @@ router.get("/:vnId/vote", async (req, res) => {
           return user;
         }),
         lastPage: length,
+        isNew: parseInt(page) === 0
       },
     });
   } catch (error) {

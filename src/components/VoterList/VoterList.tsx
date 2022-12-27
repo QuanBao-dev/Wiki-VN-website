@@ -16,15 +16,22 @@ const VoterList = ({ id }: Props) => {
   useFetchApi(
     `/api/user/${id}/vote?page=${page}`,
     (v: any) => {
-      const { data, lastPage } = v;
-      setUserList([...userList, ...data]);
+      const { data, lastPage, isNew } = v;
+      if (!isNew) {
+        setUserList([...userList, ...data]);
+      } else {
+        setUserList(data);
+      }
       setLastPage(lastPage);
     },
     "userVotes",
     [id, page, homeState],
     true,
     true,
-    undefined
+    undefined,
+    () => {
+      setUserList([]);
+    }
   );
   if (userList.length === 0) return <div></div>;
   return (
