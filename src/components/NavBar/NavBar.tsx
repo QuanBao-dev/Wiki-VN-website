@@ -233,7 +233,7 @@ const NavBar = () => {
               <div ref={logoutButtonRef}>Logout</div>
               <a
                 className="link-account-setting"
-                href={"https://www.buymeacoffee.com/SugoiVN"}
+                href={"https://ko-fi.com/sugoivn"}
                 target={"_blank"}
                 rel="noreferrer"
               >
@@ -259,7 +259,7 @@ const NavBar = () => {
           {userState.role === "" && !isHide && (
             <a
               className="link-account-setting right-side-link"
-              href={"https://www.buymeacoffee.com/SugoiVN"}
+              href={"https://ko-fi.com/sugoivn"}
               target={"_blank"}
               rel="noreferrer"
             >
@@ -284,7 +284,7 @@ const NavBar = () => {
                 </NavLink>
                 <a
                   className="link-account-setting right-side-link"
-                  href={"https://www.buymeacoffee.com/SugoiVN"}
+                  href={"https://ko-fi.com/sugoivn"}
                   target={"_blank"}
                   rel="noreferrer"
                 >

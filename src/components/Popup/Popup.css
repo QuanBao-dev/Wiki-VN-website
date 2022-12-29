@@ -1,4 +1,4 @@
-.popup-container{
+.popup-container {
   position: fixed;
   top: 0;
   left: 0;
@@ -9,22 +9,23 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  overflow:auto
+  overflow: auto;
 }
 
-.popup-title{
+.popup-title {
   margin-bottom: 1rem;
   font-family: "Roboto", sans-serif;
 }
 
-.popup-description{
+.popup-description {
   font-size: 1.2rem;
   font-family: "Roboto", sans-serif;
   line-height: 2rem;
   margin-top: 0.5rem;
 }
 
-.popup-wrapper{
+.popup-wrapper {
+  overflow: auto;
   background-color: white;
   box-shadow: 0 0 5px 1px rgb(130, 130, 130);
   padding: 1rem 2rem;
@@ -35,43 +36,52 @@
   align-items: center;
 }
 
-.popup-buttons{
+.popup-buttons {
   display: flex;
-  flex: 0 1 auto;
   width: 100%;
+  height: 50px;
   justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .popup-buttons a{
-  width: 49%;
+  height: 100%;
+  margin: 5px 4px;
+  flex: 1 1 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 0;
-  margin-top: 1rem;
+}
+
+.popup-buttons .button-link-download {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-transform: uppercase;
   font-weight: 600;
+  padding: 0 1.7rem;
   border-radius: 5px;
 }
 
-.button-link-donate{
-  color: black!important;
+.button-link-donate {
+  color: black !important;
   background-color: rgb(255, 255, 255);
   box-shadow: 0 0 5px 1px rgb(167, 167, 167);
 }
 
-.button-link-download{
-  color: white!important;
-  background-color: purple; 
+.button-link-download {
+  color: white !important;
+  background-color: purple;
   box-shadow: 0 0 5px 1px rgb(167, 167, 167);
 }
 
-.app-container.dark-mode .popup-wrapper{
+.app-container.dark-mode .popup-wrapper {
   background-color: rgb(39, 42, 85);
 }
 
-@media (max-width:448px) {
-  .popup-buttons span{
-    font-size: 0.8rem;
+@media (max-width: 448px) {
+  .popup-buttons a {
+    font-size: 1rem;
   }
 }

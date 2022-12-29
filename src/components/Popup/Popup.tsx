@@ -1,6 +1,10 @@
-import { useEffect } from "react";
-import Donate from "../Donate/Donate";
 import "./Popup.css";
+
+import { useEffect, useRef } from "react";
+
+import Donate from "../Donate/Donate";
+import { fromEvent } from "rxjs";
+
 interface Props {
   title: string;
   description: string;
@@ -9,12 +13,36 @@ interface Props {
   setIsHide: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const Popup = ({ title, description, url, isHide, setIsHide }: Props) => {
+  const popupWrapperRef = useRef(document.createElement("div"));
   useEffect(() => {
     if (!isHide) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "auto";
     }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isHide]);
+  useEffect(() => {
+    if (
+      window.innerHeight <
+      popupWrapperRef.current.getBoundingClientRect().height
+    ) {
+      popupWrapperRef.current.style.height = `${window.innerHeight}px`;
+    }
+
+    const subscription = fromEvent(window, "resize").subscribe(() => {
+      if (
+        window.innerHeight <
+        popupWrapperRef.current.getBoundingClientRect().height
+      ) {
+        popupWrapperRef.current.style.height = `${window.innerHeight}px`;
+      }
+    });
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [isHide]);
   return (
     <div
@@ -23,24 +51,40 @@ const Popup = ({ title, description, url, isHide, setIsHide }: Props) => {
         display: isHide ? "none" : "flex",
       }}
       onClick={(e) => {
-        const target = e.target as any
-        if(target.className === "popup-container"){
+        const target = e.target as any;
+        if (target.className === "popup-container") {
           setIsHide(true);
         }
       }}
     >
-      <div className="popup-wrapper">
+      <div className="popup-wrapper" ref={popupWrapperRef}>
         <h1 className="popup-title">{title}</h1>
         <p className="popup-description">{description}</p>
         <div className="popup-buttons">
           <a
-            className="button-link-donate"
+            className="bmc-btn"
             href={"https://www.buymeacoffee.com/SugoiVN"}
             target={"_blank"}
             rel="noreferrer"
           >
-            <span>Buy me a Coffee</span>
             <Donate />
+            <span className="bmc-btn-text">Buy me a Coffee</span>
+          </a>
+          <a
+            title="Support me on ko-fi"
+            className="kofi-button"
+            target="_blank"
+            href={"https://ko-fi.com/sugoivn"}
+            rel="noreferrer"
+          >
+            <span className="kofitext">
+              <img
+                src="https://storage.ko-fi.com/cdn/cup-border.png"
+                alt="Ko-fi donations"
+                className="kofiimg"
+              />
+              Buy me a Ko-fi
+            </span>
           </a>
           <a
             className="button-link-download"
@@ -49,7 +93,7 @@ const Popup = ({ title, description, url, isHide, setIsHide }: Props) => {
             rel="noreferrer"
             onClick={(e) => {
               setIsHide(true);
-            }}      
+            }}
           >
             <span>Continue</span>
           </a>

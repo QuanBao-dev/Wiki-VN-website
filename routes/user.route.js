@@ -16,7 +16,7 @@ const loginTokenModel = require("../models/loginToken.model");
 const isValidEmail = require("../utils/isValidEmail");
 const BMC = require("../utils");
 const notificationModel = require("../models/notification.model");
-// const BMCModel = require("../models/BMC.model");
+const coffeeModel = require("../models/coffee.model");
 
 router.post("/BMC/", async (req, res) => {
   try {
@@ -24,6 +24,42 @@ router.post("/BMC/", async (req, res) => {
     res.send({ message: "Success" });
   } catch (error) {
     if (error) return res.status(400).send({ error });
+    res.status(404).send({ error: "Something went wrong" });
+  }
+});
+
+router.post("/kofi/", async (req, res) => {
+  let data = req.body;
+  console.log(data);
+  if (data.data) {
+    data = data.data;
+  }
+  try {
+    if (data.verification_token !== process.env.SUGOIKOFITOKEN) {
+      return res.status(401).send({ error: "Access Denied" });
+    }
+    let coffee = await coffeeModel.findOne({ email: data.email });
+    if (coffee) {
+      coffee = new coffeeModel({
+        email: data.email,
+        type: data.type,
+        fromName: data.from_name,
+      });
+    }
+    coffee.email = data.email;
+    coffee.type = "Donation";
+    coffee.fromName = data.from_name;
+    if (data.type === "Subscription") {
+      coffee.becomingMemberAt = data.timestamp;
+    } else {
+      coffee.becomingSupporterAt = data.timestamp;
+    }
+    coffee.url = data.url;
+    await coffee.save();
+    await updateAllBMC();
+    res.send({ message: "Success" });
+  } catch (error) {
+    if (error) return res.status(400).send({ error: error.message });
     res.status(404).send({ error: "Something went wrong" });
   }
 });
@@ -333,7 +369,7 @@ router.put(
 );
 
 async function updateAllBMC() {
-  const [users, supporters, members] = await Promise.all([
+  let [users, supporters, members, peopleFromKofi] = await Promise.all([
     userModel.aggregate([
       {
         $project: {
@@ -355,66 +391,19 @@ async function updateAllBMC() {
     ]),
     getAllSupporters(),
     getAllSubscriptions(),
+    coffeeModel.find({}).lean(),
   ]);
-  // for (let i = 0; i < supporters.data.length; i++) {
-  //   const supporter = supporters.data[i];
-  //   let supporterKofi = await BMCModel.findOne({
-  //     email: supporter.payer_email,
-  //   });
-  //   if (!supporterKofi) {
-  //     supporterKofi = new BMCModel({
-  //       email: supporter.payer_email,
-  //       type: "Donation",
-  //       fromName: supporter.payer_name,
-  //       becomingSupporterAt: supporter.support_created_on,
-  //     });
-  //   }
-  //   supporterKofi.email = supporter.payer_email;
-  //   supporterKofi.type = "Donation";
-  //   supporterKofi.fromName = supporter.payer_name;
-  //   supporterKofi.becomingSupporterAt = supporter.support_created_on;
-  //   await supporterKofi.save();
-  // }
-  // for (let i = 0; i < members.data.length; i++) {
-  //   const member = members.data[i];
-  //   let memberKofi = await BMCModel.findOne({
-  //     email: member.payer_email,
-  //   });
-  //   if (!memberKofi) {
-  //     memberKofi = new BMCModel({
-  //       email: member.payer_email,
-  //       type: "Subscription",
-  //       fromName: member.payer_name,
-  //       becomingMemberAt: member.subscription_current_period_start,
-  //       tierName:
-  //         parseInt(member.subscription_coffee_price) === 50
-  //           ? "Platinum Level"
-  //           : parseInt(member.subscription_coffee_price) === 25
-  //           ? "Gold Level"
-  //           : parseInt(member.subscription_coffee_price) === 20
-  //           ? "Silver Level"
-  //           : parseInt(member.subscription_coffee_price) === 10
-  //           ? "Bronze Level"
-  //           : "",
-  //     });
-  //   }
-  //   memberKofi.email = member.payer_email;
-  //   memberKofi.type = "Subscription";
-  //   memberKofi.fromName = member.payer_name;
-  //   memberKofi.becomingMemberAt = member.subscription_current_period_start;
-  //   memberKofi.tierName =
-  //     parseInt(member.subscription_coffee_price) === 50
-  //       ? "Platinum Level"
-  //       : parseInt(member.subscription_coffee_price) === 25
-  //       ? "Gold Level"
-  //       : parseInt(member.subscription_coffee_price) === 20
-  //       ? "Silver Level"
-  //       : parseInt(member.subscription_coffee_price) === 10
-  //       ? "Bronze Level"
-  //       : "";
-
-  //   await memberKofi.save();
-  // }
+  let temp = supporters.data.map((v) => ({ [v.payer_email]: v }));
+  peopleFromKofi.forEach((people) => {
+    temp[people.email] = {
+      payer_email: people.email,
+    };
+    if (people.type === "Donation") {
+      if (people.becomingSupporterAt)
+        temp[people.email].support_created_on = people.becomingSupporterAt;
+    }
+  });
+  supporters.data = temp.map((v) => Object.values(v)[0]);
   let finalResult = [];
   if (supporters.data)
     finalResult = await Promise.all(
@@ -426,7 +415,7 @@ async function updateAllBMC() {
               new Date(supporter.support_created_on).getTime() +
               3600 * 1000 * 24 * 31;
             if (Date.now() - endFreeAdsDate < 0) {
-              if (user.isFreeAds !== true) {
+              if (user.role !== "Supporter") {
                 let [userData, notification] = await Promise.all([
                   userModel.findOne({
                     userId: user.userId,
@@ -454,7 +443,7 @@ async function updateAllBMC() {
               }
               return {
                 ...user,
-                becomingSupporterAt: supporter.support_created,
+                becomingSupporterAt: supporter.support_created_on,
                 endFreeAdsDate: new Date(endFreeAdsDate).toUTCString(),
                 isFreeAds: true,
                 role: "Supporter",
@@ -480,6 +469,24 @@ async function updateAllBMC() {
         return user;
       })
     );
+  let temp2 = members.data.map((v) => ({ [v.payer_email]: v }));
+  peopleFromKofi.forEach((people) => {
+    temp2[people.email] = {
+      payer_email: people.email,
+    };
+    if (people.type === "Subscription") {
+      if (people.becomingMemberAt) {
+        members.subscription_current_period_start = people.becomingMemberAt;
+        const endFreeAdsDate =
+          new Date(members.subscription_current_period_start).getTime() +
+          3600 * 1000 * 24 * 31;
+        temp2[people.email].subscription_is_cancelled =
+          Date.now() - endFreeAdsDate > 0;
+      }
+      temp2[people.email].subscription_coffee_price = people.amount;
+    }
+  });
+  members.data = temp2.map((v) => Object.values(v)[0]);
   if (members.data)
     finalResult = await Promise.all(
       finalResult.map(async (user) => {
