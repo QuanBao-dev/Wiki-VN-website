@@ -16,6 +16,7 @@ const loginTokenModel = require("../models/loginToken.model");
 const isValidEmail = require("../utils/isValidEmail");
 const BMC = require("../utils");
 const notificationModel = require("../models/notification.model");
+// const BMCModel = require("../models/BMC.model");
 
 router.post("/BMC/", async (req, res) => {
   try {
@@ -188,7 +189,7 @@ router.get("/:vnId/vote", async (req, res) => {
           return user;
         }),
         lastPage: length,
-        isNew: parseInt(page) === 0
+        isNew: parseInt(page) === 0,
       },
     });
   } catch (error) {
@@ -355,8 +356,65 @@ async function updateAllBMC() {
     getAllSupporters(),
     getAllSubscriptions(),
   ]);
-  console.log(JSON.stringify(members));
+  // for (let i = 0; i < supporters.data.length; i++) {
+  //   const supporter = supporters.data[i];
+  //   let supporterKofi = await BMCModel.findOne({
+  //     email: supporter.payer_email,
+  //   });
+  //   if (!supporterKofi) {
+  //     supporterKofi = new BMCModel({
+  //       email: supporter.payer_email,
+  //       type: "Donation",
+  //       fromName: supporter.payer_name,
+  //       becomingSupporterAt: supporter.support_created_on,
+  //     });
+  //   }
+  //   supporterKofi.email = supporter.payer_email;
+  //   supporterKofi.type = "Donation";
+  //   supporterKofi.fromName = supporter.payer_name;
+  //   supporterKofi.becomingSupporterAt = supporter.support_created_on;
+  //   await supporterKofi.save();
+  // }
+  // for (let i = 0; i < members.data.length; i++) {
+  //   const member = members.data[i];
+  //   let memberKofi = await BMCModel.findOne({
+  //     email: member.payer_email,
+  //   });
+  //   if (!memberKofi) {
+  //     memberKofi = new BMCModel({
+  //       email: member.payer_email,
+  //       type: "Subscription",
+  //       fromName: member.payer_name,
+  //       becomingMemberAt: member.subscription_current_period_start,
+  //       tierName:
+  //         parseInt(member.subscription_coffee_price) === 50
+  //           ? "Platinum Level"
+  //           : parseInt(member.subscription_coffee_price) === 25
+  //           ? "Gold Level"
+  //           : parseInt(member.subscription_coffee_price) === 20
+  //           ? "Silver Level"
+  //           : parseInt(member.subscription_coffee_price) === 10
+  //           ? "Bronze Level"
+  //           : "",
+  //     });
+  //   }
+  //   memberKofi.email = member.payer_email;
+  //   memberKofi.type = "Subscription";
+  //   memberKofi.fromName = member.payer_name;
+  //   memberKofi.becomingMemberAt = member.subscription_current_period_start;
+  //   memberKofi.tierName =
+  //     parseInt(member.subscription_coffee_price) === 50
+  //       ? "Platinum Level"
+  //       : parseInt(member.subscription_coffee_price) === 25
+  //       ? "Gold Level"
+  //       : parseInt(member.subscription_coffee_price) === 20
+  //       ? "Silver Level"
+  //       : parseInt(member.subscription_coffee_price) === 10
+  //       ? "Bronze Level"
+  //       : "";
 
+  //   await memberKofi.save();
+  // }
   let finalResult = [];
   if (supporters.data)
     finalResult = await Promise.all(
@@ -365,9 +423,9 @@ async function updateAllBMC() {
           const supporter = supporters.data[i];
           if (supporter.payer_email === user.email) {
             const endFreeAdsDate =
-              new Date(supporter.support_updated_on).getTime() +
+              new Date(supporter.support_created_on).getTime() +
               3600 * 1000 * 24 * 31;
-            if ((Date.now() - endFreeAdsDate) / (3600 * 1000 * 24 * 31) <= 1) {
+            if (Date.now() - endFreeAdsDate < 0) {
               if (user.isFreeAds !== true) {
                 let [userData, notification] = await Promise.all([
                   userModel.findOne({
@@ -396,7 +454,7 @@ async function updateAllBMC() {
               }
               return {
                 ...user,
-                becomingSupporterAt: supporter.support_updated_on,
+                becomingSupporterAt: supporter.support_created,
                 endFreeAdsDate: new Date(endFreeAdsDate).toUTCString(),
                 isFreeAds: true,
                 role: "Supporter",
@@ -412,7 +470,7 @@ async function updateAllBMC() {
             }
             return {
               ...user,
-              becomingSupporterAt: supporter.support_updated_on,
+              becomingSupporterAt: supporter.support_created_on,
               isFreeAds: false,
               endFreeAdsDate: new Date(endFreeAdsDate).toUTCString(),
               role: "User",
