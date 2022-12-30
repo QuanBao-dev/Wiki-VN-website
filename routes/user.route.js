@@ -395,6 +395,7 @@ async function updateAllBMC() {
   ]);
   let temp = supporters.data.map((v) => ({ [v.payer_email]: v }));
   peopleFromKofi.forEach((people) => {
+    if(!temp[people.email]) temp[people.email] = {};
     temp[people.email].payer_email = people.email;
     if (people.type === "Donation") {
       if (people.becomingSupporterAt) {
@@ -483,6 +484,7 @@ async function updateAllBMC() {
     );
   let temp2 = members.data.map((v) => ({ [v.payer_email]: v }));
   peopleFromKofi.forEach((people) => {
+    if(!temp2[people.email]) temp2[people.email] = {};
     temp2[people.email].payer_email = people.email;
     if (people.type === "Subscription") {
       if (people.becomingMemberAt) {
