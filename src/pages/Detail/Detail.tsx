@@ -132,7 +132,7 @@ const Detail = () => {
       <Popup
         title={"Thank you!"}
         description={
-          "If you like these free translation patches on this website and want to say thanks, or encourage me to do more, you can consider buying me a coffee/ko-fi! After becoming a supporter, you can freely access the content on this website without ads for 1 month since the last day you supported a coffee/ko-fi. (NOTE: Please make sure you used the same email as the one you used on this website when buying me a coffee so I can identify the right person to give the privilege)"
+          "If you like these free translation patches on this website and want to say thanks, or encourage me to do more, you can consider buying me a coffee/ko-fi! After becoming a supporter, you can freely access the content on this website without ads for 1 month since the last day you supported a coffee. (NOTE: Please make sure you used the same email as the one you used on this website when buying me a coffee so I can identify the right person to give the privilege)"
         }
         url={url}
         isHide={isHide}
@@ -380,7 +380,7 @@ const Detail = () => {
         )}
         {patch.affiliateLinks && patch.affiliateLinks.length > 0 && (
           <fieldset>
-            <legend>Shop(Support the dev)</legend>
+            <legend>Shop</legend>
             {patch.affiliateLinks.map((data, key) => (
               <a
                 key={key}
