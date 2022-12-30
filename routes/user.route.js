@@ -395,15 +395,27 @@ async function updateAllBMC() {
   ]);
   let temp = supporters.data.map((v) => ({ [v.payer_email]: v }));
   peopleFromKofi.forEach((people) => {
-    temp[people.email] = {
-      payer_email: people.email,
-    };
+    temp[people.email].payer_email = people.email;
     if (people.type === "Donation") {
-      if (people.becomingSupporterAt)
-        temp[people.email].support_created_on = people.becomingSupporterAt;
+      if (people.becomingSupporterAt) {
+        if (!temp[people.email].support_created_on) {
+          temp[people.email].support_created_on = people.becomingSupporterAt;
+        } else {
+          const supportCreatedOn = new Date(
+            temp[people.email].support_created_on
+          ).getTime();
+          const becomingSupporterAt = new Date(
+            people.becomingSupporterAt
+          ).getTime();
+          if (supportCreatedOn < becomingSupporterAt) {
+            temp[people.email].support_created_on = people.becomingSupporterAt;
+          }
+        }
+      }
     }
   });
   supporters.data = temp.map((v) => Object.values(v)[0]);
+  // console.log(temp.map((v) => Object.values(v)[0]))
   let finalResult = [];
   if (supporters.data)
     finalResult = await Promise.all(
@@ -471,14 +483,26 @@ async function updateAllBMC() {
     );
   let temp2 = members.data.map((v) => ({ [v.payer_email]: v }));
   peopleFromKofi.forEach((people) => {
-    temp2[people.email] = {
-      payer_email: people.email,
-    };
+    temp2[people.email].payer_email = people.email;
     if (people.type === "Subscription") {
       if (people.becomingMemberAt) {
-        members.subscription_current_period_start = people.becomingMemberAt;
+        if (!temp2[people.email].subscription_current_period_start) {
+          temp2[people.email].subscription_current_period_start =
+            people.becomingMemberAt;
+        } else {
+          const subscriptionCurrentPeriodStart = new Date(
+            temp2[people.email].subscription_current_period_start
+          ).getTime();
+          const becomingMemberAt = new Date(people.becomingMemberAt).getTime();
+          if (subscriptionCurrentPeriodStart < becomingMemberAt) {
+            temp2[people.email].subscription_current_period_start =
+              people.becomingMemberAt;
+          }
+        }
         const endFreeAdsDate =
-          new Date(members.subscription_current_period_start).getTime() +
+          new Date(
+            temp2[people.email].subscription_current_period_start
+          ).getTime() +
           3600 * 1000 * 24 * 31;
         temp2[people.email].subscription_is_cancelled =
           Date.now() - endFreeAdsDate > 0;
@@ -487,6 +511,7 @@ async function updateAllBMC() {
     }
   });
   members.data = temp2.map((v) => Object.values(v)[0]);
+  // console.log(temp2.map((v) => Object.values(v)[0]));
   if (members.data)
     finalResult = await Promise.all(
       finalResult.map(async (user) => {
