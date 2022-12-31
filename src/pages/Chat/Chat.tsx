@@ -94,7 +94,6 @@ const Chat = () => {
     document.body.style.overflowY = "hidden";
     window.scroll({ top: 0 });
     setTimeout(() => {
-      console.log(chatStore.currentState().scrollTop);
       chatMessagesListRef.current.scroll({
         top: chatStore.currentState().scrollTop,
       });

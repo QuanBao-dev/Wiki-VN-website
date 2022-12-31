@@ -3,3 +3,7 @@
   margin-left: 0.2rem;
   border-radius: 20px;
 }
+
+svg{
+  min-width: 20px;
+}
