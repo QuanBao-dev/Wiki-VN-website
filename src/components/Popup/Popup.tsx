@@ -2,7 +2,7 @@ import "./Popup.css";
 
 import { useEffect, useRef } from "react";
 
-import Donate from "../Donate/Donate";
+// import Donate from "../Donate/Donate";
 import { fromEvent } from "rxjs";
 
 interface Props {
