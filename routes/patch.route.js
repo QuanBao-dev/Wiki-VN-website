@@ -130,7 +130,7 @@ route.post("/", verifyRole("Admin"), async (req, res) => {
           dataVN,
         });
       }
-      if (newPatch.linkDownloads) {
+      if (newPatch.shrinkMeLinkDownloads) {
         if (!isAddingNewPatch) {
           // newPatch.linkDownloads = [ouoLinkDownload];
           newPatch.originalLinkDownloads = [linkDownload];
