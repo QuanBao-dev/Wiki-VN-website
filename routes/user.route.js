@@ -29,11 +29,8 @@ router.post("/BMC/", async (req, res) => {
 });
 
 router.post("/kofi/", async (req, res) => {
-  let data = req.body;
+  let data = JSON.parse(req.body.data);
   console.log(data);
-  if (data.data) {
-    data = data.data;
-  }
   try {
     if (data.verification_token !== process.env.SUGOIKOFITOKEN) {
       return res.status(401).send({ error: "Access Denied" });
@@ -393,11 +390,14 @@ async function updateAllBMC() {
     getAllSubscriptions(),
     coffeeModel.find({}).lean(),
   ]);
-  let temp = supporters.data.map((v) => ({ [v.payer_email]: v }));
+  let temp = supporters.data.reduce((ans, v) => {
+    ans[v.payer_email] = v;
+    return ans;
+  }, {});
   peopleFromKofi.forEach((people) => {
-    if(!temp[people.email]) temp[people.email] = {};
-    temp[people.email].payer_email = people.email;
     if (people.type === "Donation") {
+      if (!temp[people.email]) temp[people.email] = {};
+      temp[people.email].payer_email = people.email;
       if (people.becomingSupporterAt) {
         if (!temp[people.email].support_created_on) {
           temp[people.email].support_created_on = people.becomingSupporterAt;
@@ -415,8 +415,7 @@ async function updateAllBMC() {
       }
     }
   });
-  supporters.data = temp.map((v) => Object.values(v)[0]);
-  // console.log(temp.map((v) => Object.values(v)[0]))
+  supporters.data = Object.values(temp);
   let finalResult = [];
   if (supporters.data)
     finalResult = await Promise.all(
@@ -482,11 +481,14 @@ async function updateAllBMC() {
         return user;
       })
     );
-  let temp2 = members.data.map((v) => ({ [v.payer_email]: v }));
+  let temp2 = members.data.reduce((ans, v) => {
+    ans[v.payer_email] = v;
+    return ans;
+  }, {});
   peopleFromKofi.forEach((people) => {
-    if(!temp2[people.email]) temp2[people.email] = {};
-    temp2[people.email].payer_email = people.email;
     if (people.type === "Subscription") {
+      if (!temp2[people.email]) temp2[people.email] = {};
+      temp2[people.email].payer_email = people.email;
       if (people.becomingMemberAt) {
         if (!temp2[people.email].subscription_current_period_start) {
           temp2[people.email].subscription_current_period_start =
@@ -512,7 +514,8 @@ async function updateAllBMC() {
       temp2[people.email].subscription_coffee_price = people.amount;
     }
   });
-  members.data = temp2.map((v) => Object.values(v)[0]);
+  members.data = Object.values(temp2);
+  // console.log(Object.values(temp2));
   // console.log(temp2.map((v) => Object.values(v)[0]));
   if (members.data)
     finalResult = await Promise.all(
