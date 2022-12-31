@@ -2,7 +2,7 @@ import "./Popup.css";
 
 import { useEffect, useRef } from "react";
 
-// import Donate from "../Donate/Donate";
+import Donate from "../Donate/Donate";
 import { fromEvent } from "rxjs";
 
 interface Props {
@@ -61,7 +61,7 @@ const Popup = ({ title, description, url, isHide, setIsHide }: Props) => {
         <h1 className="popup-title">{title}</h1>
         <p className="popup-description">{description}</p>
         <div className="popup-buttons">
-          {/* <a
+          <a
             className="bmc-btn"
             href={"https://www.buymeacoffee.com/SugoiVN"}
             target={"_blank"}
@@ -69,7 +69,7 @@ const Popup = ({ title, description, url, isHide, setIsHide }: Props) => {
           >
             <Donate />
             <span className="bmc-btn-text">Buy me a Coffee</span>
-          </a> */}
+          </a>
           <a
             title="Support me on ko-fi"
             className="kofi-button"

@@ -233,7 +233,7 @@ const NavBar = () => {
               <div ref={logoutButtonRef}>Logout</div>
               <a
                 className="link-account-setting"
-                href={"https://ko-fi.com/sugoivn"}
+                href={"https://www.buymeacoffee.com/SugoiVN"}
                 target={"_blank"}
                 rel="noreferrer"
               >
