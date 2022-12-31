@@ -259,7 +259,7 @@ const NavBar = () => {
           {userState.role === "" && !isHide && (
             <a
               className="link-account-setting right-side-link"
-              href={"https://ko-fi.com/sugoivn"}
+              href={"https://www.buymeacoffee.com/SugoiVN"}
               target={"_blank"}
               rel="noreferrer"
             >
@@ -284,7 +284,7 @@ const NavBar = () => {
                 </NavLink>
                 <a
                   className="link-account-setting right-side-link"
-                  href={"https://ko-fi.com/sugoivn"}
+                  href={"https://www.buymeacoffee.com/SugoiVN"}
                   target={"_blank"}
                   rel="noreferrer"
                 >
