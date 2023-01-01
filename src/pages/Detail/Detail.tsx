@@ -151,11 +151,13 @@ const Detail = () => {
             backupObj.current.width + "px";
           imageZoomContainerRef.current.style.height =
             backupObj.current.height + "px";
-          document.body.style.overflow = "auto";
           timeoutRef.current = setTimeout(() => {
             chosenImageRef.current.style.opacity = "1";
             imageZoomContainerRef.current.style.display = "none";
             blackBackgroundRef.current.style.display = "none";
+            (imageZoomContainerRef.current.querySelector("img") as any).src =
+              "";
+            document.body.style.overflow = "auto";
           }, 500);
         }}
       >
