@@ -155,8 +155,8 @@ router.post("/register", async (req, res) => {
   if (result.error) {
     return res.status(400).send({ error: result.error.details[0].message });
   }
-  const { username, email, password, confirmedPassword } = req.body;
-
+  let { username, email, password, confirmedPassword } = req.body;
+  email = email.toLocaleLowerCase();
   try {
     if (password !== confirmedPassword) {
       return res.status(400).send({ error: "Wrong confirmed password" });
