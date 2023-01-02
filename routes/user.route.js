@@ -422,7 +422,10 @@ async function updateAllBMC() {
       users.map(async (user) => {
         for (let i = 0; i < supporters.data.length; i++) {
           const supporter = supporters.data[i];
-          if (supporter.payer_email === user.email) {
+          if (
+            supporter.payer_email === user.email ||
+            supporter.payer_email === user.email.toLocaleLowerCase()
+          ) {
             const endFreeAdsDate =
               new Date(supporter.support_created_on).getTime() +
               3600 * 1000 * 24 * 31;
@@ -515,14 +518,16 @@ async function updateAllBMC() {
     }
   });
   members.data = Object.values(temp2);
-  // console.log(Object.values(temp2));
   // console.log(temp2.map((v) => Object.values(v)[0]));
   if (members.data)
     finalResult = await Promise.all(
       finalResult.map(async (user) => {
         for (let i = 0; i < members.data.length; i++) {
           const member = members.data[i];
-          if (member.payer_email === user.email) {
+          if (
+            member.payer_email === user.email ||
+            member.payer_email === user.email.toLocaleLowerCase()
+          ) {
             if (!member.subscription_is_cancelled) {
               if (
                 user.isFreeAds !== true ||
