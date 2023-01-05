@@ -36,7 +36,7 @@ router.post("/kofi/", async (req, res) => {
       return res.status(401).send({ error: "Access Denied" });
     }
     let coffee = await coffeeModel.findOne({ email: data.email });
-    if (coffee) {
+    if (!coffee) {
       coffee = new coffeeModel({
         email: data.email,
         type: data.type,
@@ -44,7 +44,7 @@ router.post("/kofi/", async (req, res) => {
       });
     }
     coffee.email = data.email;
-    coffee.type = "Donation";
+    coffee.type = data.type;
     coffee.fromName = data.from_name;
     if (data.type === "Subscription") {
       coffee.becomingMemberAt = data.timestamp;
