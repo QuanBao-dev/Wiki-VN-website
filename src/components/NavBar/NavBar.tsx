@@ -238,7 +238,7 @@ const NavBar = () => {
                 rel="noreferrer"
               >
                 <span>Buy SVN a Coffee</span>
-                <Donate />
+                <Donate color={"#FFDD00"} />
               </a>
               <NavLink
                 className="link-account-setting"
@@ -264,7 +264,7 @@ const NavBar = () => {
               rel="noreferrer"
             >
               <span>Buy SVN a Coffee</span>
-              <Donate />
+              <Donate color={"#FFDD00"} />
             </a>
           )}
           <div className="navbar-small-mobile-container">
@@ -289,7 +289,7 @@ const NavBar = () => {
                   rel="noreferrer"
                 >
                   <span style={{ whiteSpace: "nowrap" }}>Buy SVN a Coffee</span>
-                  <Donate />
+                  <Donate color={"#FFDD00"} />
                 </a>
                 <NavLink
                   className="right-side-link"

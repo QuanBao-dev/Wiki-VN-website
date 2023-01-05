@@ -93,7 +93,7 @@ a.kofi-button:visited {
   color: #000000;
   box-shadow: 0 0 5px 1px rgba(128, 128, 128, 0.601);
   min-width: 130px;
-  background-color: white !important;
+  background-color: #FFDD00 !important;
   height: 60px;
   display: flex;
   justify-content: center;
