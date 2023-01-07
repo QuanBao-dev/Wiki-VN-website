@@ -74,25 +74,32 @@ io.on("connection", (socket) => {
   // socket.on("user-out", (username) => {
   //   socket.broadcast.emit("new-user-out", `${username} has been left the chat`);
   // });
-  socket.on("new-message", async (message, username, role, avatarImage) => {
-    const { userId } = socket.request.user;
-    if (!userId) {
-      console.log("error");
-      return;
+  socket.on(
+    "new-message",
+    async (message, username, role, avatarImage, boost, type) => {
+      const { userId } = socket.request.user;
+      if (!userId) {
+        console.log("error");
+        return;
+      }
+      const newMessage = new chatTextModel({
+        userId,
+        text: message,
+        type,
+        boost
+      });
+      await newMessage.save();
+      socket.broadcast.emit(
+        "send-message-other-users",
+        message,
+        username,
+        role,
+        avatarImage,
+        boost,
+        type
+      );
     }
-    const newMessage = new chatTextModel({
-      userId,
-      text: message,
-    });
-    await newMessage.save();
-    socket.broadcast.emit(
-      "send-message-other-users",
-      message,
-      username,
-      role,
-      avatarImage
-    );
-  });
+  );
 });
 
 ////////////////////////////////

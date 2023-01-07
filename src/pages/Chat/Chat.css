@@ -41,3 +41,24 @@
 .dark-mode .form-send-message input{
   color: white;
 }
+
+.chat-container{
+  display: flex;
+}
+
+.list-channel{
+  list-style-type:none;
+  padding: 0;
+  overflow: auto;
+}
+
+.list-channel li{
+  margin: 1rem 0;
+  cursor: pointer;
+  color: grey;
+  padding: 0 10px;
+}
+
+.list-channel li.active{
+  color: white;
+}

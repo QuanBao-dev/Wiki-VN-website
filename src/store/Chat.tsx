@@ -6,4 +6,5 @@ export const chatStore = createStore({
   page: 1,
   ratio: 1,
   scrollTop: 1000000,
+  type:""
 });

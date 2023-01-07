@@ -13,6 +13,10 @@ const chatTextSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  type: {
+    type: String,
+    default: "",
+  },
 });
 
 module.exports = mongoose.model("chatText", chatTextSchema);

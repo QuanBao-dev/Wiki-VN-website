@@ -23,8 +23,11 @@ import { chatStore } from "../../store/Chat";
 import cachesStore from "../../store/caches";
 
 const Chat = () => {
+  const [type] = useState(chatStore.currentState().type);
   const [chatTexts, setChatTexts] = useState<ChatText[]>(
-    cachesStore.currentState().caches["messages"] || []
+    cachesStore.currentState().caches[
+      "messages" + (type !== "" ? "-" + type : "")
+    ] || []
   );
   const [isLoading, setIsLoading] = useState(
     chatStore.currentState().isLoading
@@ -86,6 +89,11 @@ const Chat = () => {
       }, 10);
     }
   };
+  // const updateType = (type: string) => {
+  //   setType(type);
+  //   chatStore.updateState({ type });
+  //   setChatTexts([]);
+  // };
 
   useEffect(() => {
     if (!socket.connected) {
@@ -114,9 +122,11 @@ const Chat = () => {
         username: string,
         role: string,
         avatarImage: string,
-        boost: number
+        boost: number,
+        type: string
       ) => {
-        addNewMessage(message, avatarImage, role, username, boost);
+        if (type === chatStore.currentState().type)
+          addNewMessage(message, avatarImage, role, username, boost);
       }
     );
     return () => {
@@ -159,7 +169,8 @@ const Chat = () => {
         filter(() => !isStopFetching),
         switchMap(() =>
           ajax({
-            url: "/api/chat?page=" + page,
+            url:
+              "/api/chat?page=" + page + (type !== "" ? `&type=${type}` : ""),
           }).pipe(
             pluck("response", "message"),
             catchError((error) => of(error).pipe(pluck("response")))
@@ -169,7 +180,10 @@ const Chat = () => {
     ).subscribe((v) => {
       if (v && !v.error) {
         setChatTexts([...v, ...chatTexts]);
-        updateCaches([...v, ...chatTexts], "messages");
+        updateCaches(
+          [...v, ...chatTexts],
+          "messages" + (type !== "" ? "-" + type : "")
+        );
         if (chatMessagesListRef.current.children[0]) {
           chatMessagesListRef.current.children[v.length - 1].scrollIntoView({
             block: "start",
@@ -203,7 +217,7 @@ const Chat = () => {
       subscription.unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, page, isStopFetching, chatTexts.length]);
+  }, [isLoading, page, isStopFetching, chatTexts.length, type]);
   useEffect(() => {
     const subscription = fromEvent(window, "keydown").subscribe((e: any) => {
       if (e.key === "Escape") {
@@ -219,7 +233,26 @@ const Chat = () => {
   chatTextsRef.current = chatTexts;
   return (
     <section className="chat-container" ref={chatContainerRef}>
-      {/* <ul className="online-users-list"></ul> */}
+      {/* <ul className="list-channel">
+        <li
+          className={type === "" ? "active" : ""}
+          onClick={() => {
+            updateType("");
+            setIsLoading(true);
+          }}
+        >
+          #general
+        </li>
+        <li
+          className={type === "rules" ? "active" : ""}
+          onClick={() => {
+            updateType("rules");
+            setIsLoading(true);
+          }}
+        >
+          #rules
+        </li>
+      </ul> */}
       <div className="chat-app-container">
         <ChatMessagesList
           chatTexts={chatTexts}
@@ -250,7 +283,8 @@ const Chat = () => {
                   userStore.currentState().username,
                   userStore.currentState().role,
                   userStore.currentState().avatarImage,
-                  userStore.currentState().boost
+                  userStore.currentState().boost,
+                  chatStore.currentState().type
                 );
                 inputRef.current.value = "";
               }
@@ -273,7 +307,8 @@ const Chat = () => {
                 userStore.currentState().username,
                 userStore.currentState().role,
                 userStore.currentState().avatarImage,
-                userStore.currentState().boost
+                userStore.currentState().boost,
+                chatStore.currentState().type
               );
               inputRef.current.value = "";
             }}

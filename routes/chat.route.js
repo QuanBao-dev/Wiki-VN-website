@@ -5,8 +5,10 @@ const router = express.Router();
 
 router.get("/", verifyRole("Admin", "Member"), async (req, res) => {
   let page = req.query.page || 1;
+  let type = req.query.type || "";
   try {
     const chatTexts = await chatTextModel.aggregate([
+      { $match: { type: type } },
       {
         $group: {
           _id: { $toDate: "$createdAt" },
