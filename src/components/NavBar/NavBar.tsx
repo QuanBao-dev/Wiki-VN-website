@@ -210,6 +210,9 @@ const NavBar = () => {
             ref={accountDetailRef}
           >
             <img src={userState.avatarImage} alt="" />
+            {(userState.role === "Admin" || userState.role === "Member") && (
+              <span className="unseen-message-amount">1</span>
+            )}
             <i className="fas fa-chevron-down"></i>
             <div
               className="drop-down-container"
@@ -226,8 +229,24 @@ const NavBar = () => {
                 Account Settings
               </Link>
               {(userState.role === "Admin" || userState.role === "Member") && (
-                <Link className="link-account-setting" to={"/chat"}>
+                <Link
+                  className={`link-account-setting`}
+                  to={"/chat"}
+                  style={{
+                    fontWeight: 900,
+                    position: "relative",
+                  }}
+                >
                   Secret Room
+                  <span
+                    className="unseen-message-amount"
+                    style={{
+                      right: "100%",
+                      top: 0,
+                    }}
+                  >
+                    1
+                  </span>
                 </Link>
               )}
               <div ref={logoutButtonRef}>Logout</div>
