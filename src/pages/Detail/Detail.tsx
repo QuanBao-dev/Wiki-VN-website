@@ -452,6 +452,7 @@ const Detail = () => {
               <li>
                 Extract the patch. (if the patch is in .rar or .zip format)
               </li>
+              <li>Follow all the steps in the GUIDE.txt file (If there's one after extraction)</li>
               <li>
                 Put all files and folders into the game folder and overwrite the
                 destination to apply.
