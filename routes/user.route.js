@@ -508,13 +508,13 @@ async function updateAllBMC() {
               people.becomingMemberAt;
           }
         }
-        const endFreeAdsDate =
-          new Date(
-            temp2[people.email].subscription_current_period_start
-          ).getTime() +
-          3600 * 1000 * 24 * 31;
-        temp2[people.email].subscription_is_cancelled =
-          Date.now() - endFreeAdsDate > 0;
+        // const endFreeAdsDate =
+        //   new Date(
+        //     temp2[people.email].subscription_current_period_start
+        //   ).getTime() +
+        //   3600 * 1000 * 24 * 31;
+        // temp2[people.email].subscription_is_cancelled =
+        //   Date.now() - endFreeAdsDate > 0;
       }
       temp2[people.email].subscription_coffee_price = people.amount;
     }
@@ -530,7 +530,10 @@ async function updateAllBMC() {
             member.payer_email === user.email ||
             member.payer_email === user.email.toLocaleLowerCase()
           ) {
-            if (!member.subscription_is_cancelled) {
+            const endFreeAdsDate =
+              new Date(member.subscription_current_period_start).getTime() +
+              3600 * 1000 * 24 * 31;
+            if (Date.now() - endFreeAdsDate < 0) {
               if (
                 user.isFreeAds !== true ||
                 user.role !== "Member" ||
