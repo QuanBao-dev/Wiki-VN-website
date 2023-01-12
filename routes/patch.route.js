@@ -92,7 +92,7 @@ route.get("/:id", async (req, res) => {
       message: {
         vnId: patch.vnId,
         linkDownloads: !isFreeAds
-          ? patch.shrinkMeLinkDownloads
+          ? patch.originalLinkDownloads
           : patch.originalLinkDownloads,
         affiliateLinks: patch.affiliateLinks,
       },
