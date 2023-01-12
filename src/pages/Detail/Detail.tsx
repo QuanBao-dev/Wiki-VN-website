@@ -132,7 +132,7 @@ const Detail = () => {
       <Popup
         title={"Thank you!"}
         description={
-          "If you like these free translation patches on this website and want to say thanks, or encourage me to do more, you can consider buying me a coffee! After becoming a supporter, you can freely access the content on this website without ads for 1 month since the last day you supported a coffee. (NOTE: Please make sure you used the same email as the one you used on this website when buying me a coffee so I can identify the right person to give the privilege)"
+          "If you like these free translation patches on this website and want to say thanks, or encourage me to do more, you can consider buying me a coffee! After becoming a supporter, your vote will be counted as 5 votes. (NOTE: Please make sure you used the same email as the one you used on this website when buying me a coffee so I can identify the right person to give the privilege)"
         }
         url={url}
         isHide={isHide}
@@ -452,7 +452,10 @@ const Detail = () => {
               <li>
                 Extract the patch. (if the patch is in .rar or .zip format)
               </li>
-              <li>Follow all the steps in the GUIDE.txt file (If there's one after extraction)</li>
+              <li>
+                Follow all the steps in the GUIDE.txt file (If there's one after
+                extraction)
+              </li>
               <li>
                 Put all files and folders into the game folder and overwrite the
                 destination to apply.
@@ -501,25 +504,26 @@ const Detail = () => {
             <FormUpdateTranslatable dataVN={detailState} />
           </Suspense>
         )}
-        {(!patch.linkDownloads || patch.linkDownloads.length === 0) &&
+        {(((!patch.linkDownloads || patch.linkDownloads.length === 0) &&
           cachesState.caches["patches"] &&
-          !cachesState.caches["patches"].reason && (
-            <Suspense
-              fallback={
-                <div>
-                  <i
-                    className="fas fa-spinner fa-pulse fa-5x"
-                    style={{
-                      display: "inline-block",
-                      margin: "auto",
-                    }}
-                  ></i>
-                </div>
-              }
-            >
-              <VoterList id={id} />
-            </Suspense>
-          )}
+          !cachesState.caches["patches"].reason) ||
+          userStore.currentState().role === "Admin") && (
+          <Suspense
+            fallback={
+              <div>
+                <i
+                  className="fas fa-spinner fa-pulse fa-5x"
+                  style={{
+                    display: "inline-block",
+                    margin: "auto",
+                  }}
+                ></i>
+              </div>
+            }
+          >
+            <VoterList id={id} />
+          </Suspense>
+        )}
       </div>
     </div>
   );

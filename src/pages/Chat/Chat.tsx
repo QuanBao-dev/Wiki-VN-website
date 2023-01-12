@@ -23,7 +23,7 @@ import { chatStore } from "../../store/Chat";
 import cachesStore from "../../store/caches";
 
 const Chat = () => {
-  const [type] = useState(chatStore.currentState().type);
+  const [type, setType] = useState(chatStore.currentState().type);
   const [chatTexts, setChatTexts] = useState<ChatText[]>(
     cachesStore.currentState().caches[
       "messages" + (type !== "" ? "-" + type : "")
@@ -89,11 +89,11 @@ const Chat = () => {
       }, 10);
     }
   };
-  // const updateType = (type: string) => {
-  //   setType(type);
-  //   chatStore.updateState({ type });
-  //   setChatTexts([]);
-  // };
+  const updateType = (type: string) => {
+    setType(type);
+    chatStore.updateState({ type });
+    setChatTexts([]);
+  };
 
   useEffect(() => {
     if (!socket.connected) {
@@ -233,7 +233,7 @@ const Chat = () => {
   chatTextsRef.current = chatTexts;
   return (
     <section className="chat-container" ref={chatContainerRef}>
-      {/* <ul className="list-channel">
+      <ul className="list-channel">
         <li
           className={type === "" ? "active" : ""}
           onClick={() => {
@@ -243,16 +243,7 @@ const Chat = () => {
         >
           #general
         </li>
-        <li
-          className={type === "rules" ? "active" : ""}
-          onClick={() => {
-            updateType("rules");
-            setIsLoading(true);
-          }}
-        >
-          #rules
-        </li>
-      </ul> */}
+      </ul>
       <div className="chat-app-container">
         <ChatMessagesList
           chatTexts={chatTexts}
