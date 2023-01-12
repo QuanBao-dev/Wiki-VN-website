@@ -392,7 +392,7 @@ async function updateAllBMC() {
     getAllSubscriptions(),
     coffeeModel.find({}).lean(),
   ]);
-  let temp = supporters.data.reduce((ans, v) => {
+  let temp = supporters.data.reverse().reduce((ans, v) => {
     ans[v.payer_email] = v;
     return ans;
   }, {});
@@ -418,6 +418,7 @@ async function updateAllBMC() {
     }
   });
   supporters.data = Object.values(temp);
+  // console.log(supporters.data);
   let finalResult = [];
   if (supporters.data)
     finalResult = await Promise.all(
@@ -486,7 +487,7 @@ async function updateAllBMC() {
         return user;
       })
     );
-  let temp2 = members.data.reduce((ans, v) => {
+  let temp2 = members.data.reverse().reduce((ans, v) => {
     ans[v.payer_email] = v;
     return ans;
   }, {});
