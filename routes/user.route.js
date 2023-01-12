@@ -433,7 +433,7 @@ async function updateAllBMC() {
               new Date(supporter.support_created_on).getTime() +
               3600 * 1000 * 24 * 31;
             if (Date.now() - endFreeAdsDate < 0) {
-              if (user.role !== "Supporter") {
+              if (user.role !== "Supporter" || user.boost !== 5) {
                 let [userData, notification] = await Promise.all([
                   userModel.findOne({
                     userId: user.userId,
@@ -444,6 +444,7 @@ async function updateAllBMC() {
                 ]);
                 userData.isFreeAds = true;
                 userData.role = "Supporter";
+                userData.boost = 5;
                 if (!notification) {
                   notification = new notificationModel({
                     userId: user.userId,
@@ -454,7 +455,7 @@ async function updateAllBMC() {
                 notification.title = "Thank you for your support";
                 notification.message = `Hi ${
                   user.username
-                }! Now you can freely download the patches on this website without ads for 1 month since the day you supported. This will be end at ${new Date(
+                }! Now your vote is counted as 5 votes for 1 month since the last day you supported. This will be end at ${new Date(
                   endFreeAdsDate
                 ).toUTCString()}`;
                 await Promise.all([userData.save(), notification.save()]);
@@ -464,6 +465,7 @@ async function updateAllBMC() {
                 becomingSupporterAt: supporter.support_created_on,
                 endFreeAdsDate: new Date(endFreeAdsDate).toUTCString(),
                 isFreeAds: true,
+                boost: 1,
                 role: "Supporter",
               };
             }
@@ -559,9 +561,9 @@ async function updateAllBMC() {
                 notification.title = "Thank you for your support";
                 notification.message = `Hi ${
                   user.username
-                }! Now you can freely download the patches on this website without ads as long as you are still a membership and your votes is now boosted by x${parseInt(
+                }! Now your votes is now boosted by x${parseInt(
                   member.subscription_coffee_price
-                )}`;
+                )}, you can access to the secret room on the top right as well as long as you are still a membership`;
                 userData.boost = parseInt(member.subscription_coffee_price);
                 userData.role = "Member";
                 await Promise.all([userData.save(), notification.save()]);
