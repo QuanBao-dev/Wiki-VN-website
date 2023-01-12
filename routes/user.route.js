@@ -465,7 +465,7 @@ async function updateAllBMC() {
                 becomingSupporterAt: supporter.support_created_on,
                 endFreeAdsDate: new Date(endFreeAdsDate).toUTCString(),
                 isFreeAds: true,
-                boost: 1,
+                boost: 5,
                 role: "Supporter",
               };
             }
