@@ -228,7 +228,7 @@ const CardListVN = () => {
             homeStore.updateState({ indexActive: 2 });
           }}
         >
-          Visual Novels Ranking
+          Visual Novels Rank
         </div>
       </div>
       <div
