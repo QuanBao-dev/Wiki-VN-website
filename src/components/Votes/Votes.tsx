@@ -80,7 +80,7 @@ const Votes = ({ vnId, dataVN }: Props) => {
           setTrigger(!trigger);
         } else {
           return alert(
-            "Require login to use this feature, and this feature only is only for member and supporter who donated SVN"
+            "Require login to use this feature, and this feature is only for member and supporter who donated me"
           );
         }
       });
