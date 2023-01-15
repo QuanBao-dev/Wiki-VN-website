@@ -54,6 +54,20 @@ a{
   margin-left: 1rem;
 }
 
+.discord-banner-container img{
+  width:100%
+}
+
+.discord-banner-container{
+  border-radius:10px;
+  overflow: hidden;
+  display: block;
+  width:100%;
+  padding: 1rem;
+  box-shadow:0 0 3px 3px rgb(128 128 128 / 36%);
+  margin-bottom: 1rem;
+}
+
 @media (max-width:1230px) {
   .app-container{
     padding-left: 0;
@@ -64,6 +78,10 @@ a{
   .app-container-2{
     flex-direction: column;
     padding: 0.5rem 0;
+  }
+
+  .discord-banner-container{
+    padding: 0;
   }
 
   .app-wrapper{

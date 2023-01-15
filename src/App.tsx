@@ -141,6 +141,17 @@ function App() {
                   >
                     <Stats />
                   </Suspense>
+                  <a
+                    className="discord-banner-container"
+                    href="https://discord.gg/bBRAH5E4"
+                    target={"_blank"}
+                    rel="noreferrer"
+                  >
+                    <img
+                      src="https://media.discordapp.net/attachments/911517352418504707/1063951746436694076/62a07b53139aec4c1fd07771_discord-logo.png?width=1135&height=617"
+                      alt=""
+                    />
+                  </a>
                 </div>
               </div>
             }
@@ -275,6 +286,17 @@ function App() {
                   >
                     <Stats />
                   </Suspense>
+                  <a
+                    className="discord-banner-container"
+                    href="https://discord.gg/bBRAH5E4"
+                    target={"_blank"}
+                    rel="noreferrer"
+                  >
+                    <img
+                      src="https://media.discordapp.net/attachments/911517352418504707/1063951746436694076/62a07b53139aec4c1fd07771_discord-logo.png?width=1135&height=617"
+                      alt=""
+                    />
+                  </a>
                 </div>
               </div>
             }

@@ -79,7 +79,9 @@ const Votes = ({ vnId, dataVN }: Props) => {
           setVotes(temp + userStore.currentState().boost);
           setTrigger(!trigger);
         } else {
-          return alert("Require login to use this feature");
+          return alert(
+            "Require login to use this feature, and this feature only is only for member and supporter who donated SVN"
+          );
         }
       });
     return () => {
@@ -120,7 +122,9 @@ const Votes = ({ vnId, dataVN }: Props) => {
           setTrigger(!trigger);
         } else {
           if (v.error === "Access Denied") {
-            alert("Require login to use this feature");
+            alert(
+              "Require login to use this feature, and this feature only is only for member and supporter"
+            );
           }
           alert(v.error);
         }

@@ -72,7 +72,13 @@ router.get("/:vnId", async (req, res) => {
         .select({ _id: 0, votedVnIdList: 1 })
         .lean(),
       userModel.aggregate([
-        { $match: { votedVnIdList: parseInt(vnId), isVerified: true } },
+        {
+          $match: {
+            votedVnIdList: parseInt(vnId),
+            isVerified: true,
+            role: { $in: ["Admin", "Member", "Supporter"] },
+          },
+        },
       ]),
     ]);
     const validUsersLength = voters.reduce((ans, curr) => {
@@ -127,7 +133,7 @@ router.put("/:vnId/translatable", verifyRole("Admin"), async (req, res) => {
 
 router.put(
   "/:vnId",
-  verifyRole("User", "Supporter", "Member", "Admin"),
+  verifyRole( "Supporter", "Member", "Admin"),
   async (req, res) => {
     const vnId = +req.params.vnId;
     let { dataVN, isDownVotes } = req.body;

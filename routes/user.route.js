@@ -198,7 +198,13 @@ router.get("/:vnId/vote", async (req, res) => {
     const page = req.query.page || 0;
     const [users, [{ length }]] = await Promise.all([
       userModel.aggregate([
-        { $match: { votedVnIdList: parseInt(vnId), isVerified: true } },
+        {
+          $match: {
+            votedVnIdList: parseInt(vnId),
+            isVerified: true,
+            role: { $in: ["Admin", "Member", "Supporter"] },
+          },
+        },
         { $sort: { boost: -1, _id: 1 } },
         { $skip: 10 * parseInt(page) },
         { $limit: 10 },
@@ -207,7 +213,13 @@ router.get("/:vnId/vote", async (req, res) => {
         },
       ]),
       userModel.aggregate([
-        { $match: { votedVnIdList: parseInt(vnId), isVerified: true } },
+        {
+          $match: {
+            votedVnIdList: parseInt(vnId),
+            isVerified: true,
+            role: { $in: ["Admin", "Member", "Supporter"] },
+          },
+        },
         {
           $group: {
             _id: null,
