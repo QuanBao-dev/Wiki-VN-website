@@ -670,60 +670,31 @@ async function addNewAccessToken(user, token) {
   await loginToken.save();
 }
 
-function sendEmail(to, subject, message) {
-  return new Promise((res, rej) => {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL,
-        pass: process.env.PASSWORD_EMAIL,
-      },
-    });
-    const mailOptions = {
-      from: process.env.EMAIL,
-      to,
-      subject,
-      text: message,
-    };
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error(error);
-        rej(error);
-      } else {
-        res("Email sent:" + info.response);
-        console.log("Email sent:" + info.response);
-      }
-    });
-  });
-}
-
-async function verifyEmailUser(user) {
-  let token = await tokenModel.findOne({ userId: user.userId });
-  if (!token) {
-    token = new tokenModel({
-      userId: user.userId,
-    });
-    await token.save();
-  }
-  const tokenString = jwt.sign(
-    {
-      userId: token.userId,
-      email: user.email,
-      createdAt: token.createdAt,
-    },
-    process.env.JWT_KEY,
-    {
-      expiresIn: 60,
-    }
-  );
-  await sendEmail(
-    user.email,
-    "Verify your email address",
-    `
-      - This link will be expired in 1 minute
-      - Please click this link to verify your email address: ${process.env.HOST_EMAIL}/verify/${tokenString}
-      `
-  );
-}
+// function sendEmail(to, subject, message) {
+//   return new Promise((res, rej) => {
+//     const transporter = nodemailer.createTransport({
+//       service: "gmail",
+//       auth: {
+//         user: process.env.EMAIL,
+//         pass: process.env.PASSWORD_EMAIL,
+//       },
+//     });
+//     const mailOptions = {
+//       from: process.env.EMAIL,
+//       to,
+//       subject,
+//       text: message,
+//     };
+//     transporter.sendMail(mailOptions, (error, info) => {
+//       if (error) {
+//         console.error(error);
+//         rej(error);
+//       } else {
+//         res("Email sent:" + info.response);
+//         console.log("Email sent:" + info.response);
+//       }
+//     });
+//   });
+// }
 
 module.exports = router;
