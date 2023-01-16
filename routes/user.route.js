@@ -202,7 +202,7 @@ router.get("/:vnId/vote", async (req, res) => {
           $match: {
             votedVnIdList: parseInt(vnId),
             isVerified: true,
-            role: { $in: ["Admin", "Member", "Supporter"] },
+            isNotSpam: true,
           },
         },
         { $sort: { boost: -1, _id: 1 } },
@@ -217,7 +217,7 @@ router.get("/:vnId/vote", async (req, res) => {
           $match: {
             votedVnIdList: parseInt(vnId),
             isVerified: true,
-            role: { $in: ["Admin", "Member", "Supporter"] },
+            isNotSpam: true,
           },
         },
         {

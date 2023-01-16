@@ -76,7 +76,7 @@ router.get("/:vnId", async (req, res) => {
           $match: {
             votedVnIdList: parseInt(vnId),
             isVerified: true,
-            role: { $in: ["Admin", "Member", "Supporter"] },
+            isNotSpam: true,
           },
         },
       ]),
@@ -133,7 +133,7 @@ router.put("/:vnId/translatable", verifyRole("Admin"), async (req, res) => {
 
 router.put(
   "/:vnId",
-  verifyRole( "Supporter", "Member", "Admin"),
+  verifyRole("Supporter", "Member", "Admin"),
   async (req, res) => {
     const vnId = +req.params.vnId;
     let { dataVN, isDownVotes } = req.body;
