@@ -123,7 +123,7 @@ const Votes = ({ vnId, dataVN }: Props) => {
         } else {
           if (v.error === "Access Denied") {
             alert(
-              "Require login to use this feature, and this feature only is only for member and supporter"
+              "Require login to use this feature"
             );
           }
           alert(v.error);
