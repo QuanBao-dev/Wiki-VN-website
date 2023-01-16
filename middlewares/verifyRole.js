@@ -25,7 +25,7 @@ module.exports.verifyRole = (...roles) => {
         }),
         userModel
           .findOne({ userId: decode.userId })
-          .select({ _id: false, username: 1 })
+          .select({ _id: false, username: 1, isNotSpam: 1 })
           .lean(),
       ]);
       if (!user) {
