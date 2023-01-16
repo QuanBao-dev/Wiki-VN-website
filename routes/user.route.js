@@ -282,7 +282,7 @@ router.delete("/:userId", verifyRole("Admin"), async (req, res) => {
 });
 
 router.put("/admin/edit", verifyRole("Admin"), async (req, res) => {
-  const { isFreeAds, isVerified, userId, role, boost } = req.body;
+  const { isFreeAds, isVerified, userId, role, boost, isNotSpam } = req.body;
   try {
     const user = await userModel.findOne({ userId });
     if (user) {
@@ -290,6 +290,7 @@ router.put("/admin/edit", verifyRole("Admin"), async (req, res) => {
       user.isFreeAds = isFreeAds;
       user.isVerified = isVerified;
       user.boost = boost;
+      user.isNotSpam = isNotSpam;
     }
     await user.save();
     return res.send({ message: "Success" });
@@ -394,6 +395,7 @@ async function updateAllBMC() {
           role: 1,
           boost: 1,
           votedVnIdList: 1,
+          isNotSpam: 1,
         },
       },
       {
@@ -445,7 +447,11 @@ async function updateAllBMC() {
               new Date(supporter.support_created_on).getTime() +
               3600 * 1000 * 24 * 31;
             if (Date.now() - endFreeAdsDate < 0) {
-              if (user.role !== "Supporter" || user.boost !== 5) {
+              if (
+                user.role !== "Supporter" ||
+                user.boost !== 5 ||
+                !user.isNotSpam
+              ) {
                 let [userData, notification] = await Promise.all([
                   userModel.findOne({
                     userId: user.userId,
@@ -456,6 +462,7 @@ async function updateAllBMC() {
                 ]);
                 userData.isFreeAds = true;
                 userData.role = "Supporter";
+                userData.isNotSpam = true;
                 userData.boost = 5;
                 if (!notification) {
                   notification = new notificationModel({
@@ -552,7 +559,8 @@ async function updateAllBMC() {
               if (
                 user.isFreeAds !== true ||
                 user.role !== "Member" ||
-                user.boost !== parseInt(member.subscription_coffee_price)
+                user.boost !== parseInt(member.subscription_coffee_price) ||
+                !user.isNotSpam
               ) {
                 let [userData, notification] = await Promise.all([
                   userModel.findOne({
@@ -563,6 +571,7 @@ async function updateAllBMC() {
                   }),
                 ]);
                 userData.isFreeAds = true;
+                userData.isNotSpam = true;
                 if (!notification) {
                   notification = new notificationModel({
                     userId: user.userId,

@@ -11,5 +11,6 @@ export interface User{
   endFreeAdsDate:string,
   role:string,
   boost:number,
-  votedVnIdList:number[]
+  votedVnIdList:number[],
+  isNotSpam: boolean
 }

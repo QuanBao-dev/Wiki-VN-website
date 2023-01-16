@@ -7,12 +7,14 @@ interface Props {
   isVerifiedEditRef: React.MutableRefObject<HTMLInputElement>;
   roleRef: React.MutableRefObject<HTMLSelectElement>;
   boostRef: React.MutableRefObject<HTMLSelectElement>;
+  isNotSpamRef: React.MutableRefObject<HTMLSelectElement>;
 }
 const ButtonEdit = ({
   userId,
   isVerifiedEditRef,
   roleRef,
   boostRef,
+  isNotSpamRef,
 }: Props) => {
   const buttonEditRef = useRef(document.createElement("button"));
   useEffect(() => {
@@ -27,6 +29,7 @@ const ButtonEdit = ({
               isVerified: isVerifiedEditRef.current.checked,
               role: roleRef.current.value,
               boost: +boostRef.current.value,
+              isNotSpam: isNotSpamRef.current.value === "true",
             },
           }).pipe(
             pluck("response", "message"),

@@ -34,6 +34,10 @@ const userSchema = mongoose.Schema({
     type: Number,
     default: 1,
   },
+  isNotSpam: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 module.exports = mongoose.model("user", userSchema);

@@ -34,7 +34,6 @@ const Admin = () => {
     setIsLoading,
     null
   );
-
   useEffect(() => {
     if (!updateButtonContainerRef.current) return;
     const subscription = fromEvent(updateButtonContainerRef.current, "click")
@@ -115,6 +114,7 @@ const Admin = () => {
               <th>isVerified</th>
               <th>isVerifiedEdit</th>
               <th>isFreeAds</th>
+              <th>isNotSpam</th>
               <th>becomingSupporterAt</th>
               <th>becomingMemberAt</th>
               <th>cancelingMemberAt</th>
@@ -141,6 +141,7 @@ const Admin = () => {
                   role,
                   boost,
                   votedVnIdList,
+                  isNotSpam,
                 },
                 key
               ) => (
@@ -163,6 +164,7 @@ const Admin = () => {
                   userList={userList}
                   setUserList={setUserList}
                   votedVnIdList={votedVnIdList}
+                  isNotSpam={isNotSpam}
                 />
               )
             )}
@@ -191,6 +193,7 @@ interface RowTableProps {
   setUserList: React.Dispatch<React.SetStateAction<User[]>>;
   index: number;
   votedVnIdList: number[];
+  isNotSpam: boolean;
 }
 function RowTable({
   index,
@@ -210,10 +213,12 @@ function RowTable({
   role,
   endFreeAdsDate,
   votedVnIdList,
+  isNotSpam,
 }: RowTableProps) {
   const isVerifiedEditRef = useRef(document.createElement("input"));
   const roleRef = useRef(document.createElement("select"));
   const boostRef = useRef(document.createElement("select"));
+  const isNotSpamRef = useRef(document.createElement("select"));
   return (
     <tr>
       <td>{index + 1}</td>
@@ -260,6 +265,12 @@ function RowTable({
         />
       </td>
       <td>{isFreeAds ? "true" : "false"}</td>
+      <td>
+        <select defaultValue={isNotSpam ? "true" : "false"} ref={isNotSpamRef}>
+          <option value="true">true</option>
+          <option value="false">false</option>
+        </select>
+      </td>
       <td>{becomingSupporterAt ? becomingSupporterAt : "none"}</td>
       <td>{becomingMemberAt ? becomingMemberAt : "none"}</td>
       <td>{cancelingMemberAt ? cancelingMemberAt : "none"}</td>
@@ -277,6 +288,7 @@ function RowTable({
           isVerifiedEditRef={isVerifiedEditRef}
           roleRef={roleRef}
           boostRef={boostRef}
+          isNotSpamRef={isNotSpamRef}
         />
       </td>
       <td>
