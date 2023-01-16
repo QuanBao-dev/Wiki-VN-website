@@ -32,6 +32,9 @@ module.exports.verifyRole = (...roles) => {
         if (loginToken) await loginToken.delete();
         return res.status(401).send({ error: "You don't have permission" });
       }
+      if (!user.isNotSpam) {
+        return res.status(401).send({ error: "You don't have permission" });
+      }
       if (
         !loginToken ||
         !loginToken.accessTokenList ||

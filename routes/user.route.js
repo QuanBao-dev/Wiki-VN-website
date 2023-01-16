@@ -13,7 +13,6 @@ const tokenModel = require("../models/token.model");
 const { verifyRole } = require("../middlewares/verifyRole");
 const cloudinary = require("cloudinary");
 const loginTokenModel = require("../models/loginToken.model");
-const isValidEmail = require("../utils/isValidEmail");
 const BMC = require("../utils");
 const notificationModel = require("../models/notification.model");
 const coffeeModel = require("../models/coffee.model");
@@ -107,22 +106,29 @@ router.post("/login", async (req, res) => {
     if (!user) {
       return res.status(400).send({ error: "Email or Password is wrong" });
     }
-    if (!(await isValidEmail(email))) {
-      const user = await userModel.findOne({ email });
-      if (user) await user.delete();
-      return res.status(400).send({
-        error: `Fake email is not accepted`,
-      });
-    }
+    // if (!(await isValidEmail(email))) {
+    //   const user = await userModel.findOne({ email });
+    //   if (user) await user.delete();
+    //   return res.status(400).send({
+    //     error: `Fake email is not accepted`,
+    //   });
+    // }
     const checkPassword = await compare(password, user.password);
     if (!checkPassword) {
       return res.status(400).send({ error: "Email or Password is wrong" });
     }
-    if (!user.isVerified) {
-      await verifyEmailUser(user);
-      return res.status(401).send({
-        error: "Unverified email, Please check your email to verify your email",
-      });
+    if (!user.isNotSpam || !user.isVerified) {
+      const allSupporters = (await updateAllBMC())
+        .filter(({ role }) => ["Member", "Supporter", "Admin"].includes(role))
+        .map(({ email }) => email);
+      if (!allSupporters.includes(user.email) && user.role !== "Admin") {
+        return res.status(401).send({
+          error:
+            'You need to verify your email by using this email to donate me by "buy me a coffee".',
+        });
+      }
+      user.isVerified = true;
+      user.isNotSpam = true;
     }
     const token = jwt.sign(
       {
@@ -170,21 +176,33 @@ router.post("/register", async (req, res) => {
     if (emailExist) {
       return res.status(400).send({ error: "Email already existed" });
     }
-    if (!(await isValidEmail(email))) {
-      return res.status(400).send({
-        error: `Fake email is not accepted`,
-      });
-    }
+    // if (!(await isValidEmail(email))) {
+    //   return res.status(400).send({
+    //     error: `Fake email is not accepted`,
+    //   });
+    // }
     if (usernameExist) {
       return res.status(400).send({ error: "Username already existed" });
     }
     const newUser = new userModel({ username, email });
     const salt = await bcrypt.genSalt(10);
     newUser.password = await bcrypt.hash(password, salt);
+    const allSupporters = (await updateAllBMC())
+      .filter(({ role }) => ["Member", "Supporter", "Admin"].includes(role))
+      .map(({ email }) => email);
+    if (!allSupporters.includes(newUser.email) && newUser.role !== "Admin") {
+      return res.status(401).send({
+        error:
+          'You need to verify your email by using this email to donate me by "buy me a coffee"',
+      });
+    }
+    newUser.isVerified = true;
+    newUser.isNotSpam = true;
     await newUser.save();
-    await Promise.all([verifyEmailUser(newUser), updateAllBMC()]);
+
     return res.send({
-      message: "Checking your email account, Please verify your email address",
+      message:
+        "Congrats! Your account has been created successfully! Don't forget to check out my discord too",
     });
   } catch (error) {
     if (error) return res.status(400).send({ error: error.message });
@@ -329,13 +347,13 @@ router.put(
       }
 
       if (email) {
-        if (!(await isValidEmail(email))) {
-          const user = await userModel.findOne({ email });
-          if (user) await user.delete();
-          return res.status(400).send({
-            error: `Fake email is not accepted`,
-          });
-        }
+        // if (!(await isValidEmail(email))) {
+        //   const user = await userModel.findOne({ email });
+        //   if (user) await user.delete();
+        //   return res.status(400).send({
+        //     error: `Fake email is not accepted`,
+        //   });
+        // }
         const isExactPassword = await compare(password, user.password);
         if (!isExactPassword)
           return res.status(400).send({ error: "Wrong Password" });
@@ -347,9 +365,22 @@ router.put(
         }
         user.email = email;
         user.isVerified = false;
-        await verifyEmailUser(user);
-        return res.status(401).send({
-          error: "Checking your email account, Please verify your new email",
+        user.isNotSpam = false;
+        // await verifyEmailUser(user);
+        const allSupporters = (await updateAllBMC())
+          .filter(({ role }) => ["Member", "Supporter", "Admin"].includes(role))
+          .map(({ email }) => email);
+        if (!allSupporters.includes(user.email) && user.role !== "Admin") {
+          return res.status(401).send({
+            error:
+              'You need to verify your email by using this email to donate me by "buy me a coffee". ',
+          });
+        }
+        user.isVerified = true;
+        user.isNotSpam = true;
+        await user.save();
+        res.send({
+          message: { newToken },
         });
       }
 
@@ -372,7 +403,6 @@ router.put(
           message: { newToken },
         });
       }
-      await updateAllBMC();
     } catch (error) {
       if (error) return res.status(400).send({ error: error.message });
       res.status(404).send({ error: "Something went wrong" });
