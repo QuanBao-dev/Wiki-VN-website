@@ -4,7 +4,7 @@ const router = require("express").Router();
 router.get("/", async (req, res) => {
   try {
     const [users, mtledVNLength, releases] = await Promise.all([
-      userModel.aggregate([{ $match: { isVerified: true } }]),
+      userModel.aggregate([{ $match: { isVerified: true, isNotSpam: true } }]),
       patchModel.countDocuments(),
       patchModel.aggregate([
         {
