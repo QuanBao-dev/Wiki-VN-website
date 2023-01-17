@@ -124,7 +124,7 @@ router.post("/login", async (req, res) => {
       if (!allSupporters.includes(user.email) && user.role !== "Admin") {
         return res.status(401).send({
           error:
-            'You need to verify your email by using this email to donate me by "buy me a coffee".',
+            "Require to verify your email address, to do this you have to buy me a coffee using this email address",
         });
       }
       user.isVerified = true;
@@ -193,7 +193,7 @@ router.post("/register", async (req, res) => {
     if (!allSupporters.includes(newUser.email) && newUser.role !== "Admin") {
       return res.status(401).send({
         error:
-          'You need to verify your email by using this email to donate me by "buy me a coffee"',
+          "Require to verify your email address, to do this you have to buy me a coffee using this email address",
       });
     }
     newUser.isVerified = true;
@@ -373,7 +373,7 @@ router.put(
         if (!allSupporters.includes(user.email) && user.role !== "Admin") {
           return res.status(401).send({
             error:
-              'You need to verify your email by using this email to donate me by "buy me a coffee". ',
+              "Require to verify your email address, to do this you have to buy me a coffee using this email address",
           });
         }
         user.isVerified = true;
