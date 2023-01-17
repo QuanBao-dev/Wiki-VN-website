@@ -8,8 +8,8 @@ const {
   registerValidation,
   changeInfoAccountValidation,
 } = require("../validation/user.validation");
-const nodemailer = require("nodemailer");
-const tokenModel = require("../models/token.model");
+// const nodemailer = require("nodemailer");
+// const tokenModel = require("../models/token.model");
 const { verifyRole } = require("../middlewares/verifyRole");
 const cloudinary = require("cloudinary");
 const loginTokenModel = require("../models/loginToken.model");
