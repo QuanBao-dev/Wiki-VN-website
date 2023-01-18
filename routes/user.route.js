@@ -490,6 +490,7 @@ async function updateAllBMC() {
                 userData.isFreeAds = true;
                 userData.role = "Supporter";
                 userData.isNotSpam = true;
+                userData.isVerified = true;
                 userData.boost = 5;
                 if (!notification) {
                   notification = new notificationModel({
@@ -599,6 +600,7 @@ async function updateAllBMC() {
                 ]);
                 userData.isFreeAds = true;
                 userData.isNotSpam = true;
+                userData.isVerified = true;
                 if (!notification) {
                   notification = new notificationModel({
                     userId: user.userId,
