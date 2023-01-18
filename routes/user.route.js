@@ -170,10 +170,10 @@ router.post("/register", async (req, res) => {
       return res.status(400).send({ error: "Wrong confirmed password" });
     }
     const [emailExist, usernameExist] = await Promise.all([
-      userModel.findOne({ email, isNotSpam: true }),
-      userModel.findOne({ username, isNotSpam: true }),
+      userModel.findOne({ email }),
+      userModel.findOne({ username }),
     ]);
-    if (emailExist) {
+    if (emailExist && emailExist.isNotSpam) {
       return res.status(400).send({ error: "Email already existed" });
     }
     // if (!(await isValidEmail(email))) {
@@ -181,10 +181,13 @@ router.post("/register", async (req, res) => {
     //     error: `Fake email is not accepted`,
     //   });
     // }
-    if (usernameExist) {
+    if (usernameExist&& usernameExist.isNotSpam) {
       return res.status(400).send({ error: "Username already existed" });
     }
-    const newUser = new userModel({ username, email });
+    let newUser = emailExist;
+    if(!emailExist){
+      newUser = new userModel({ username, email });
+    }
     const salt = await bcrypt.genSalt(10);
     newUser.password = await bcrypt.hash(password, salt);
     await newUser.save();
