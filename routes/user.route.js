@@ -187,8 +187,7 @@ router.post("/register", async (req, res) => {
     const newUser = new userModel({ username, email });
     const salt = await bcrypt.genSalt(10);
     newUser.password = await bcrypt.hash(password, salt);
-    await newUser.save();
-    const allSupporters = (await updateAllBMC())
+    const allSupporters = (await updateAllBMC(newUser))
       .filter(({ role }) => ["Member", "Supporter", "Admin"].includes(role))
       .map(({ email }) => email);
     if (!allSupporters.includes(newUser.email) && newUser.role !== "Admin") {
@@ -354,7 +353,10 @@ router.put(
         const isExactPassword = await compare(password, user.password);
         if (!isExactPassword)
           return res.status(400).send({ error: "Wrong Password" });
-        const isEmailExisted = await userModel.findOne({ email });
+        const isEmailExisted = await userModel.findOne({
+          email,
+          isNotSpam: true,
+        });
         if (isEmailExisted) {
           return res
             .status(400)
@@ -363,8 +365,9 @@ router.put(
         user.email = email;
         user.isVerified = false;
         user.isNotSpam = false;
+        await user.save();
         // await verifyEmailUser(user);
-        const allSupporters = (await updateAllBMC())
+        const allSupporters = (await updateAllBMC(user))
           .filter(({ role }) => ["Member", "Supporter", "Admin"].includes(role))
           .map(({ email }) => email);
         if (!allSupporters.includes(user.email) && user.role !== "Admin") {
@@ -373,9 +376,6 @@ router.put(
               "Require to verify your email address, to do this you have to buy me a coffee using this email address",
           });
         }
-        user.isVerified = true;
-        user.isNotSpam = true;
-        await user.save();
         res.send({
           message: { newToken },
         });
@@ -407,7 +407,7 @@ router.put(
   }
 );
 
-async function updateAllBMC() {
+async function updateAllBMC(newUser) {
   let [users, supporters, members, peopleFromKofi] = await Promise.all([
     userModel.aggregate([
       {
@@ -433,6 +433,8 @@ async function updateAllBMC() {
     getAllSubscriptions(),
     coffeeModel.find({}).lean(),
   ]);
+  if (newUser) users.push(newUser);
+
   let temp = supporters.data.reverse().reduce((ans, v) => {
     ans[v.payer_email] = v;
     return ans;
