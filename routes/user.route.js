@@ -170,8 +170,8 @@ router.post("/register", async (req, res) => {
       return res.status(400).send({ error: "Wrong confirmed password" });
     }
     const [emailExist, usernameExist] = await Promise.all([
-      userModel.findOne({ email }),
-      userModel.findOne({ username }),
+      userModel.findOne({ email, isNotSpam: true }),
+      userModel.findOne({ username, isNotSpam: true }),
     ]);
     if (emailExist) {
       return res.status(400).send({ error: "Email already existed" });
