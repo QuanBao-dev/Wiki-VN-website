@@ -197,9 +197,6 @@ router.post("/register", async (req, res) => {
           "Require to verify your email address, to do this you have to buy me a coffee using this email address",
       });
     }
-    newUser.isVerified = true;
-    newUser.isNotSpam = true;
-    await newUser.save();
     return res.send({
       message:
         "Congrats! Your account has been created successfully! Don't forget to check out my discord too",
