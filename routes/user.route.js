@@ -187,7 +187,8 @@ router.post("/register", async (req, res) => {
     const newUser = new userModel({ username, email });
     const salt = await bcrypt.genSalt(10);
     newUser.password = await bcrypt.hash(password, salt);
-    const allSupporters = (await updateAllBMC(newUser))
+    await newUser.save();
+    const allSupporters = (await updateAllBMC())
       .filter(({ role }) => ["Member", "Supporter", "Admin"].includes(role))
       .map(({ email }) => email);
     if (!allSupporters.includes(newUser.email) && newUser.role !== "Admin") {
@@ -367,7 +368,7 @@ router.put(
         user.isNotSpam = false;
         await user.save();
         // await verifyEmailUser(user);
-        const allSupporters = (await updateAllBMC(user))
+        const allSupporters = (await updateAllBMC())
           .filter(({ role }) => ["Member", "Supporter", "Admin"].includes(role))
           .map(({ email }) => email);
         if (!allSupporters.includes(user.email) && user.role !== "Admin") {
@@ -407,7 +408,7 @@ router.put(
   }
 );
 
-async function updateAllBMC(newUser) {
+async function updateAllBMC() {
   let [users, supporters, members, peopleFromKofi] = await Promise.all([
     userModel.aggregate([
       {
@@ -433,7 +434,6 @@ async function updateAllBMC(newUser) {
     getAllSubscriptions(),
     coffeeModel.find({}).lean(),
   ]);
-  if (newUser) users.push(newUser);
 
   let temp = supporters.data.reverse().reduce((ans, v) => {
     ans[v.payer_email] = v;
