@@ -187,6 +187,7 @@ router.post("/register", async (req, res) => {
     const newUser = new userModel({ username, email });
     const salt = await bcrypt.genSalt(10);
     newUser.password = await bcrypt.hash(password, salt);
+    await newUser.save();
     const allSupporters = (await updateAllBMC())
       .filter(({ role }) => ["Member", "Supporter", "Admin"].includes(role))
       .map(({ email }) => email);
@@ -198,7 +199,6 @@ router.post("/register", async (req, res) => {
     }
     newUser.isVerified = true;
     newUser.isNotSpam = true;
-    await newUser.save();
 
     return res.send({
       message:
