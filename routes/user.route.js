@@ -104,7 +104,12 @@ router.post("/login", async (req, res) => {
   try {
     const user = await userModel.findOne({ email });
     if (!user) {
-      return res.status(400).send({ error: "Email or Password is wrong" });
+      return res
+        .status(400)
+        .send({
+          error:
+            "Your account doesn't exist, please register your account before logging in",
+        });
     }
     // if (!(await isValidEmail(email))) {
     //   const user = await userModel.findOne({ email });
