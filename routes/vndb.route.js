@@ -1,7 +1,8 @@
 const express = require("express");
+const { nanoid } = require("nanoid");
 const router = express.Router();
 const VNDB = require("vndb-api");
-const vndb = new VNDB("vndb", {
+const vndb = new VNDB(nanoid(), {
   acquireTimeout: 10000,
 });
 
@@ -78,7 +79,7 @@ router.get("/random", async (req, res) => {
   try {
     const response = await vndb.query(`dbstats`);
     const { vn } = response;
-    const randomNumberList = Array.from(Array(5).keys()).reduce((ans, curr) => {
+    const randomNumberList = Array.from(Array(4).keys()).reduce((ans, curr) => {
       let randomNumber = Math.ceil(Math.random() * vn);
       while (ans[ans.length - 1] === randomNumber) {
         randomNumber = Math.ceil(Math.random() * vn);

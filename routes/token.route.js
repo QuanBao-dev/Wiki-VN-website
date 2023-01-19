@@ -18,7 +18,7 @@ router.get(
         createdAt: 1,
         email: 1,
         isFreeAds: 1,
-        boost:1,
+        boost: 1,
       });
       res.send({
         message: { user: { ...user, exp: req.user.exp, iat: req.user.iat } },
@@ -99,10 +99,10 @@ router.get("/verify/:token", async (req, res) => {
     await Promise.all(
       users.map(async ({ userId }) => {
         const user = await userModel.findOne({ userId });
-        const createdAt = new Date(user.createdAt).getTime();
         if (
-          Math.abs(Date.now() - createdAt) / (3600 * 1 * 1000) > 1 &&
-          user.isVerified === false
+          Date.now() >=
+            new Date(user.createdAt).getTime() + 3600 * 1000 * 24 * 7 &&
+          (user.isVerified === false || user.isNotSpam === false)
         ) {
           await Promise.all([user.delete(), removeToken(user.userId)]);
         }

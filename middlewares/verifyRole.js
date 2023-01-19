@@ -28,11 +28,9 @@ module.exports.verifyRole = (...roles) => {
           .select({ _id: false, username: 1, isNotSpam: 1 })
           .lean(),
       ]);
-      if (!user) {
+      if (!user || !user.isNotSpam) {
+        res.clearCookie("token", { path: "/" });
         if (loginToken) await loginToken.delete();
-        return res.status(401).send({ error: "You don't have permission" });
-      }
-      if (!user.isNotSpam) {
         return res.status(401).send({ error: "You don't have permission" });
       }
       if (
@@ -40,6 +38,7 @@ module.exports.verifyRole = (...roles) => {
         !loginToken.accessTokenList ||
         !loginToken.accessTokenList.includes(token)
       ) {
+        res.clearCookie("token", { path: "/" });
         return res.status(401).send({ error: "Invalid token" });
       }
       const newToken = jwt.sign(

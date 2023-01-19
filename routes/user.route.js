@@ -181,11 +181,11 @@ router.post("/register", async (req, res) => {
     //     error: `Fake email is not accepted`,
     //   });
     // }
-    if (usernameExist&& usernameExist.isNotSpam) {
+    if (usernameExist && usernameExist.isNotSpam) {
       return res.status(400).send({ error: "Username already existed" });
     }
     let newUser = emailExist;
-    if(!emailExist){
+    if (!emailExist) {
       newUser = new userModel({ username, email });
     }
     const salt = await bcrypt.genSalt(10);
@@ -412,6 +412,7 @@ router.put(
 );
 
 async function updateAllBMC() {
+  await deleteInactiveAccount();
   let [users, supporters, members, peopleFromKofi] = await Promise.all([
     userModel.aggregate([
       {
@@ -672,6 +673,22 @@ async function addNewAccessToken(user, token) {
   }
   loginToken.accessTokenList[0] = token;
   await loginToken.save();
+}
+
+async function deleteInactiveAccount() {
+  const users = await userModel.find({});
+  await Promise.all(
+    users.map(async ({ userId }) => {
+      const user = await userModel.findOne({ userId });
+      if (
+        Date.now() >=
+          new Date(user.createdAt).getTime() + 3600 * 1000 * 24 * 3 &&
+        (!user.isVerified || !user.isNotSpam)
+      ) {
+        await user.delete();
+      }
+    })
+  );
 }
 
 // function sendEmail(to, subject, message) {
