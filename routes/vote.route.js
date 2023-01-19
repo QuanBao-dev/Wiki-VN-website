@@ -133,7 +133,7 @@ router.put("/:vnId/translatable", verifyRole("Admin"), async (req, res) => {
 
 router.put(
   "/:vnId",
-  verifyRole("Supporter", "Member", "Admin","User"),
+  verifyRole("Supporter", "Member", "Admin", "User"),
   async (req, res) => {
     const vnId = +req.params.vnId;
     let { dataVN, isDownVotes } = req.body;
@@ -180,7 +180,7 @@ router.put(
       if (voteData.votes > 0) {
         await Promise.all([voteData.save(), user.save()]);
       } else {
-        await Promise.all([voteData.delete(), user.save()]);
+        await user.save();
       }
 
       res.send({ message: "success" });
