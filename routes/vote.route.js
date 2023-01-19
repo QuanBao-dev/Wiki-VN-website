@@ -177,12 +177,7 @@ router.put(
           }
         }
       }
-      if (voteData.votes > 0) {
-        await Promise.all([voteData.save(), user.save()]);
-      } else {
-        await user.save();
-      }
-
+      await Promise.all([voteData.save(), user.save()]);
       res.send({ message: "success" });
     } catch (error) {
       if (error) return res.status(400).send({ error: error.message });
