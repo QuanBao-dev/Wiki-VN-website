@@ -335,7 +335,8 @@ router.put("/edit/reset/password", async (req, res) => {
     if (!resetPasswordToken)
       return res.status(401).send({ error: "Access Denied" });
     const user = await userModel.findOne({ userId, isNotSpam: true });
-    if (!user) return res.status(400).send({ error: "Your account doesn't exist" });
+    if (!user)
+      return res.status(400).send({ error: "Your account doesn't exist" });
     if (password !== confirmedPassword)
       return res.status(400).send({ error: "Invalid confirmed password" });
     const [salt, loginToken] = await Promise.all([
@@ -593,11 +594,12 @@ async function updateAllBMC() {
                 role: "Supporter",
               };
             }
-            if (user.isFreeAds !== false) {
+            if (user.isFreeAds !== false || user.boost !== 1) {
               const userData = await userModel.findOne({
                 userId: user.userId,
               });
               userData.isFreeAds = false;
+              userData.boost = 1;
               userData.role = "User";
               await userData.save();
             }
@@ -705,14 +707,12 @@ async function updateAllBMC() {
                 role: "Member",
               };
             }
-            if (
-              user.isFreeAds !== false ||
-              user.boost !== member.subscription_coffee_price
-            ) {
+            if (user.isFreeAds !== false || user.boost !== 1) {
               const userData = await userModel.findOne({
                 userId: user.userId,
               });
               userData.isFreeAds = false;
+              userData.boost = 1;
               userData.role = "User";
               await userData.save();
             }
