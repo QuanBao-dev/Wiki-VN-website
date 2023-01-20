@@ -1,28 +1,27 @@
-import "./Login.css";
-
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { from, fromEvent, of } from "rxjs";
-import { ajax } from "rxjs/ajax";
+import { useNavigate, useParams } from "react-router-dom";
 import {
-  catchError,
-  combineAll,
-  exhaustMap,
-  filter,
-  pluck,
+  from,
   startWith,
+  fromEvent,
+  filter,
+  combineAll,
   tap,
-} from "rxjs/operators";
-
+  exhaustMap,
+  pluck,
+  catchError,
+  of,
+} from "rxjs";
+import { ajax } from "rxjs/ajax";
 import Input from "../../components/Input/Input";
-import { userStore } from "../../store/user";
 
-const Login = () => {
-  const emailRef = useRef(document.createElement("input"));
-  const passwordRef = useRef(document.createElement("input"));
+import "./PasswordReset.css";
+const PasswordReset = () => {
+  const { token } = useParams();
   const formContainerRef = useRef(document.createElement("form"));
+  const passwordRef = useRef(document.createElement("input"));
+  const confirmedPasswordRef = useRef(document.createElement("input"));
   const buttonRef = useRef(document.createElement("button"));
-  const forgetPasswordButtonRef = useRef(document.createElement("button"));
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
   useEffect(() => {
@@ -46,11 +45,14 @@ const Login = () => {
         ),
         exhaustMap(() =>
           ajax({
-            url: "/api/user/login",
-            method: "POST",
+            url: "/api/user/edit/reset/password",
+            method: "Put",
             body: {
-              email: emailRef.current.value,
               password: passwordRef.current.value,
+              confirmedPassword: confirmedPasswordRef.current.value,
+            },
+            headers: {
+              authorization: `Bearer ${token}`,
             },
           }).pipe(
             pluck("response", "message"),
@@ -60,10 +62,8 @@ const Login = () => {
       )
       .subscribe((res: any) => {
         if (!res.error) {
+          alert("Reset Password Successfully");
           navigate("/");
-          userStore.updateState({
-            trigger: !userStore.currentState().trigger,
-          });
         } else {
           setErrorMessage(res.error);
         }
@@ -82,26 +82,25 @@ const Login = () => {
           if (e.key === "Enter") e.preventDefault();
         }}
       >
-        <h1>Login</h1>
+        <h1>Password Reset</h1>
         {errorMessage !== "" && (
           <div className="error-container">{errorMessage}</div>
         )}
-        <Input label={"email"} type={"text"} inputRef={emailRef} />
-        <Input label={"password"} type={"password"} inputRef={passwordRef} />
-        <div className="buttons-container">
-          <button
-            ref={forgetPasswordButtonRef}
-            onClick={() => {
-              navigate("/lostPassword");
-            }}
-          >
-            Forgot your Password
-          </button>
-          <button ref={buttonRef}>Submit</button>
-        </div>
+
+        <Input
+          label={"New Password"}
+          type={"password"}
+          inputRef={passwordRef}
+        />
+        <Input
+          label={"Confirmed New Password"}
+          type={"password"}
+          inputRef={confirmedPasswordRef}
+        />
+        <button ref={buttonRef}>Submit</button>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default PasswordReset;

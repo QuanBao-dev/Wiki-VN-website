@@ -79,35 +79,49 @@ router.get(
   }
 );
 
-router.get("/verify/:token", async (req, res) => {
+// router.get("/verify/:token", async (req, res) => {
+//   const token = req.params.token;
+//   try {
+//     const user = jwt.verify(token, process.env.JWT_KEY);
+//     const userExisted = await userModel.findOne({ userId: user.userId });
+//     if (!userExisted) {
+//       try {
+//         await removeToken(user.userId);
+//       } catch (error) {
+//         return res.status(401).send({ error: "Invalid token" });
+//       }
+//       return res.status(401).send({ error: "User doesn't exist" });
+//     }
+//     userExisted.isVerified = true;
+//     userExisted.email = user.email;
+//     await Promise.all([removeToken(user.userId), userExisted.save()]);
+//     const users = await userModel.find({});
+//     await Promise.all(
+//       users.map(async ({ userId }) => {
+//         const user = await userModel.findOne({ userId });
+//         if (
+//           Date.now() >=
+//             new Date(user.createdAt).getTime() + 3600 * 1000 * 24 * 7 &&
+//           (user.isVerified === false || user.isNotSpam === false)
+//         ) {
+//           await Promise.all([user.delete(), removeToken(user.userId)]);
+//         }
+//       })
+//     );
+//     res.send({ message: "success" });
+//   } catch (error) {
+//     if (error) return res.status(400).send({ error: error.message });
+//     res.status(404).send({ error: "Something went wrong" });
+//   }
+// });
+
+router.get("/resetPassword/:token", async (req, res) => {
   const token = req.params.token;
   try {
-    const user = jwt.verify(token, process.env.JWT_KEY);
-    const userExisted = await userModel.findOne({ userId: user.userId });
-    if (!userExisted) {
-      try {
-        await removeToken(user.userId);
-      } catch (error) {
-        return res.status(401).send({ error: "Invalid token" });
-      }
-      return res.status(401).send({ error: "User doesn't exist" });
-    }
-    userExisted.isVerified = true;
-    userExisted.email = user.email;
-    await Promise.all([removeToken(user.userId), userExisted.save()]);
-    const users = await userModel.find({});
-    await Promise.all(
-      users.map(async ({ userId }) => {
-        const user = await userModel.findOne({ userId });
-        if (
-          Date.now() >=
-            new Date(user.createdAt).getTime() + 3600 * 1000 * 24 * 7 &&
-          (user.isVerified === false || user.isNotSpam === false)
-        ) {
-          await Promise.all([user.delete(), removeToken(user.userId)]);
-        }
-      })
-    );
+    const { userId } = jwt.verify(token, process.env.JWT_KEY);
+    const resetPasswordToken = await tokenModel.findOne({ userId });
+    if (!resetPasswordToken)
+      return res.status(401).send({ error: "You don't have permission" });
     res.send({ message: "success" });
   } catch (error) {
     if (error) return res.status(400).send({ error: error.message });
@@ -115,9 +129,9 @@ router.get("/verify/:token", async (req, res) => {
   }
 });
 
-async function removeToken(userId) {
-  const token = await tokenModel.findOne({ userId });
-  if (token) await token.remove();
-}
+// async function removeToken(userId) {
+//   const token = await tokenModel.findOne({ userId });
+//   if (token) await token.remove();
+// }
 
 module.exports = router;

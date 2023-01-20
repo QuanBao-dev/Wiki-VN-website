@@ -8,7 +8,7 @@ const {
   registerValidation,
   changeInfoAccountValidation,
 } = require("../validation/user.validation");
-// const nodemailer = require("nodemailer");
+const nodemailer = require("nodemailer");
 // const tokenModel = require("../models/token.model");
 const { verifyRole } = require("../middlewares/verifyRole");
 const cloudinary = require("cloudinary");
@@ -16,6 +16,7 @@ const loginTokenModel = require("../models/loginToken.model");
 const BMC = require("../utils");
 const notificationModel = require("../models/notification.model");
 const coffeeModel = require("../models/coffee.model");
+const tokenModel = require("../models/token.model");
 
 router.post("/BMC/", async (req, res) => {
   try {
@@ -104,12 +105,10 @@ router.post("/login", async (req, res) => {
   try {
     const user = await userModel.findOne({ email });
     if (!user) {
-      return res
-        .status(400)
-        .send({
-          error:
-            "Your account doesn't exist, please register your account before logging in",
-        });
+      return res.status(400).send({
+        error:
+          "Your account doesn't exist, please register your account before logging in",
+      });
     }
     // if (!(await isValidEmail(email))) {
     //   const user = await userModel.findOne({ email });
@@ -320,6 +319,73 @@ router.put("/admin/edit", verifyRole("Admin"), async (req, res) => {
   } catch (error) {
     if (error) return res.status(400).send({ error: error.message });
     return res.status(404).send({ error: "Something went wrong" });
+  }
+});
+
+router.put("/edit/reset/password", async (req, res) => {
+  const { password, confirmedPassword } = req.body;
+  const authorization = req.headers["authorization"];
+  const token = authorization.split(" ")[1];
+  if (!token || token === "undefined") {
+    return res.status(401).send({ error: "Access Denied" });
+  }
+  try {
+    const { userId } = jwt.verify(token, process.env.JWT_KEY);
+    const resetPasswordToken = await tokenModel.findOne({ userId });
+    if (!resetPasswordToken)
+      return res.status(401).send({ error: "Access Denied" });
+    const user = await userModel.findOne({ userId });
+    if (!user) return res.status(400).send({ error: "Something went wrong" });
+    if (password !== confirmedPassword)
+      return res.status(400).send({ error: "Invalid confirmed password" });
+    const [salt, loginToken] = await Promise.all([
+      bcrypt.genSalt(10),
+      loginTokenModel.findOne({ userId }),
+    ]);
+    if (loginToken) await loginToken.delete();
+    user.password = await bcrypt.hash(password, salt);
+    await Promise.all([user.save(), resetPasswordToken.delete()]);
+    res.send({ message: "Success" });
+  } catch (error) {
+    if (error.message) return res.status(400).send({ error: error.message });
+    return res.status(404).send({ error: "Something went wrong" });
+  }
+});
+
+router.put("/reset/password", async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await userModel
+      .findOne({ email, isNotSpam: true, isVerified: true })
+      .lean();
+    if (!user) return res.status(400).send({ error: "Account doesn't exist" });
+    let token = await tokenModel.findOne({ userId: user.userId });
+    if (!token) {
+      token = new tokenModel({
+        userId: user.userId,
+      });
+    }
+    await token.save();
+    const jwtToken = jwt.sign(
+      {
+        userId: token.userId,
+        createdAt: token.createdAt,
+      },
+      process.env.JWT_KEY,
+      {
+        expiresIn: 60 * 15,
+      }
+    );
+    sendEmail(
+      email,
+      "Reset your password",
+      `- This link will be expired after 15 minutes
+      - Please click this link ${process.env.HOST_EMAIL}/resetPassword/${jwtToken} to reset your password`
+    );
+    res.send({ message: "Please check your email to reset your password" });
+  } catch (error) {
+    if (error) return res.status(400).send({ error: error.message });
+    res.status(404).send({ error: "Something went wrong" });
   }
 });
 
@@ -696,31 +762,31 @@ async function deleteInactiveAccount() {
   );
 }
 
-// function sendEmail(to, subject, message) {
-//   return new Promise((res, rej) => {
-//     const transporter = nodemailer.createTransport({
-//       service: "gmail",
-//       auth: {
-//         user: process.env.EMAIL,
-//         pass: process.env.PASSWORD_EMAIL,
-//       },
-//     });
-//     const mailOptions = {
-//       from: process.env.EMAIL,
-//       to,
-//       subject,
-//       text: message,
-//     };
-//     transporter.sendMail(mailOptions, (error, info) => {
-//       if (error) {
-//         console.error(error);
-//         rej(error);
-//       } else {
-//         res("Email sent:" + info.response);
-//         console.log("Email sent:" + info.response);
-//       }
-//     });
-//   });
-// }
+function sendEmail(to, subject, message) {
+  return new Promise((res, rej) => {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASSWORD_EMAIL,
+      },
+    });
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to,
+      subject,
+      text: message,
+    };
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error(error);
+        rej(error);
+      } else {
+        res("Email sent:" + info.response);
+        console.log("Email sent:" + info.response);
+      }
+    });
+  });
+}
 
 module.exports = router;

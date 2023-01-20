@@ -1,30 +1,16 @@
-import "./Login.css";
+import './UserLostPassword.css';
 
-import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { from, fromEvent, of } from "rxjs";
-import { ajax } from "rxjs/ajax";
-import {
-  catchError,
-  combineAll,
-  exhaustMap,
-  filter,
-  pluck,
-  startWith,
-  tap,
-} from "rxjs/operators";
+import { useEffect, useRef, useState } from 'react';
+import { catchError, combineAll, exhaustMap, filter, from, fromEvent, of, pluck, startWith, tap } from 'rxjs';
+import { ajax } from 'rxjs/ajax';
 
-import Input from "../../components/Input/Input";
-import { userStore } from "../../store/user";
+import Input from '../../components/Input/Input';
 
-const Login = () => {
-  const emailRef = useRef(document.createElement("input"));
-  const passwordRef = useRef(document.createElement("input"));
+const UserLostPassword = () => {
   const formContainerRef = useRef(document.createElement("form"));
+  const emailRef = useRef(document.createElement("input"));
   const buttonRef = useRef(document.createElement("button"));
-  const forgetPasswordButtonRef = useRef(document.createElement("button"));
   const [errorMessage, setErrorMessage] = useState("");
-  const navigate = useNavigate();
   useEffect(() => {
     const subscription = from([
       fromEvent(buttonRef.current, "click").pipe(startWith("")),
@@ -46,11 +32,10 @@ const Login = () => {
         ),
         exhaustMap(() =>
           ajax({
-            url: "/api/user/login",
-            method: "POST",
+            url: "/api/user/reset/password",
+            method: "Put",
             body: {
               email: emailRef.current.value,
-              password: passwordRef.current.value,
             },
           }).pipe(
             pluck("response", "message"),
@@ -60,10 +45,7 @@ const Login = () => {
       )
       .subscribe((res: any) => {
         if (!res.error) {
-          navigate("/");
-          userStore.updateState({
-            trigger: !userStore.currentState().trigger,
-          });
+          alert(res);
         } else {
           setErrorMessage(res.error);
         }
@@ -82,26 +64,17 @@ const Login = () => {
           if (e.key === "Enter") e.preventDefault();
         }}
       >
-        <h1>Login</h1>
+        <h1>Forgot your password</h1>
         {errorMessage !== "" && (
           <div className="error-container">{errorMessage}</div>
         )}
-        <Input label={"email"} type={"text"} inputRef={emailRef} />
-        <Input label={"password"} type={"password"} inputRef={passwordRef} />
-        <div className="buttons-container">
-          <button
-            ref={forgetPasswordButtonRef}
-            onClick={() => {
-              navigate("/lostPassword");
-            }}
-          >
-            Forgot your Password
-          </button>
-          <button ref={buttonRef}>Submit</button>
-        </div>
+
+        <Input label={"Email"} type={"text"} inputRef={emailRef} />
+
+        <button ref={buttonRef}>Submit</button>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default UserLostPassword;

@@ -14,6 +14,8 @@ import { ajax } from "rxjs/ajax";
 import PopupNotification from "./components/PopupNotification/PopupNotification";
 import Chat from "./pages/Chat/Chat";
 import About from "./pages/About/About";
+import PasswordReset from "./pages/PasswordReset/PasswordReset";
+import UserLostPassword from "./pages/UserLostPassword/UserLostPassword";
 
 const RandomVNList = React.lazy(
   () => import("./components/RandomVNList/RandomVNList")
@@ -174,6 +176,50 @@ function App() {
                   }
                 >
                   <Login />
+                </Suspense>
+              }
+            />
+          )}
+          {userState.role === "" && (
+            <Route
+              path="/resetPassword/:token"
+              element={
+                <Suspense
+                  fallback={
+                    <h1 className="loading-3-dot">
+                      <i
+                        className="fas fa-spinner fa-pulse fa-5x"
+                        style={{
+                          display: "inline-block",
+                          margin: "auto",
+                        }}
+                      ></i>
+                    </h1>
+                  }
+                >
+                  <PasswordReset />
+                </Suspense>
+              }
+            />
+          )}
+          {userState.role === "" && (
+            <Route
+              path="/lostPassword"
+              element={
+                <Suspense
+                  fallback={
+                    <h1 className="loading-3-dot">
+                      <i
+                        className="fas fa-spinner fa-pulse fa-5x"
+                        style={{
+                          display: "inline-block",
+                          margin: "auto",
+                        }}
+                      ></i>
+                    </h1>
+                  }
+                >
+                  <UserLostPassword />
                 </Suspense>
               }
             />
