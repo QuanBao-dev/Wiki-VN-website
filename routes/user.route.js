@@ -334,8 +334,8 @@ router.put("/edit/reset/password", async (req, res) => {
     const resetPasswordToken = await tokenModel.findOne({ userId });
     if (!resetPasswordToken)
       return res.status(401).send({ error: "Access Denied" });
-    const user = await userModel.findOne({ userId });
-    if (!user) return res.status(400).send({ error: "Something went wrong" });
+    const user = await userModel.findOne({ userId, isNotSpam: true });
+    if (!user) return res.status(400).send({ error: "Your account doesn't exist" });
     if (password !== confirmedPassword)
       return res.status(400).send({ error: "Invalid confirmed password" });
     const [salt, loginToken] = await Promise.all([
