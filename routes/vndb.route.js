@@ -2,9 +2,6 @@ const express = require("express");
 const { nanoid } = require("nanoid");
 const router = express.Router();
 const VNDB = require("vndb-api");
-const vndb = new VNDB(nanoid(), {
-  acquireTimeout: 10000,
-});
 
 router.get("/", async (req, res) => {
   const {
@@ -23,8 +20,13 @@ router.get("/", async (req, res) => {
   let string = "";
   if (id) {
     if (string.length > 0)
-      string += ` and id ${isLarger ? ">=" : "="} ${id} and id <= ${parseInt(id) + 10}`;
-    else string = `id ${isLarger ? ">=" : "="} ${id} and id <= ${parseInt(id) + 10}`;
+      string += ` and id ${isLarger ? ">=" : "="} ${id} and id <= ${
+        parseInt(id) + 10
+      }`;
+    else
+      string = `id ${isLarger ? ">=" : "="} ${id} and id <= ${
+        parseInt(id) + 10
+      }`;
   }
   if (released) {
     if (string.length > 0) string += " and released >= " + released;
@@ -63,6 +65,10 @@ router.get("/", async (req, res) => {
     else string = `tags = ${tags}`;
   }
   console.log(string);
+  const vndb = new VNDB(nanoid(), {
+    acquireTimeout: 10000,
+  });
+
   try {
     const response = await vndb.query(
       `get vn details,basic,anime,relations,stats,screens,staff,tags (${string})`
@@ -77,6 +83,10 @@ router.get("/", async (req, res) => {
 
 router.get("/random", async (req, res) => {
   try {
+    const vndb = new VNDB(nanoid(), {
+      acquireTimeout: 10000,
+    });
+
     const response = await vndb.query(`dbstats`);
     const { vn } = response;
     const randomNumberList = Array.from(Array(4).keys()).reduce((ans, curr) => {
@@ -176,6 +186,10 @@ router.get("/release", async (req, res) => {
   }
   console.log(string);
   try {
+    const vndb = new VNDB(nanoid(), {
+      acquireTimeout: 10000,
+    });
+
     const response = await vndb.query(
       `get release basic,details,vn,producers (${string})`
     );
@@ -217,6 +231,9 @@ router.get("/character", async (req, res) => {
     if (string.length > 0) string += " and traits = " + traits;
     else string = `traits = ${traits}`;
   }
+  const vndb = new VNDB(nanoid(), {
+    acquireTimeout: 10000,
+  });
 
   try {
     const response = await vndb.query(
@@ -248,6 +265,10 @@ router.get("/staff", async (req, res) => {
   }
 
   try {
+    const vndb = new VNDB(nanoid(), {
+      acquireTimeout: 10000,
+    });
+
     const response = await vndb.query(
       `get staff basic,details,aliases,vns,voiced (${string})`
     );
@@ -261,6 +282,10 @@ router.get("/staff", async (req, res) => {
 
 router.get("/stats", async (req, res) => {
   try {
+    const vndb = new VNDB(nanoid(), {
+      acquireTimeout: 10000,
+    });
+
     const response = await vndb.query(`dbstats`);
     res.send({
       message: response,
@@ -272,6 +297,10 @@ router.get("/stats", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
+  const vndb = new VNDB(nanoid(), {
+    acquireTimeout: 10000,
+  });
+
   try {
     const visualNovel = await vndb.query(
       `get vn details,basic,anime,relations,stats,screens,staff,tags (id = ${id})`
