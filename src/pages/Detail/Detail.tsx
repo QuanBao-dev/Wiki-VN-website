@@ -33,6 +33,7 @@ const convertObject = {
   alt: "Alternative version",
   fan: "Fandisc",
   preq: "Prequel",
+  seq: "Sequel",
   side: "Side story",
   set: "Same setting",
   ser: "Same serries",
