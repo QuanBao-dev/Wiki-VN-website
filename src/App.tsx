@@ -145,7 +145,7 @@ function App() {
                   </Suspense>
                   <a
                     className="discord-banner-container"
-                    href="https://discord.gg/bBRAH5E4"
+                    href="https://discord.gg/h4eksqEbVK"
                     target={"_blank"}
                     rel="noreferrer"
                   >
@@ -334,7 +334,7 @@ function App() {
                   </Suspense>
                   <a
                     className="discord-banner-container"
-                    href="https://discord.gg/bBRAH5E4"
+                    href="https://discord.gg/h4eksqEbVK"
                     target={"_blank"}
                     rel="noreferrer"
                   >
