@@ -19,7 +19,7 @@ const About = () => {
           <li>
             MingShiba (Sugoi model). This is his{" "}
             <a
-              href="https://discord.gg/AEwRn3Wf"
+              href="https://discord.gg/h4eksqEbVK"
               target={"_blank"}
               rel="noreferrer"
               style={{
