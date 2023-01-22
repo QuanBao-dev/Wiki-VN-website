@@ -29,7 +29,6 @@ router.get("/", async (req, res) => {
               in: { $sum: ["$$value", "$$this.boost"] },
             },
           },
-          votesData: 1,
           isTranslatable: 1,
           dataVN: 1,
         },
