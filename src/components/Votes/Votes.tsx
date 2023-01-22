@@ -41,12 +41,6 @@ const Votes = ({ vnId, dataVN }: Props) => {
   useEffect(() => {
     if (!data.votes) return setVotes(0);
     setVotes(data.votes);
-    if (isIncreasedRef.current === true) {
-      setVotes(data.votes - 1 + userStore.currentState().boost);
-    }
-    if (isIncreasedRef.current === false) {
-      setVotes(data.votes + 1 - userStore.currentState().boost);
-    }
   }, [data.votes]);
   useEffect(() => {
     if (!upVotesRef.current) return;

@@ -10,18 +10,33 @@ router.get("/", async (req, res) => {
   try {
     let votes = await voteModel.aggregate([
       { $match: { isTranslatable: true } },
+      {
+        $lookup: {
+          from: "users",
+          localField: "vnId",
+          foreignField: "votedVnIdList",
+          as: "votesData",
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          vnId: 1,
+          votes: {
+            $reduce: {
+              input: "$votesData",
+              initialValue: 0,
+              in: { $sum: ["$$value", "$$this.boost"] },
+            },
+          },
+          votesData: 1,
+          isTranslatable: 1,
+          dataVN: 1,
+        },
+      },
       { $sort: { votes: -1, _id: 1 } },
       { $skip: 10 * page },
       { $limit: 10 },
-      {
-        $project: {
-          vnId: 1,
-          votes: 1,
-          isTranslatable: 1,
-          dataVN: 1,
-          _id: 0,
-        },
-      },
     ]);
     if (votes.length === 0) {
       return res.status(400).send({ error: "It has reached its last page" });
@@ -109,23 +124,13 @@ router.get("/:vnId", async (req, res) => {
       ans += curr.boost || 1;
       return ans;
     }, 0);
-    if (vote)
-      if (validUsersLength === 0 && vote.isTranslatable) {
-        const vote = await voteModel.findOne({ vnId });
-        if (vote) await vote.delete();
-      } else if (validUsersLength !== vote.votes && vote.isTranslatable) {
-        if (vote) {
-          const vote = await voteModel.findOne({ vnId });
-          vote.votes = validUsersLength;
-          await vote.save();
-        }
-      }
+
     let isIncreased = false;
     if (user && user.votedVnIdList) {
       if (user.votedVnIdList.includes(vnId)) isIncreased = true;
     }
     res.send({
-      message: { ...vote, isIncreased },
+      message: { ...vote, isIncreased, votes: validUsersLength },
     });
   } catch (error) {
     if (error) return res.status(400).send({ error: error.message });
@@ -188,15 +193,13 @@ router.put(
       }
       if (!isDownVotes) {
         if (!user.votedVnIdList.includes(vnId)) {
-          voteData.votes += 1;
           user.votedVnIdList.push(vnId);
         }
       } else {
         if (isIncreased) {
           if (user.votedVnIdList.includes(vnId)) {
-            voteData.votes -= 1;
             user.votedVnIdList = user.votedVnIdList.filter(
-              (votes) => votes !== vnId
+              (vnIdData) => vnIdData !== vnId
             );
           }
         }
