@@ -688,12 +688,18 @@ async function updateAllBMC() {
                   });
                 }
                 notification.title = "Thank you for your support";
-                notification.message = `Hi ${
-                  user.username
-                }! Now your votes is now boosted by x${parseInt(
-                  member.subscription_coffee_price
-                )}, you can access to the secret room on the top right as well as long as you are still a membership`;
                 userData.boost = parseInt(member.subscription_coffee_price);
+                if (userData.boost === 100) {
+                  notification.message = `Hi ${user.username}! Now you are a member with diamond level. Please contact me through discord by direct message on discord. You have the right to request me 2 VNs you want me to translate.`;
+                } else if(userData.boost === 200) {
+                  notification.message = `Hi ${user.username}! Now you are a member with master level. Please contact me through discord by direct message on discord. You have the right to request me 4 VNs you want me to translate.`;
+                } else {
+                  notification.message = `Hi ${
+                    user.username
+                  }! Now your votes is now boosted by x${parseInt(
+                    member.subscription_coffee_price
+                  )}, you can access to the secret room on the top right as well as long as you are still a membership`;
+                }
                 userData.role = "Member";
                 await Promise.all([userData.save(), notification.save()]);
               }
@@ -753,7 +759,7 @@ async function deleteInactiveAccount() {
       const user = await userModel.findOne({ userId });
       if (
         Date.now() >=
-          new Date(user.createdAt).getTime() + 3600 * 1000 * 24 * 3 &&
+          new Date(user.createdAt).getTime() + 3600 * 1000 * 24 * 1 &&
         (!user.isVerified || !user.isNotSpam)
       ) {
         await user.delete();

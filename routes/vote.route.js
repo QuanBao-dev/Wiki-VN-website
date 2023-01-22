@@ -35,6 +35,30 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get(
+  "/personal/vns/",
+  verifyRole("User", "Admin", "Member"),
+  async (req, res) => {
+    const { userId } = req.user;
+    const page = req.query.page || 0;
+    try {
+      const { votedVnIdList } = await userModel
+        .findOne({ userId })
+        .select({ _id: 0, votedVnIdList: 1 })
+        .lean();
+      const votes = await voteModel.aggregate([
+        { $match: { vnId: { $in: votedVnIdList } } },
+        { $limit: 10 },
+        { $skip: page * 10 },
+      ]);
+      res.send({ message: votes });
+    } catch (error) {
+      if (error) return res.status(400).send({ error: error.message });
+      return res.status(404).send({ error: "Something went wrong" });
+    }
+  }
+);
+
 router.get("/:vnId", async (req, res) => {
   const vnId = parseInt(req.params.vnId);
   const decode = jwt.decode(req.signedCookies.token, { json: true });
