@@ -1,7 +1,7 @@
 import "./Login.css";
 
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { from, fromEvent, of } from "rxjs";
 import { ajax } from "rxjs/ajax";
 import {
@@ -22,7 +22,6 @@ const Login = () => {
   const passwordRef = useRef(document.createElement("input"));
   const formContainerRef = useRef(document.createElement("form"));
   const buttonRef = useRef(document.createElement("button"));
-  const forgetPasswordButtonRef = useRef(document.createElement("button"));
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
   useEffect(() => {
@@ -89,14 +88,7 @@ const Login = () => {
         <Input label={"email"} type={"text"} inputRef={emailRef} />
         <Input label={"password"} type={"password"} inputRef={passwordRef} />
         <div className="buttons-container">
-          <button
-            ref={forgetPasswordButtonRef}
-            onClick={() => {
-              navigate("/lostPassword");
-            }}
-          >
-            Forgot your Password
-          </button>
+          <Link to={"/lostPassword"}>Forgot your Password</Link>
           <button ref={buttonRef}>Submit</button>
         </div>
       </form>
