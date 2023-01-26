@@ -6,13 +6,17 @@ interface HomeStore {
   patchesPage: number;
   indexActive: number;
   maxVotes: number;
+  maxVotesPersonalVN: number;
+  isLoadingPersonalVN:boolean;
   isStopFetching: boolean;
+  isStopFetchingPersonalVN: boolean;
   votesPage: number;
+  votesPagePersonalVN:number;
   isLoading: boolean;
   trigger: boolean;
   stats: SugoiVNDBStats;
   currentScrollTop: number;
-  textSearch:string
+  textSearch: string;
 }
 
 export const homeStore = createStore<HomeStore>({
@@ -26,10 +30,14 @@ export const homeStore = createStore<HomeStore>({
     releasesLength: 0,
   },
   maxVotes: 0,
+  maxVotesPersonalVN: 0,
+  votesPagePersonalVN:0,
   isStopFetching: false,
+  isStopFetchingPersonalVN:false,
   votesPage: 0,
   isLoading: true,
+  isLoadingPersonalVN:true,
   trigger: false,
   currentScrollTop: 0,
-  textSearch: ""
+  textSearch: "",
 });

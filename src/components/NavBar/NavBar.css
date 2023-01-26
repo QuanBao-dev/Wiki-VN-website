@@ -178,4 +178,8 @@
   .logo{
     font-size: 1.7rem;
   }
+
+  .card-list-toggle-mode{
+    font-size:0.8rem
+  }
 }

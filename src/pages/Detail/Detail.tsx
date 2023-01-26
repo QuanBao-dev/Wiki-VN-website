@@ -145,6 +145,8 @@ const Detail = () => {
         className="image-zoom-container"
         ref={imageZoomContainerRef}
         onClick={() => {
+          document.body.style.overflow = "auto";
+
           clearTimeout(timeoutRef.current);
           imageZoomContainerRef.current.style.top = backupObj.current.y + "px";
           imageZoomContainerRef.current.style.left = backupObj.current.x + "px";
@@ -158,7 +160,6 @@ const Detail = () => {
             blackBackgroundRef.current.style.display = "none";
             (imageZoomContainerRef.current.querySelector("img") as any).src =
               "";
-            document.body.style.overflow = "auto";
           }, 500);
         }}
       >

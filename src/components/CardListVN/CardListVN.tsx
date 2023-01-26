@@ -10,6 +10,8 @@ import { useFetchApi } from "../../pages/Hooks/useFetchApi";
 import cachesStore from "../../store/caches";
 import { homeStore } from "../../store/home";
 import SkeletonLoading from "../SkeletonLoading/SkeletonLoading";
+import PersonalVoteList from "../PersonalVoteList/PersonalVoteList";
+import { userStore } from "../../store/user";
 const RankingVN = React.lazy(() => import("../RankingVN/RankingVN"));
 const CardItemVN = React.lazy(() => import("../CardItemVN/CardItemVN"));
 const CardListVN = () => {
@@ -230,6 +232,17 @@ const CardListVN = () => {
         >
           Visual Novels Rank
         </div>
+        {userStore.currentState().role && (
+          <div
+            className={indexActive === 3 ? "active" : ""}
+            onClick={() => {
+              setIndexActive(3);
+              homeStore.updateState({ indexActive: 3 });
+            }}
+          >
+            Your voted VNs
+          </div>
+        )}
       </div>
       <div
         className="card-list-vn-wrapper"
@@ -289,6 +302,21 @@ const CardListVN = () => {
           }
         >
           <RankingVN />
+        </Suspense>
+      )}
+      {indexActive === 3 && (
+        <Suspense
+          fallback={
+            <SkeletonLoading
+              isLoading={true}
+              height={300}
+              width={`${100}%`}
+              LoadingComponent={undefined}
+              margin={3}
+            />
+          }
+        >
+          <PersonalVoteList />
         </Suspense>
       )}
       <div

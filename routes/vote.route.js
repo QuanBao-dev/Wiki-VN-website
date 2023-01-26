@@ -27,7 +27,7 @@ router.get("/", async (req, res) => {
               input: "$votesData",
               initialValue: 0,
               in: { $sum: ["$$value", "$$this.boost"] },
-            },  
+            },
           },
           isTranslatable: 1,
           dataVN: 1,
@@ -51,7 +51,7 @@ router.get("/", async (req, res) => {
 
 router.get(
   "/personal/vns/",
-  verifyRole("User", "Admin", "Member"),
+  verifyRole("User", "Admin", "Member", "Supporter"),
   async (req, res) => {
     const { userId } = req.user;
     const page = req.query.page || 0;
@@ -62,10 +62,39 @@ router.get(
         .lean();
       const votes = await voteModel.aggregate([
         { $match: { vnId: { $in: votedVnIdList } } },
+        {
+          $lookup: {
+            from: "users",
+            localField: "vnId",
+            foreignField: "votedVnIdList",
+            as: "votesData",
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            vnId: 1,
+            votes: {
+              $reduce: {
+                input: "$votesData",
+                initialValue: 0,
+                in: { $sum: ["$$value", "$$this.boost"] },
+              },
+            },
+            isTranslatable: 1,
+            dataVN: 1,
+          },
+        },
+        { $sort: { votes: -1, vnId: 1 } },
+        { $skip: 10 * page },
         { $limit: 10 },
-        { $skip: page * 10 },
       ]);
-      res.send({ message: votes });
+      if (votes.length === 0) {
+        return res.status(400).send({ error: "It has reached its last page" });
+      }  
+      res.send({
+        message: votes.map((vote) => ({ ...vote.dataVN, votes: vote.votes })),
+      });
     } catch (error) {
       if (error) return res.status(400).send({ error: error.message });
       return res.status(404).send({ error: "Something went wrong" });
