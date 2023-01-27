@@ -68,6 +68,13 @@ a{
   margin-bottom: 1rem;
 }
 
+.discord-banner-container h1{
+  margin: 0;
+  margin-bottom: 10px;
+  font-size: 2.6rem;
+  font-family: "Cookie";
+}
+
 @media (max-width:1230px) {
   .app-container{
     padding-left: 0;
