@@ -24,6 +24,7 @@ const changeInfoAccountValidation = (data) => {
     password: Joi.string().min(6),
     username: Joi.string().min(1),
     avatarImage: Joi.string().min(6),
+    discordUsername: Joi.string(),
   });
   return schema.validate(data);
 };

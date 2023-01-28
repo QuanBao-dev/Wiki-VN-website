@@ -22,7 +22,7 @@ import { chatStore } from "../../store/Chat";
 import { updateCaches } from "../../util/updateCaches";
 
 const ChangeAccountInfoForm = () => {
-  const inputUsernameEmailRef = useRef(document.createElement("input"));
+  const inputUsernameEmailDiscordRef = useRef(document.createElement("input"));
   const inputPasswordRef = useRef(document.createElement("input"));
   const [userState, setUserState] = useState(userStore.currentState());
   const [errorMessage, setErrorMessage] = useState("");
@@ -33,10 +33,14 @@ const ChangeAccountInfoForm = () => {
     if (userState.isShowEditAccount) {
       switch (userState.editMode) {
         case "username":
-          inputUsernameEmailRef.current.value = userState.username;
+          inputUsernameEmailDiscordRef.current.value = userState.username;
           break;
         case "email":
-          inputUsernameEmailRef.current.value = userState.email;
+          inputUsernameEmailDiscordRef.current.value = userState.email;
+          break;
+        case "discord username":
+          inputUsernameEmailDiscordRef.current.value =
+            userState.discordUsername;
           break;
       }
     }
@@ -85,11 +89,15 @@ const ChangeAccountInfoForm = () => {
             body: {
               username:
                 userState.editMode === "username"
-                  ? inputUsernameEmailRef.current.value
+                  ? inputUsernameEmailDiscordRef.current.value
                   : undefined,
               email:
                 userState.editMode === "email"
-                  ? inputUsernameEmailRef.current.value
+                  ? inputUsernameEmailDiscordRef.current.value
+                  : undefined,
+              discordUsername:
+                userState.editMode === "discord username"
+                  ? inputUsernameEmailDiscordRef.current.value
                   : undefined,
               password: inputPasswordRef.current.value,
             },
@@ -154,7 +162,7 @@ const ChangeAccountInfoForm = () => {
         <Input
           label={userState.editMode}
           type="text"
-          inputRef={inputUsernameEmailRef}
+          inputRef={inputUsernameEmailDiscordRef}
         />
         <Input label="password" type="password" inputRef={inputPasswordRef} />
         <button ref={buttonSubmitRef}>Submit</button>

@@ -38,6 +38,9 @@ const userSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  discordUsername:{
+    type:String,
+  }
 });
 
 module.exports = mongoose.model("user", userSchema);

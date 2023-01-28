@@ -105,6 +105,22 @@ const Account = () => {
               Edit
             </button>
           </div>
+          <div className="detail-account-item">
+            <div>
+              <label>Discord</label>
+              <div>{userState.discordUsername}</div>
+            </div>
+            <button
+              onClick={() => {
+                userStore.updateState({
+                  isShowEditAccount: true,
+                  editMode: "discord username",
+                });
+              }}
+            >
+              Edit
+            </button>
+          </div>
         </div>
       </div>
     </div>

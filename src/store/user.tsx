@@ -6,12 +6,13 @@ interface UserStore {
   role: string;
   trigger: boolean;
   email: string;
-  editMode: "username" | "email";
+  editMode: "username" | "email" | "discord username";
   isShowEditAccount: boolean;
   isDarkMode: boolean;
   exp: number;
   iat: number;
-  boost:number
+  boost:number;
+  discordUsername: string 
 }
 
 export const userStore = createStore<UserStore>({
@@ -26,5 +27,6 @@ export const userStore = createStore<UserStore>({
   isDarkMode: false,
   exp: 0,
   iat: 0,
-  boost:1
+  boost:1,
+  discordUsername:"No username"
 });

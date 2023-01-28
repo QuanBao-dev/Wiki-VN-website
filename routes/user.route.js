@@ -396,7 +396,8 @@ router.put(
   "/edit",
   verifyRole("Admin", "Supporter", "Member", "User"),
   async (req, res) => {
-    const { username, email, password, avatarImage } = req.body;
+    const { username, email, password, avatarImage, discordUsername } =
+      req.body;
     const result = changeInfoAccountValidation(req.body);
     if (result.error) {
       return res.status(400).send({ error: result.error.details[0].message });
@@ -414,6 +415,16 @@ router.put(
         if (isUsernameExisted)
           return res.status(400).send({ error: "Username existed" });
         user.username = username;
+        await user.save();
+        return res.send({
+          message: { newToken },
+        });
+      }
+      if (discordUsername) {
+        const isExactPassword = await compare(password, user.password);
+        if (!isExactPassword)
+          return res.status(400).send({ error: "Wrong Password" });
+        user.discordUsername = discordUsername;
         await user.save();
         return res.send({
           message: { newToken },
@@ -502,6 +513,7 @@ async function updateAllBMC() {
           boost: 1,
           votedVnIdList: 1,
           isNotSpam: 1,
+          discordUsername: 1,
         },
       },
       {
@@ -651,7 +663,7 @@ async function updateAllBMC() {
     }
   });
   members.data = Object.values(temp2);
-  console.log(members.data)
+  console.log(members.data);
   // console.log(temp2.map((v) => Object.values(v)[0]));
   if (members.data)
     finalResult = await Promise.all(
@@ -694,7 +706,7 @@ async function updateAllBMC() {
                 userData.boost = parseInt(member.subscription_coffee_price);
                 if (userData.boost === 100) {
                   notification.message = `Hi ${user.username}! Now you are a member with diamond level. Please contact me through discord by direct message on discord. You have the right to request me 2 VNs you want me to translate.`;
-                } else if(userData.boost === 200) {
+                } else if (userData.boost === 200) {
                   notification.message = `Hi ${user.username}! Now you are a member with master level. Please contact me through discord by direct message on discord. You have the right to request me 4 VNs you want me to translate.`;
                 } else {
                   notification.message = `Hi ${

@@ -104,6 +104,7 @@ const Admin = () => {
           <thead>
             <tr>
               <th>STT</th>
+              <th>Discord Username</th>
               <th>votedVnIdList</th>
               <th>userId</th>
               <th>Username</th>
@@ -142,6 +143,7 @@ const Admin = () => {
                   boost,
                   votedVnIdList,
                   isNotSpam,
+                  discordUsername
                 },
                 key
               ) => (
@@ -165,6 +167,7 @@ const Admin = () => {
                   setUserList={setUserList}
                   votedVnIdList={votedVnIdList}
                   isNotSpam={isNotSpam}
+                  discordUsername={discordUsername}
                 />
               )
             )}
@@ -194,6 +197,7 @@ interface RowTableProps {
   index: number;
   votedVnIdList: number[];
   isNotSpam: boolean;
+  discordUsername: string;
 }
 function RowTable({
   index,
@@ -214,6 +218,7 @@ function RowTable({
   endFreeAdsDate,
   votedVnIdList,
   isNotSpam,
+  discordUsername,
 }: RowTableProps) {
   const isVerifiedEditRef = useRef(document.createElement("input"));
   const roleRef = useRef(document.createElement("select"));
@@ -222,6 +227,7 @@ function RowTable({
   return (
     <tr>
       <td>{index + 1}</td>
+      <td>{discordUsername}</td>
       <td
         style={{
           maxWidth: 100,

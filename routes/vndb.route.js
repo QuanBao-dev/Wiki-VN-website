@@ -2,11 +2,12 @@ const express = require("express");
 const { nanoid } = require("nanoid");
 const router = express.Router();
 const VNDB = require("vndb-api");
+const vndb = new VNDB(nanoid(), {
+  acquireTimeout: 10000,
+  encoding: "utf-8",
+});
 
 router.get("/", async (req, res) => {
-  const vndb = new VNDB("vndb", {
-    acquireTimeout: 10000,
-  });  
   const {
     id,
     title,
@@ -83,9 +84,6 @@ router.get("/", async (req, res) => {
 
 router.get("/random", async (req, res) => {
   try {
-    const vndb = new VNDB("vndb-stats", {
-      acquireTimeout: 10000,
-    });    
     const response = await vndb.query(`dbstats`);
     const { vn } = response;
     const randomNumberList = Array.from(Array(4).keys()).reduce((ans, curr) => {
@@ -110,9 +108,6 @@ router.get("/random", async (req, res) => {
 });
 
 router.get("/release", async (req, res) => {
-  const vndb = new VNDB("vndb-release", {
-    acquireTimeout: 10000,
-  });  
   const {
     id,
     released,
@@ -204,9 +199,6 @@ router.get("/release", async (req, res) => {
 });
 
 router.get("/character", async (req, res) => {
-  const vndb = new VNDB("vndb-character", {
-    acquireTimeout: 10000,
-  });  
   const { id, name, original, search, vn, traits } = req.query;
   let string = "";
   if (id) {
@@ -250,9 +242,6 @@ router.get("/character", async (req, res) => {
 });
 
 router.get("/staff", async (req, res) => {
-  const vndb = new VNDB("vndb-staff", {
-    acquireTimeout: 10000,
-  });  
   const { id, aid, search } = req.query;
   let string = "";
 
@@ -282,9 +271,6 @@ router.get("/staff", async (req, res) => {
 });
 
 router.get("/stats", async (req, res) => {
-  const vndb = new VNDB("vndb-stats", {
-    acquireTimeout: 10000,
-  });  
   try {
     const response = await vndb.query(`dbstats`);
     res.send({
@@ -297,9 +283,6 @@ router.get("/stats", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
-  const vndb = new VNDB(id, {
-    acquireTimeout: 10000,
-  });  
 
   try {
     const visualNovel = await vndb.query(

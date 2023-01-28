@@ -12,5 +12,6 @@ export interface User{
   role:string,
   boost:number,
   votedVnIdList:number[],
-  isNotSpam: boolean
+  isNotSpam: boolean,
+  discordUsername:string
 }

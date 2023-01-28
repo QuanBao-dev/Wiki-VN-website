@@ -19,6 +19,7 @@ router.get(
         email: 1,
         isFreeAds: 1,
         boost: 1,
+        discordUsername: 1,
       });
       res.send({
         message: { user: { ...user, exp: req.user.exp, iat: req.user.iat } },
