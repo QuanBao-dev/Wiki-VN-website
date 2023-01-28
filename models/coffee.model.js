@@ -24,7 +24,10 @@ const coffeeSchema = new mongoose.Schema({
   },
   tierName: {
     type: String,
-    default:""
+    default: "",
+  },
+  amount: {
+    type: Number,
   },
 });
 

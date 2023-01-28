@@ -46,8 +46,10 @@ router.post("/kofi/", async (req, res) => {
     coffee.email = data.email;
     coffee.type = data.type;
     coffee.fromName = data.from_name;
+    coffee.amount = parseFloat(data.amount);
     if (data.type === "Subscription") {
       coffee.becomingMemberAt = data.timestamp;
+      coffee.tierName = data.tier_name;
     } else {
       coffee.becomingSupporterAt = data.timestamp;
     }
@@ -649,6 +651,7 @@ async function updateAllBMC() {
     }
   });
   members.data = Object.values(temp2);
+  console.log(members.data)
   // console.log(temp2.map((v) => Object.values(v)[0]));
   if (members.data)
     finalResult = await Promise.all(
