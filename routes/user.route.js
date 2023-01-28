@@ -663,7 +663,6 @@ async function updateAllBMC() {
     }
   });
   members.data = Object.values(temp2);
-  console.log(members.data);
   // console.log(temp2.map((v) => Object.values(v)[0]));
   if (members.data)
     finalResult = await Promise.all(

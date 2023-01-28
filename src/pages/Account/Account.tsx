@@ -107,7 +107,7 @@ const Account = () => {
           </div>
           <div className="detail-account-item">
             <div>
-              <label>Discord</label>
+              <label>Discord username</label>
               <div>{userState.discordUsername}</div>
             </div>
             <button
