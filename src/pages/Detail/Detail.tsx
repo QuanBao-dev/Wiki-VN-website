@@ -205,13 +205,15 @@ const Detail = () => {
                       <ul
                         style={{
                           margin: 0,
-                          padding:0,
-                          listStyleType:"none"
+                          padding: 0,
+                          listStyleType: "none",
                         }}
                       >
-                        {detailState.aliases.map((v, index) => (
-                          <li key={index}>{v}</li>
-                        ))}
+                        {typeof detailState.aliases !== "string"
+                          ? detailState.aliases.map((v, index) => (
+                              <li key={index}>{v}</li>
+                            ))
+                          : detailState.aliases}
                       </ul>
                     </td>
                   </tr>
