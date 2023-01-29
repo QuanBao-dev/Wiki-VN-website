@@ -85,7 +85,7 @@ router.get("/", async (req, res) => {
   //   else string = `tags = ${tags}`;
   // }
   // console.log(string);
-
+  console.log(data.filters);
   try {
     const response = (await axios.post("https://api.vndb.org/kana/vn", data))
       .data;
