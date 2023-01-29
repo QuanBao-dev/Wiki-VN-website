@@ -26,7 +26,7 @@ router.get("/", async (req, res) => {
   let data = {
     filters: [],
     fields:
-      "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases",
+      "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases, screenshots.dims",
   };
   if (id) {
     data.filters = [
@@ -123,7 +123,7 @@ router.get("/random", async (req, res) => {
           .map((id) => ["id", "=", id]),
       ],
       fields:
-        "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases",
+        "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases, screenshots.dims",
     };
     // console.log(data);
     const randomVNList = await (
@@ -322,7 +322,7 @@ router.get("/:id", async (req, res) => {
   let data = {
     filters: ["id", "=", "v" + id],
     fields:
-      "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases",
+      "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases, screenshots.dims",
   };
   const details = await (
     await axios.post("https://api.vndb.org/kana/vn", data)
@@ -347,6 +347,8 @@ function parseData(data) {
         ...screenshot,
         nsfw: screenshot.sexual >= 1,
         image: screenshot.url,
+        width: screenshot.dims[0],
+        height: screenshot.dims[1]
       })),
     };
   });

@@ -322,6 +322,7 @@ const Detail = () => {
                       imageZoomContainerRef.current.style.top = `${y}px`;
                       imageZoomContainerRef.current.style.width = `${element.offsetWidth}px`;
                       imageZoomContainerRef.current.style.height = `${element.offsetHeight}px`;
+                      console.log(screen.image);
                       (
                         imageZoomContainerRef.current.querySelector(
                           "img"
