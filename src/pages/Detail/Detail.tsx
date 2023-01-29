@@ -198,7 +198,7 @@ const Detail = () => {
                 </tr>
               </thead>
               <tbody>
-                {detailState.aliases && (
+                {detailState.aliases && detailState.aliases.length > 0 && (
                   <tr>
                     <th>Aliases</th>
                     <td>
