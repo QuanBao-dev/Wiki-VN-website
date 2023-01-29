@@ -1,5 +1,5 @@
 export interface VisualNovel {
-  aliases: string;
+  aliases: string[];
   description: string;
   reason?:string;
   id: number;

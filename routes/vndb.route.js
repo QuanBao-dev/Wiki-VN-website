@@ -1,3 +1,4 @@
+const { default: axios } = require("axios");
 const express = require("express");
 const { nanoid } = require("nanoid");
 const router = express.Router();
@@ -21,61 +22,81 @@ router.get("/", async (req, res) => {
     tags,
     isLarger,
   } = req.query;
-  let string = "";
+  // let string = "";
+  let data = {
+    filters: [],
+    fields:
+      "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases",
+  };
   if (id) {
-    if (string.length > 0)
-      string += ` and id ${isLarger ? ">=" : "="} ${id} and id <= ${
-        parseInt(id) + 10
-      }`;
-    else
-      string = `id ${isLarger ? ">=" : "="} ${id} and id <= ${
-        parseInt(id) + 10
-      }`;
+    data.filters = [
+      "and",
+      ["id", isLarger ? ">=" : "=", "v" + id],
+      ["id", "<=", "v" + (parseInt(id) + 10)],
+    ];
+    // if (string.length > 0)
+    //   string += ` and id ${isLarger ? ">=" : "="} ${id} and id <= ${
+    //     parseInt(id) + 10
+    //   }`;
+    // else
+    //   string = `id ${isLarger ? ">=" : "="} ${id} and id <= ${
+    //     parseInt(id) + 10
+    //   }`;
   }
-  if (released) {
-    if (string.length > 0) string += " and released >= " + released;
-    else string = `released >= ${released}`;
-  }
-  if (firstchar) {
-    if (string.length > 0) string += " and firstchar = " + firstchar;
-    else string = `firstchar = ${firstchar}`;
-  }
-  if (platforms) {
-    if (string.length > 0) string += " and platforms = " + platforms;
-    else string = `platforms = ${platforms}`;
-  }
+  // if (released) {
+  //   if (string.length > 0) string += " and released >= " + released;
+  //   else string = `released >= ${released}`;
+  // }
+  // if (firstchar) {
+  //   if (string.length > 0) string += " and firstchar = " + firstchar;
+  //   else string = `firstchar = ${firstchar}`;
+  // }
+  // if (platforms) {
+  //   if (string.length > 0) string += " and platforms = " + platforms;
+  //   else string = `platforms = ${platforms}`;
+  // }
+  // if (title) {
+  //   if (string.length > 0) string += ' and title ~ "' + title + '"';
+  //   else string = `title ~ "${title}"`;
+  // }
+  // if (languages) {
+  //   if (string.length > 0) string += " and languages = " + languages;
+  //   else string = `languages = ${languages}`;
+  // }
+  // if (original) {
+  //   if (string.length > 0) string += " and original = " + original;
+  //   else string = `original = ${original}`;
+  // }
+  // if (orig_lang) {
+  //   if (string.length > 0) string += " and orig_lang = " + orig_lang;
+  //   else string = `orig_lang = ${orig_lang}`;
+  // }
   if (title) {
-    if (string.length > 0) string += ' and title ~ "' + title + '"';
-    else string = `title ~ "${title}"`;
+    if (data.filters.length > 0) {
+      data.filters.push(["search", "=", title]);
+    } else {
+      data.filters = ["search", "=", title];
+    }
+    // if (string.length > 0) string += " and search = " + search;
+    // else string = `search ~ ${search}`;
   }
-  if (languages) {
-    if (string.length > 0) string += " and languages = " + languages;
-    else string = `languages = ${languages}`;
-  }
-  if (original) {
-    if (string.length > 0) string += " and original = " + original;
-    else string = `original = ${original}`;
-  }
-  if (orig_lang) {
-    if (string.length > 0) string += " and orig_lang = " + orig_lang;
-    else string = `orig_lang = ${orig_lang}`;
-  }
-  if (search) {
-    if (string.length > 0) string += " and search = " + search;
-    else string = `search ~ ${search}`;
-  }
-  if (tags) {
-    if (string.length > 0) string += " and tags = " + tags;
-    else string = `tags = ${tags}`;
-  }
-  console.log(string);
+  // if (tags) {
+  //   if (string.length > 0) string += " and tags = " + tags;
+  //   else string = `tags = ${tags}`;
+  // }
+  // console.log(string);
 
   try {
-    const response = await vndb.query(
-      `get vn details,basic,anime,relations,stats,screens,staff,tags (${string})`
-    );
+    const response = (await axios.post("https://api.vndb.org/kana/vn", data))
+      .data;
+    // const response = await vndb.query(
+    //   `get vn details,basic,anime,relations,stats,screens,staff,tags (${string})`
+    // );
     res.send({
-      message: response.items,
+      message: parseData(response.results),
+      // .map((data) => {
+      //   return { ...data, id: parseInt(data.id) };
+      // }),
     });
   } catch (error) {
     res.status(404).send({ error });
@@ -94,13 +115,28 @@ router.get("/random", async (req, res) => {
       ans.push(randomNumber);
       return ans;
     }, []);
-    const randomVNList = await vndb.query(
-      `get vn details,basic,anime,relations,stats,screens,staff,tags (id = ${JSON.stringify(
-        randomNumberList
-      )})`
-    );
+    let data = {
+      filters: [
+        "or",
+        ...randomNumberList
+          .map((number) => "v" + number)
+          .map((id) => ["id", "=", id]),
+      ],
+      fields:
+        "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases",
+    };
+    // console.log(data);
+    const randomVNList = await (
+      await axios.post("https://api.vndb.org/kana/vn", data)
+    ).data;
+
+    // const randomVNList = await vndb.query(
+    //   `get vn details,basic,anime,relations,stats,screens,staff,tags (id = ${JSON.stringify(
+    //     randomNumberList
+    //   )})`
+    // );
     res.send({
-      message: randomVNList.items,
+      message: parseData(randomVNList.results),
     });
   } catch (error) {
     res.status(404).send({ error });
@@ -272,7 +308,7 @@ router.get("/staff", async (req, res) => {
 
 router.get("/stats", async (req, res) => {
   try {
-    const response = await vndb.query(`dbstats`);
+    const response = (await axios.get("https://api.vndb.org/kana/stats")).data;
     res.send({
       message: response,
     });
@@ -283,17 +319,37 @@ router.get("/stats", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
-
+  let data = {
+    filters: ["id", "=", "v" + id],
+    fields:
+      "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases",
+  };
+  const details = await (
+    await axios.post("https://api.vndb.org/kana/vn", data)
+  ).data;
   try {
-    const visualNovel = await vndb.query(
-      `get vn details,basic,anime,relations,stats,screens,staff,tags (id = ${id})`
-    );
     res.send({
-      message: visualNovel.items[0],
+      message: parseData(details.results)[0],
     });
   } catch (error) {
     res.status(404).send({ error });
   }
 });
+
+function parseData(data) {
+  return data.map((data) => {
+    return {
+      ...data,
+      id: parseInt(data.id.match(/[0-9]+/g)[0]),
+      image: data.image.url,
+      image_nsfw: data.image.sexual >= 1,
+      screens: data.screenshots.map((screenshot) => ({
+        ...screenshot,
+        nsfw: screenshot.sexual >= 1,
+        image: screenshot.url,
+      })),
+    };
+  });
+}
 
 module.exports = router;

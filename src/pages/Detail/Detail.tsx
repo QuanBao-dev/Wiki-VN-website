@@ -201,7 +201,19 @@ const Detail = () => {
                 {detailState.aliases && (
                   <tr>
                     <th>Aliases</th>
-                    <td>{detailState.aliases}</td>
+                    <td>
+                      <ul
+                        style={{
+                          margin: 0,
+                          padding:0,
+                          listStyleType:"none"
+                        }}
+                      >
+                        {detailState.aliases.map((v, index) => (
+                          <li key={index}>{v}</li>
+                        ))}
+                      </ul>
+                    </td>
                   </tr>
                 )}
                 {detailState.length && (

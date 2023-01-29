@@ -251,9 +251,9 @@ const CardListVN = () => {
       >
         {!isLoading &&
           visualNovelList.map(
-            ({ title, description, image, id, image_nsfw, screens }) => (
+            ({ title, description, image, id, image_nsfw, screens }, index) => (
               <Suspense
-                key={id}
+                key={index}
                 fallback={
                   <SkeletonLoading
                     isLoading={true}
