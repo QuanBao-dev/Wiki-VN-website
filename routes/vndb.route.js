@@ -343,6 +343,7 @@ function parseData(data) {
       id: parseInt(data.id.match(/[0-9]+/g)[0]),
       image: data.image.url,
       image_nsfw: data.image.sexual >= 1,
+      rating: (data.rating*0.1).toFixed(2) ,
       screens: data.screenshots.map((screenshot) => ({
         ...screenshot,
         nsfw: screenshot.sexual >= 1,
