@@ -230,7 +230,7 @@ const CardListVN = () => {
             homeStore.updateState({ indexActive: 2 });
           }}
         >
-          Visual Novels Rank
+          Visual Novels Poll
         </div>
         {userStore.currentState().role && (
           <div
