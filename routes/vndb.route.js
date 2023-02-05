@@ -4,7 +4,7 @@ const { nanoid } = require("nanoid");
 const router = express.Router();
 const VNDB = require("vndb-api");
 const vndb = new VNDB(nanoid(), {
-  acquireTimeout: 10000,
+  acquireTimeout: 3000,
   encoding: "utf-8",
 });
 
@@ -22,7 +22,7 @@ router.get("/", async (req, res) => {
     tags,
     isLarger,
   } = req.query;
-  // let string = "";
+  let string = "";
   let data = {
     filters: [],
     fields:
@@ -34,14 +34,14 @@ router.get("/", async (req, res) => {
       ["id", isLarger ? ">=" : "=", "v" + id],
       ["id", "<=", "v" + (parseInt(id) + 10)],
     ];
-    // if (string.length > 0)
-    //   string += ` and id ${isLarger ? ">=" : "="} ${id} and id <= ${
-    //     parseInt(id) + 10
-    //   }`;
-    // else
-    //   string = `id ${isLarger ? ">=" : "="} ${id} and id <= ${
-    //     parseInt(id) + 10
-    //   }`;
+    if (string.length > 0)
+      string += ` and id ${isLarger ? ">=" : "="} ${id} and id <= ${
+        parseInt(id) + 10
+      }`;
+    else
+      string = `id ${isLarger ? ">=" : "="} ${id} and id <= ${
+        parseInt(id) + 10
+      }`;
   }
   // if (released) {
   //   if (string.length > 0) string += " and released >= " + released;
@@ -77,8 +77,8 @@ router.get("/", async (req, res) => {
     } else {
       data.filters = ["search", "=", title];
     }
-    // if (string.length > 0) string += " and search = " + search;
-    // else string = `search ~ ${search}`;
+    if (string.length > 0) string += " and search = " + search;
+    else string = `search ~ ${search}`;
   }
   // if (tags) {
   //   if (string.length > 0) string += " and tags = " + tags;
@@ -89,11 +89,17 @@ router.get("/", async (req, res) => {
   try {
     const response = (await axios.post("https://api.vndb.org/kana/vn", data))
       .data;
-    // const response = await vndb.query(
-    //   `get vn details,basic,anime,relations,stats,screens,staff,tags (${string})`
-    // );
+    let items = [];
+    try {
+      items = (await vndb.query(`get vn relations (${string})`)).items;
+    } catch (error) {
+      console.log({ error });
+    }
     res.send({
-      message: parseData(response.results),
+      message: parseData(response.results).map((v, index) => ({
+        ...v,
+        relations: items.length !== 0 ? items[index].relations : [],
+      })),
       // .map((data) => {
       //   return { ...data, id: parseInt(data.id) };
       // }),
@@ -135,8 +141,24 @@ router.get("/random", async (req, res) => {
     //     randomNumberList
     //   )})`
     // );
+    let items = [];
+    try {
+      items = (
+        await vndb.query(
+          `get vn relations (id = ${JSON.stringify(randomNumberList)})`
+        )
+      ).items;
+    } catch (error) {
+      console.log({ error });
+    }
     res.send({
-      message: parseData(randomVNList.results),
+      message: parseData(randomVNList.results).map((v, index) => ({
+        ...v,
+        relations: items.length !== 0 ? items[index].relations : [],
+      })),
+      // .map((data) => {
+      //   return { ...data, id: parseInt(data.id) };
+      // }),
     });
   } catch (error) {
     res.status(404).send({ error });
@@ -219,10 +241,6 @@ router.get("/release", async (req, res) => {
   }
   console.log(string);
   try {
-    const vndb = new VNDB(nanoid(), {
-      acquireTimeout: 10000,
-    });
-
     const response = await vndb.query(
       `get release basic,details,vn,producers (${string})`
     );
@@ -324,12 +342,24 @@ router.get("/:id", async (req, res) => {
     fields:
       "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases, screenshots.dims",
   };
-  const details = await (
-    await axios.post("https://api.vndb.org/kana/vn", data)
-  ).data;
   try {
+    const details = await (
+      await axios.post("https://api.vndb.org/kana/vn", data)
+    ).data;
+    let items = [];
+    try {
+      items = (await vndb.query(`get vn relations (id = ${id})`)).items;
+    } catch (error) {
+      console.log({ error });
+    }
     res.send({
-      message: parseData(details.results)[0],
+      message: parseData(details.results).map((v, index) => ({
+        ...v,
+        relations: items.length !== 0 ? items[index].relations : [],
+      }))[0],
+      // .map((data) => {
+      //   return { ...data, id: parseInt(data.id) };
+      // }),
     });
   } catch (error) {
     res.status(404).send({ error });
@@ -343,13 +373,13 @@ function parseData(data) {
       id: parseInt(data.id.match(/[0-9]+/g)[0]),
       image: data.image.url,
       image_nsfw: data.image.sexual >= 1,
-      rating: (data.rating*0.1).toFixed(2) ,
+      rating: (data.rating * 0.1).toFixed(2),
       screens: data.screenshots.map((screenshot) => ({
         ...screenshot,
         nsfw: screenshot.sexual >= 1,
         image: screenshot.url,
         width: screenshot.dims[0],
-        height: screenshot.dims[1]
+        height: screenshot.dims[1],
       })),
     };
   });
