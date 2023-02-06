@@ -73,9 +73,10 @@ const Votes = ({ vnId, dataVN }: Props) => {
           setVotes(temp + userStore.currentState().boost);
           setTrigger(!trigger);
         } else {
-          return alert(
-            "Require login to use this feature"
-          );
+          if (v.error === "Access Denied") {
+            alert("Require login to use this feature");
+          }
+          alert(v.error);
         }
       });
     return () => {
@@ -115,10 +116,9 @@ const Votes = ({ vnId, dataVN }: Props) => {
           setVotes(temp - userStore.currentState().boost);
           setTrigger(!trigger);
         } else {
+          console.log(v.error);
           if (v.error === "Access Denied") {
-            alert(
-              "Require login to use this feature"
-            );
+            alert("Require login to use this feature");
           }
           alert(v.error);
         }

@@ -40,6 +40,9 @@ const userSchema = mongoose.Schema({
   },
   discordUsername:{
     type:String,
+  },
+  votedVNsTranslatedAt:{
+    type: Date,
   }
 });
 

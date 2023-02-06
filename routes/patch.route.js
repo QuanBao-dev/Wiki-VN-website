@@ -129,6 +129,16 @@ route.post("/", verifyRole("Admin"), async (req, res) => {
           shrinkEarnLinkDownloads: [shrinkEarnLinkDownload],
           dataVN,
         });
+        const users = await userModel.find({
+          votedVnIdList: parseInt(vnId),
+          isVerified: true,
+          isNotSpam: true,
+        });
+        for (let i = 0; i < users.length; i++) {
+          const user = users[i];
+          user.votedVNsTranslatedAt = new Date(Date.now());
+          await user.save();
+        }
       }
       if (newPatch.shrinkMeLinkDownloads) {
         if (!isAddingNewPatch) {

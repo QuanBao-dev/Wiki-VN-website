@@ -11,8 +11,9 @@ interface UserStore {
   isDarkMode: boolean;
   exp: number;
   iat: number;
-  boost:number;
-  discordUsername: string 
+  boost: number;
+  discordUsername: string;
+  isCoolDown: boolean;
 }
 
 export const userStore = createStore<UserStore>({
@@ -27,6 +28,7 @@ export const userStore = createStore<UserStore>({
   isDarkMode: false,
   exp: 0,
   iat: 0,
-  boost:1,
-  discordUsername:"No username"
+  boost: 1,
+  discordUsername: "No username",
+  isCoolDown: true,
 });
