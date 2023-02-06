@@ -214,7 +214,7 @@ router.put(
       }
       if (isCoolDown) {
         return res.status(401).send({
-          error: `You are in cool down mode. You will be able to vote again at ${new Date(
+          error: `You are in cool down mode. You will be able to vote again on ${new Date(
             endCoolDownDate
           ).toUTCString()}`,
         });
