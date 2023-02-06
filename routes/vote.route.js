@@ -91,7 +91,7 @@ router.get(
       ]);
       if (votes.length === 0) {
         return res.status(400).send({ error: "It has reached its last page" });
-      }  
+      }
       res.send({
         message: votes.map((vote) => ({ ...vote.dataVN, votes: vote.votes })),
       });
@@ -221,7 +221,8 @@ router.put(
       }
       if (!isDownVotes) {
         if (!user.votedVnIdList.includes(vnId)) {
-          user.votedVnIdList.push(vnId);
+          // user.votedVnIdList.push(vnId);
+          user.votedVnIdList = [vnId];
         }
       } else {
         if (isIncreased) {
