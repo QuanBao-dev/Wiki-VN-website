@@ -77,8 +77,8 @@ router.get("/", async (req, res) => {
     } else {
       data.filters = ["search", "=", title];
     }
-    if (string.length > 0) string += " and search = " + search;
-    else string = `search ~ ${search}`;
+    if (string.length > 0) string += " and search = " + title;
+    else string = `search ~ ${title}`;
   }
   // if (tags) {
   //   if (string.length > 0) string += " and tags = " + tags;
