@@ -4,7 +4,7 @@ const { nanoid } = require("nanoid");
 const router = express.Router();
 const VNDB = require("vndb-api");
 const vndb = new VNDB(nanoid(), {
-  acquireTimeout: 3000,
+  acquireTimeout: 1000,
   encoding: "utf-8",
 });
 
