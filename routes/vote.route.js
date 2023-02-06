@@ -109,19 +109,34 @@ router.get("/:vnId", async (req, res) => {
   const decode = jwt.decode(req.signedCookies.token, { json: true });
   try {
     if (!decode) {
-      const vote = await voteModel
-        .findOne({ vnId })
-        .select({
-          _id: 0,
-          vnId: 1,
-          isTranslatable: 1,
-          dataVN: 1,
-          votes: 1,
-          reason: 1,
-        })
-        .lean();
+      const [vote, voters] = await Promise.all([
+        voteModel
+          .findOne({ vnId })
+          .select({
+            _id: 0,
+            vnId: 1,
+            isTranslatable: 1,
+            dataVN: 1,
+            votes: 1,
+            reason: 1,
+          })
+          .lean(),
+        userModel.aggregate([
+          {
+            $match: {
+              votedVnIdList: parseInt(vnId),
+              isVerified: true,
+              isNotSpam: true,
+            },
+          },
+        ]),
+      ]);
+      const validUsersLength = voters.reduce((ans, curr) => {
+        ans += curr.boost || 1;
+        return ans;
+      }, 0);
       return res.send({
-        message: { ...vote, isIncreased: false },
+        message: { ...vote, isIncreased: false, votes: validUsersLength },
       });
     }
     const [vote, user, voters] = await Promise.all([
