@@ -37,11 +37,13 @@ router.get("/", async (req, res) => {
       { $skip: 10 * page },
       { $limit: 10 },
     ]);
-    if (votes.length === 0) {
+    if (votes.filter((v) => v.votes !== 0).length === 0) {
       return res.status(400).send({ error: "It has reached its last page" });
     }
     res.send({
-      message: votes.map((vote) => ({ ...vote.dataVN, votes: vote.votes })),
+      message: votes
+        .map((vote) => ({ ...vote.dataVN, votes: vote.votes }))
+        .filter((v) => v.votes !== 0),
     });
   } catch (error) {
     if (error) return res.status(400).send({ error: error.message });
