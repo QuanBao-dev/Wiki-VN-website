@@ -219,21 +219,21 @@ router.put(
         voteModel.findOne({ vnId }),
         userModel.findOne({ userId }),
       ]);
-      let isCoolDown;
-      const endCoolDownDate =
-        new Date(user.votedVNsTranslatedAt).getTime() + 3600 * 1000 * 24 * 7;
-      if (user.votedVNsTranslatedAt) {
-        isCoolDown = Date.now() < endCoolDownDate;
-      } else {
-        isCoolDown = false;
-      }
-      if (isCoolDown) {
-        return res.status(401).send({
-          error: `You are in cool down mode. You will be able to vote again on ${new Date(
-            endCoolDownDate
-          ).toUTCString()}`,
-        });
-      }
+      // let isCoolDown;
+      // const endCoolDownDate =
+      //   new Date(user.votedVNsTranslatedAt).getTime() + 3600 * 1000 * 24 * 7;
+      // if (user.votedVNsTranslatedAt) {
+      //   isCoolDown = Date.now() < endCoolDownDate;
+      // } else {
+      //   isCoolDown = false;
+      // }
+      // if (isCoolDown) {
+      //   return res.status(401).send({
+      //     error: `You are in cool down mode. You will be able to vote again on ${new Date(
+      //       endCoolDownDate
+      //     ).toUTCString()}`,
+      //   });
+      // }
       if (voteData && voteData.isTranslatable === false) {
         return res.status(400).send({
           error: "This vn is not translatable or it's already been translated",
@@ -253,8 +253,8 @@ router.put(
       }
       if (!isDownVotes) {
         if (!user.votedVnIdList.includes(vnId)) {
-          // user.votedVnIdList.push(vnId);
-          user.votedVnIdList = [vnId];
+          user.votedVnIdList.push(vnId);
+          // user.votedVnIdList = [vnId];
         }
       } else {
         if (isIncreased) {

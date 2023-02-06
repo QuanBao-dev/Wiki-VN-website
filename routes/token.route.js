@@ -22,17 +22,22 @@ router.get(
         discordUsername: 1,
         votedVNsTranslatedAt: 1,
       });
-      let isCoolDown;
-      if (user.votedVNsTranslatedAt) {
-        const endCoolDownDate =
-          new Date(user.votedVNsTranslatedAt).getTime() + 3600 * 1000 * 24 * 7;
-        isCoolDown = Date.now() < endCoolDownDate;
-      } else {
-        isCoolDown = false;
-      }
+      // let isCoolDown;
+      // if (user.votedVNsTranslatedAt) {
+      //   const endCoolDownDate =
+      //     new Date(user.votedVNsTranslatedAt).getTime() + 3600 * 1000 * 24 * 7;
+      //   isCoolDown = Date.now() < endCoolDownDate;
+      // } else {
+      //   isCoolDown = false;
+      // }
       res.send({
         message: {
-          user: { ...user, exp: req.user.exp, iat: req.user.iat, isCoolDown },
+          user: {
+            ...user,
+            exp: req.user.exp,
+            iat: req.user.iat,
+            // isCoolDown
+          },
         },
       });
     } catch (error) {
