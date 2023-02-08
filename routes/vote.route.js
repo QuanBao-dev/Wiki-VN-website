@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 
 router.get("/", async (req, res) => {
   const page = parseInt(req.query.page || 0);
+  const isLowTier = req.query.isLowTier === "true";
   try {
     let votes = await voteModel.aggregate([
       { $match: { isTranslatable: true } },
@@ -18,6 +19,21 @@ router.get("/", async (req, res) => {
           as: "votesData",
         },
       },
+      {
+        $project: {
+          _id: 0,
+          vnId: 1,
+          votesData: {
+            $filter: {
+              input: "$votesData",
+              cond: { $lte: ["$$this.boost", isLowTier ? 25 : 200] },
+            },
+          },
+          isTranslatable: 1,
+          dataVN: 1,
+        },
+      },
+      { $sort: { votes: -1, vnId: 1 } },
       {
         $project: {
           _id: 0,

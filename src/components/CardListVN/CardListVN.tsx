@@ -20,6 +20,9 @@ const CardListVN = () => {
   const [indexActive, setIndexActive] = useState(
     homeStore.currentState().indexActive
   );
+  const [indexPollModeActive, setIndexPollModeActive] = useState(
+    homeStore.currentState().indexPollModeActive
+  );
   const selectPageRef = useRef(document.createElement("select"));
   const [visualNovelList, setVisualNovelList] = useState<VisualNovel[] | []>(
     []
@@ -149,7 +152,7 @@ const CardListVN = () => {
   useEffect(() => {
     setTriggerFetching(!triggerFetching);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, indexActive]);
+  }, [page, indexActive, indexPollModeActive]);
   useEffect(() => {
     if (indexActive === 1) {
       homeStore.updateState({
@@ -195,7 +198,13 @@ const CardListVN = () => {
         );
       }
     }
-  }, [dbStats.vn, page, indexActive, visualNovelList.length]);
+  }, [
+    dbStats.vn,
+    page,
+    indexActive,
+    indexPollModeActive,
+    visualNovelList.length,
+  ]);
   let lastPage = 0;
   if (indexActive === 1) lastPage = Math.ceil(((dbStats.vn || 0) + 1646) / 10);
   if (indexActive === 0)
@@ -204,43 +213,69 @@ const CardListVN = () => {
     );
   return (
     <div className="card-list-vn-container">
-      <div className="card-list-toggle-mode">
-        <div
-          className={indexActive === 0 ? "active" : ""}
-          onClick={() => {
-            setIndexActive(0);
-            homeStore.updateState({ indexActive: 0 });
-          }}
-        >
-          Updated visual novels
-        </div>
-        <div
-          className={indexActive === 1 ? "active" : ""}
-          onClick={() => {
-            setIndexActive(1);
-            homeStore.updateState({ indexActive: 1 });
-          }}
-        >
-          All visual novels
-        </div>
-        <div
-          className={indexActive === 2 ? "active" : ""}
-          onClick={() => {
-            setIndexActive(2);
-            homeStore.updateState({ indexActive: 2 });
-          }}
-        >
-          Visual Novels Poll
-        </div>
-        {userStore.currentState().role && (
+      <div>
+        <div className="card-list-toggle-mode">
           <div
-            className={indexActive === 3 ? "active" : ""}
+            className={indexActive === 0 ? "active" : ""}
             onClick={() => {
-              setIndexActive(3);
-              homeStore.updateState({ indexActive: 3 });
+              setIndexActive(0);
+              homeStore.updateState({ indexActive: 0 });
             }}
           >
-            Your voted VNs
+            Updated visual novels
+          </div>
+          <div
+            className={indexActive === 1 ? "active" : ""}
+            onClick={() => {
+              setIndexActive(1);
+              homeStore.updateState({ indexActive: 1 });
+            }}
+          >
+            All visual novels
+          </div>
+          <div
+            className={indexActive === 2 ? "active" : ""}
+            onClick={() => {
+              setIndexActive(2);
+              homeStore.updateState({ indexActive: 2 });
+            }}
+          >
+            Visual Novels Poll
+          </div>
+          {userStore.currentState().role && (
+            <div
+              className={indexActive === 3 ? "active" : ""}
+              onClick={() => {
+                setIndexActive(3);
+                homeStore.updateState({ indexActive: 3 });
+              }}
+            >
+              Your voted VNs
+            </div>
+          )}
+        </div>
+        {indexActive === 2 && (
+          <div className="card-list-toggle-mode">
+            <div
+              className={indexPollModeActive === 0 ? "active" : ""}
+              onClick={() => {
+                setIndexPollModeActive(0);
+                homeStore.updateState({ indexPollModeActive: 0 });
+              }}
+            >
+              Poll
+            </div>
+            <div
+              className={indexPollModeActive === 1 ? "active" : ""}
+              onClick={() => {
+                setIndexPollModeActive(1);
+                homeStore.updateState({
+                  indexPollModeActive: 1,
+                });
+              }}
+            >
+              Low tier poll
+            </div>
           </div>
         )}
       </div>
@@ -301,7 +336,7 @@ const CardListVN = () => {
             />
           }
         >
-          <RankingVN />
+          <RankingVN isLowTier={indexPollModeActive === 1} />
         </Suspense>
       )}
       {indexActive === 3 && (
