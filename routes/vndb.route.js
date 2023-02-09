@@ -89,16 +89,16 @@ router.get("/", async (req, res) => {
   try {
     const response = (await axios.post("https://api.vndb.org/kana/vn", data))
       .data;
-    let items = [];
-    try {
-      items = (await vndb.query(`get vn relations (${string})`)).items;
-    } catch (error) {
-      console.log({ error });
-    }
+    // let items = [];
+    // try {
+    //   items = (await vndb.query(`get vn relations (${string})`)).items;
+    // } catch (error) {
+    //   console.log({ error });
+    // }
     res.send({
       message: parseData(response.results).map((v, index) => ({
         ...v,
-        relations: items.length !== 0 ? items[index].relations : [],
+        // relations: items.length !== 0 ? items[index].relations : [],
       })),
       // .map((data) => {
       //   return { ...data, id: parseInt(data.id) };
@@ -141,20 +141,20 @@ router.get("/random", async (req, res) => {
     //     randomNumberList
     //   )})`
     // );
-    let items = [];
-    try {
-      items = (
-        await vndb.query(
-          `get vn relations (id = ${JSON.stringify(randomNumberList)})`
-        )
-      ).items;
-    } catch (error) {
-      console.log({ error });
-    }
+    // let items = [];
+    // try {
+    //   items = (
+    //     await vndb.query(
+    //       `get vn relations (id = ${JSON.stringify(randomNumberList)})`
+    //     )
+    //   ).items;
+    // } catch (error) {
+    //   console.log({ error });
+    // }
     res.send({
       message: parseData(randomVNList.results).map((v, index) => ({
         ...v,
-        relations: items.length !== 0 ? items[index].relations : [],
+        // relations: items.length !== 0 ? items[index].relations : [],
       })),
       // .map((data) => {
       //   return { ...data, id: parseInt(data.id) };
@@ -346,16 +346,16 @@ router.get("/:id", async (req, res) => {
     const details = await (
       await axios.post("https://api.vndb.org/kana/vn", data)
     ).data;
-    let items = [];
-    try {
-      items = (await vndb.query(`get vn relations (id = ${id})`)).items;
-    } catch (error) {
-      console.log({ error });
-    }
+    // let items = [];
+    // try {
+    //   items = (await vndb.query(`get vn relations (id = ${id})`)).items;
+    // } catch (error) {
+    //   console.log({ error });
+    // }
     res.send({
       message: parseData(details.results).map((v, index) => ({
         ...v,
-        relations: items.length !== 0 ? items[index].relations : [],
+        // relations: items.length !== 0 ? items[index].relations : [],
       }))[0],
       // .map((data) => {
       //   return { ...data, id: parseInt(data.id) };
