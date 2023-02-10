@@ -334,6 +334,18 @@ router.get("/stats", async (req, res) => {
     res.status(404).send({ error });
   }
 });
+router.get("/:vnId/relations", async (req, res) => {
+  const vnId = parseInt(req.params.vnId);
+  let items = [];
+  try {
+    items = (await vndb.query(`get vn relations (id = ${vnId})`)).items;
+    res.send({
+      message: items[0].relations,
+    });
+  } catch (error) {
+    console.log({ error });
+  }
+});
 
 router.get("/:id", async (req, res) => {
   const { id } = req.params;

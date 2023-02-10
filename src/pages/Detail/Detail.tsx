@@ -33,6 +33,7 @@ const convertObject = {
   alt: "Alternative version",
   fan: "Fandisc",
   preq: "Prequel",
+  orig: "Original game",
   seq: "Sequel",
   side: "Side story",
   set: "Same setting",
@@ -52,6 +53,7 @@ const Detail = () => {
       ? cachesStore.currentState().caches.VNs[id as string]
       : {}) as VisualNovel
   );
+  const [relations, setRelations] = useState([]);
   const [patch, setPatch] = useState<Patch>(
     (cachesStore.currentState().caches.patches &&
     cachesStore.currentState().caches.patches[id as string]
@@ -89,6 +91,14 @@ const Detail = () => {
     );
   }, [id]);
   useFetchApi(
+    "/api/vndb/" + id + "/relations",
+    setRelations,
+    "relations",
+    [id],
+    false,
+    true
+  );
+  useFetchApi(
     "/api/vndb/" + id,
     setDetailState,
     "VNs",
@@ -119,15 +129,14 @@ const Detail = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [detailState.description]);
 
-  if (detailState.relations)
-    relationsData = (detailState.relations as any).reduce(
-      (ans: any, relation: any) => {
-        if (!ans[relation.relation]) ans[relation.relation] = [];
-        ans[relation.relation].push(relation);
-        return ans;
-      },
-      {}
-    );
+  detailState.relations = relations;
+  if (detailState.relations) {
+    relationsData = relations.reduce((ans: any, relation: any) => {
+      if (!ans[relation.relation]) ans[relation.relation] = [];
+      ans[relation.relation].push(relation);
+      return ans;
+    }, {});
+  }
   return (
     <div className="app-wrapper">
       <Popup
