@@ -33,6 +33,10 @@ const patchSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  isMemberOnly:{
+    type:Boolean,
+    default: false
+  }
 });
 
 module.exports = mongoose.model("patch", patchSchema);
