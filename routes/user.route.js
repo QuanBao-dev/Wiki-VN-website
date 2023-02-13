@@ -676,11 +676,16 @@ async function updateAllBMC() {
             const endFreeAdsDate =
               new Date(member.subscription_current_period_start).getTime() +
               3600 * 1000 * 24 * 31;
+            let ratio = 1;
+            if (member.subscription_duration_type === "year") {
+              ratio = 10;
+            }
             if (Date.now() - endFreeAdsDate < 0) {
               if (
                 user.isFreeAds !== true ||
                 user.role !== "Member" ||
-                user.boost !== parseInt(member.subscription_coffee_price) ||
+                user.boost !==
+                  parseInt(member.subscription_coffee_price / ratio) ||
                 !user.isNotSpam
               ) {
                 let [userData, notification] = await Promise.all([
@@ -711,7 +716,7 @@ async function updateAllBMC() {
                   notification.message = `Hi ${
                     user.username
                   }! Now your votes is now boosted by x${parseInt(
-                    member.subscription_coffee_price
+                    member.subscription_coffee_price / ratio
                   )}, you can access to the secret room on the top right as well as long as you are still a membership`;
                 }
                 userData.role = "Member";
@@ -723,7 +728,7 @@ async function updateAllBMC() {
                 cancelingMemberAt: member.subscription_current_period_end,
                 endFreeAdsDate: member.subscription_current_period_end,
                 isFreeAds: true,
-                boost: parseInt(member.subscription_coffee_price),
+                boost: parseInt(member.subscription_coffee_price) / ratio,
                 role: "Member",
               };
             }
