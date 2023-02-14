@@ -673,19 +673,21 @@ async function updateAllBMC() {
             member.payer_email === user.email ||
             member.payer_email === user.email.toLocaleLowerCase()
           ) {
-            const endFreeAdsDate =
-              new Date(member.subscription_current_period_start).getTime() +
-              3600 * 1000 * 24 * 31;
             let ratio = 1;
+            let isYearly = false;
             if (member.subscription_duration_type === "year") {
               ratio = 10;
+              isYearly = true;
             }
+            const endFreeAdsDate =
+              new Date(member.subscription_current_period_start).getTime() +
+              3600 * 1000 * 24 * (isYearly ? 365 : 31);
             if (Date.now() - endFreeAdsDate < 0) {
               if (
                 user.isFreeAds !== true ||
                 user.role !== "Member" ||
                 user.boost !==
-                  parseInt(member.subscription_coffee_price )/ ratio ||
+                  parseInt(member.subscription_coffee_price) / ratio ||
                 !user.isNotSpam
               ) {
                 let [userData, notification] = await Promise.all([
@@ -707,7 +709,8 @@ async function updateAllBMC() {
                   });
                 }
                 notification.title = "Thank you for your support";
-                userData.boost = parseInt(member.subscription_coffee_price)/ratio;
+                userData.boost =
+                  parseInt(member.subscription_coffee_price) / ratio;
                 if (userData.boost === 100) {
                   notification.message = `Hi ${user.username}! Now you are a member with diamond level. Please contact me through discord by direct message on discord. You have the right to request me 2 VNs you want me to translate.`;
                 } else if (userData.boost === 200) {
