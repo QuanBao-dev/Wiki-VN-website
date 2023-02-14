@@ -685,7 +685,7 @@ async function updateAllBMC() {
                 user.isFreeAds !== true ||
                 user.role !== "Member" ||
                 user.boost !==
-                  parseInt(member.subscription_coffee_price / ratio) ||
+                  parseInt(member.subscription_coffee_price )/ ratio ||
                 !user.isNotSpam
               ) {
                 let [userData, notification] = await Promise.all([
@@ -707,7 +707,7 @@ async function updateAllBMC() {
                   });
                 }
                 notification.title = "Thank you for your support";
-                userData.boost = parseInt(member.subscription_coffee_price);
+                userData.boost = parseInt(member.subscription_coffee_price)/ratio;
                 if (userData.boost === 100) {
                   notification.message = `Hi ${user.username}! Now you are a member with diamond level. Please contact me through discord by direct message on discord. You have the right to request me 2 VNs you want me to translate.`;
                 } else if (userData.boost === 200) {
