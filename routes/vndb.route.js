@@ -113,7 +113,7 @@ router.get("/random", async (req, res) => {
   try {
     const response = await vndb.query(`dbstats`);
     const { vn } = response;
-    const randomNumberList = Array.from(Array(4).keys()).reduce((ans, curr) => {
+    const randomNumberList = Array.from(Array(3).keys()).reduce((ans, curr) => {
       let randomNumber = Math.ceil(Math.random() * vn);
       while (ans[ans.length - 1] === randomNumber) {
         randomNumber = Math.ceil(Math.random() * vn);
@@ -132,7 +132,7 @@ router.get("/random", async (req, res) => {
         "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases, screenshots.dims",
     };
     // console.log(data);
-    const randomVNList = await (
+    const randomVNList = (
       await axios.post("https://api.vndb.org/kana/vn", data)
     ).data;
 
