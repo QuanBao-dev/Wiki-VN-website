@@ -263,7 +263,7 @@ const CardListVN = () => {
                 homeStore.updateState({ indexPollModeActive: 0 });
               }}
             >
-              Poll
+              Poll (1-200)
             </div>
             <div
               className={indexPollModeActive === 1 ? "active" : ""}
@@ -274,7 +274,7 @@ const CardListVN = () => {
                 });
               }}
             >
-              Low tier poll
+              Low tier poll (1-25)
             </div>
           </div>
         )}
