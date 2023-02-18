@@ -716,7 +716,7 @@ async function updateAllBMC() {
                 } else if (userData.boost === 200) {
                   notification.message = `Hi ${user.username}! Now you are a member with master level. Please contact me through discord by direct message on discord. You have the right to request me 4 VNs you want me to translate.`;
                 } else if (userData.boost === 50) {
-                  notification.message = `Hi ${user.username}! Now you are a member with master level. Please contact me through discord by direct message on discord. You have the right to request me 1 VN you want me to translate.`;
+                  notification.message = `Hi ${user.username}! Now you are a member with Platinum level. Please contact me through discord by direct message on discord. You have the right to request me 1 VN you want me to translate.`;
                 } else {
                   notification.message = `Hi ${
                     user.username
