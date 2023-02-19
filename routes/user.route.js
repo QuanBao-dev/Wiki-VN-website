@@ -560,7 +560,8 @@ async function updateAllBMC() {
           const supporter = supporters.data[i];
           if (
             supporter.payer_email === user.email ||
-            supporter.payer_email === user.email.toLocaleLowerCase()
+            supporter.payer_email.toLocaleLowerCase() ===
+              user.email.toLocaleLowerCase()
           ) {
             const endFreeAdsDate =
               new Date(supporter.support_created_on).getTime() +
@@ -671,7 +672,8 @@ async function updateAllBMC() {
           const member = members.data[i];
           if (
             member.payer_email === user.email ||
-            member.payer_email === user.email.toLocaleLowerCase()
+            member.payer_email.toLocaleLowerCase() ===
+              user.email.toLocaleLowerCase()
           ) {
             let ratio = 1;
             let isYearly = false;
