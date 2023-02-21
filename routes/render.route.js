@@ -1,19 +1,21 @@
 const router = require("express").Router();
 const path = require("path");
-const VNDB = require("vndb-api");
-const vndb = new VNDB("vndb2", {
-  acquireTimeout: 10000,
-});
 const fs = require("fs");
+const { default: axios } = require("axios");
 
 router.get("/vns/:vnId", async (req, res) => {
   try {
     const { vnId } = req.params;
     console.log(vnId);
-    let visualNovel = await vndb.query(
-      `get vn details,basic,anime,relations,stats,screens,staff,tags (id = ${vnId})`
-    );
-    if (visualNovel) visualNovel = visualNovel.items[0];
+    let data = {
+      filters: ["id", "=", "v" + vnId],
+      fields:
+        "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases, screenshots.dims",
+    };
+    let visualNovel = (await axios.post("https://api.vndb.org/kana/vn", data))
+      .data;
+
+    if (visualNovel) visualNovel = parseData(visualNovel.results);
     else return res.redirect("/");
     const image = !visualNovel.image_nsfw
       ? visualNovel.image
@@ -52,5 +54,25 @@ router.get("/vns/:vnId", async (req, res) => {
 router.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "../build", "index.html"));
 });
+
+module.exports = router;
+function parseData(data) {
+  return data.map((data) => {
+    return {
+      ...data,
+      id: parseInt(data.id.match(/[0-9]+/g)[0]),
+      image: data.image.url,
+      image_nsfw: data.image.sexual >= 1,
+      rating: (data.rating * 0.1).toFixed(2),
+      screens: data.screenshots.map((screenshot) => ({
+        ...screenshot,
+        nsfw: screenshot.sexual >= 1,
+        image: screenshot.url,
+        width: screenshot.dims[0],
+        height: screenshot.dims[1],
+      })),
+    };
+  });
+}
 
 module.exports = router;
