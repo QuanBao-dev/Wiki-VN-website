@@ -15,7 +15,7 @@ router.get("/vns/:vnId", async (req, res) => {
     let visualNovel = (await axios.post("https://api.vndb.org/kana/vn", data))
       .data;
 
-    if (visualNovel) visualNovel = parseData(visualNovel.results);
+    if (visualNovel) visualNovel = parseData(visualNovel.results)[0];
     else return res.redirect("/");
     const image = !visualNovel.image_nsfw
       ? visualNovel.image
