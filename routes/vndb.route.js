@@ -280,7 +280,7 @@ router.get("/:id", async (req, res) => {
       await axios.post("https://api.vndb.org/kana/vn", data)
     ).data;
     res.send({
-      message: parseData(details.results),
+      message: parseData(details.results)[0],
     });
   } catch (error) {
     res.status(404).send({ error });
