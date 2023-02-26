@@ -9,19 +9,7 @@ const vndb = new VNDB(nanoid(), {
 });
 
 router.get("/", async (req, res) => {
-  const {
-    id,
-    title,
-    released,
-    platforms,
-    firstchar,
-    languages,
-    original,
-    orig_lang,
-    search,
-    tags,
-    isLarger,
-  } = req.query;
+  const { id, title, isLarger } = req.query;
   let string = "";
   let data = {
     filters: [],
@@ -43,34 +31,6 @@ router.get("/", async (req, res) => {
         parseInt(id) + 10
       }`;
   }
-  // if (released) {
-  //   if (string.length > 0) string += " and released >= " + released;
-  //   else string = `released >= ${released}`;
-  // }
-  // if (firstchar) {
-  //   if (string.length > 0) string += " and firstchar = " + firstchar;
-  //   else string = `firstchar = ${firstchar}`;
-  // }
-  // if (platforms) {
-  //   if (string.length > 0) string += " and platforms = " + platforms;
-  //   else string = `platforms = ${platforms}`;
-  // }
-  // if (title) {
-  //   if (string.length > 0) string += ' and title ~ "' + title + '"';
-  //   else string = `title ~ "${title}"`;
-  // }
-  // if (languages) {
-  //   if (string.length > 0) string += " and languages = " + languages;
-  //   else string = `languages = ${languages}`;
-  // }
-  // if (original) {
-  //   if (string.length > 0) string += " and original = " + original;
-  //   else string = `original = ${original}`;
-  // }
-  // if (orig_lang) {
-  //   if (string.length > 0) string += " and orig_lang = " + orig_lang;
-  //   else string = `orig_lang = ${orig_lang}`;
-  // }
   if (title) {
     if (data.filters.length > 0) {
       data.filters.push(["search", "=", title]);
@@ -80,29 +40,11 @@ router.get("/", async (req, res) => {
     if (string.length > 0) string += ` and search ~ "${title}"`;
     else string = `search ~ "${title}"`;
   }
-  // if (tags) {
-  //   if (string.length > 0) string += " and tags = " + tags;
-  //   else string = `tags = ${tags}`;
-  // }
-  // console.log(string);
-  console.log(data.filters);
   try {
     const response = (await axios.post("https://api.vndb.org/kana/vn", data))
       .data;
-    // let items = [];
-    // try {
-    //   items = (await vndb.query(`get vn relations (${string})`)).items;
-    // } catch (error) {
-    //   console.log({ error });
-    // }
     res.send({
-      message: parseData(response.results).map((v, index) => ({
-        ...v,
-        // relations: items.length !== 0 ? items[index].relations : [],
-      })),
-      // .map((data) => {
-      //   return { ...data, id: parseInt(data.id) };
-      // }),
+      message: parseData(response.results),
     });
   } catch (error) {
     res.status(404).send({ error });
@@ -111,11 +53,12 @@ router.get("/", async (req, res) => {
 
 router.get("/random", async (req, res) => {
   try {
-    const response = await vndb.query(`dbstats`);
+    // const response = await vndb.query(`dbstats`);
+    const response = (await axios.get("https://api.vndb.org/kana/stats")).data;
     const { vn } = response;
-    const randomNumberList = Array.from(Array(3).keys()).reduce((ans, curr) => {
+    const randomNumberList = Array.from(Array(4).keys()).reduce((ans, curr) => {
       let randomNumber = Math.ceil(Math.random() * vn);
-      while (ans[ans.length - 1] === randomNumber) {
+      while (ans.includes(randomNumber)) {
         randomNumber = Math.ceil(Math.random() * vn);
       }
       ans.push(randomNumber);
@@ -131,36 +74,14 @@ router.get("/random", async (req, res) => {
       fields:
         "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases, screenshots.dims",
     };
-    // console.log(data);
     const randomVNList = (
       await axios.post("https://api.vndb.org/kana/vn", data)
     ).data;
-
-    // const randomVNList = await vndb.query(
-    //   `get vn details,basic,anime,relations,stats,screens,staff,tags (id = ${JSON.stringify(
-    //     randomNumberList
-    //   )})`
-    // );
-    // let items = [];
-    // try {
-    //   items = (
-    //     await vndb.query(
-    //       `get vn relations (id = ${JSON.stringify(randomNumberList)})`
-    //     )
-    //   ).items;
-    // } catch (error) {
-    //   console.log({ error });
-    // }
     res.send({
-      message: parseData(randomVNList.results).map((v, index) => ({
-        ...v,
-        // relations: items.length !== 0 ? items[index].relations : [],
-      })),
-      // .map((data) => {
-      //   return { ...data, id: parseInt(data.id) };
-      // }),
+      message: parseData(randomVNList.results),
     });
   } catch (error) {
+    console.log(error);
     res.status(404).send({ error });
   }
 });
@@ -358,20 +279,8 @@ router.get("/:id", async (req, res) => {
     const details = await (
       await axios.post("https://api.vndb.org/kana/vn", data)
     ).data;
-    // let items = [];
-    // try {
-    //   items = (await vndb.query(`get vn relations (id = ${id})`)).items;
-    // } catch (error) {
-    //   console.log({ error });
-    // }
     res.send({
-      message: parseData(details.results).map((v, index) => ({
-        ...v,
-        // relations: items.length !== 0 ? items[index].relations : [],
-      }))[0],
-      // .map((data) => {
-      //   return { ...data, id: parseInt(data.id) };
-      // }),
+      message: parseData(details.results),
     });
   } catch (error) {
     res.status(404).send({ error });
