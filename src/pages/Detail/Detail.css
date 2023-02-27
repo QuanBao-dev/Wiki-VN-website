@@ -208,15 +208,16 @@ legend {
   border: 3px solid red;
 }
 
-.affiliate-link-item{
+.affiliate-link-item {
   max-width: 200px;
   display: inline-block;
   position: relative;
   border-radius: 10px;
   overflow: hidden;
+  margin-right: 10px;
 }
 
-.affiliate-link-item:hover label{
+.affiliate-link-item:hover label {
   background-color: black;
 }
 
@@ -225,7 +226,7 @@ legend {
   display: block;
 }
 
-.affiliate-link-item label{
+.affiliate-link-item label {
   position: absolute;
   width: 100%;
   transition: 0.5s;
