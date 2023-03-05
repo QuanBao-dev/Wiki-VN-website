@@ -46,7 +46,7 @@ const RankingVN = ({ isLowTier }: { isLowTier: boolean }) => {
       setMaxVotes(Math.max(...voteList));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading]);
+  }, [isLoading, dataRankingVN]);
   useEffect(() => {
     homeStore.updateState({ maxVotes });
   }, [maxVotes]);

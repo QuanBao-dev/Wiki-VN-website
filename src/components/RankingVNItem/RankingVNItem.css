@@ -46,7 +46,7 @@
 
 .ranking-vn-item .progress-bar {
   height: 20px;
-  width: 100%!important;
+  max-width: 100%;
   background: purple;
   overflow: hidden;
   border-radius: 50px;
