@@ -253,6 +253,15 @@ const CardListVN = () => {
               Your voted VNs
             </div>
           )}
+          {/* <div
+            className={indexActive === 4 ? "active" : ""}
+            onClick={() => {
+              setIndexActive(4);
+              homeStore.updateState({ indexActive: 4 });
+            }}
+          >
+            Early access VNs
+          </div> */}
         </div>
         {indexActive === 2 && (
           <div className="card-list-toggle-mode">
@@ -282,7 +291,7 @@ const CardListVN = () => {
       <div
         className="card-list-vn-wrapper"
         ref={cardListVnContainerRef}
-        style={{ display: [0, 1].includes(indexActive) ? "block" : "none" }}
+        style={{ display: [0, 1, 4].includes(indexActive) ? "block" : "none" }}
       >
         {!isLoading &&
           visualNovelList.map(
