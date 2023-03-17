@@ -72,7 +72,7 @@ async function isMember(userId) {
     .select({ _id: 0, role: 1 })
     .lean();
   if (!user) return false;
-  return ["Admin", "Member", "Supporter"].includes(user.role);
+  return ["Admin", "Member"].includes(user.role);
 }
 
 route.get("/:id", async (req, res) => {
