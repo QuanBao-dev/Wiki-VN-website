@@ -203,7 +203,7 @@ route.post("/", verifyRole("Admin"), async (req, res) => {
       }
     }
     newPatch.isMemberOnly = isMemberOnly;
-    newPatch.isNotifyDiscord = isNotifyDiscord;
+    newPatch.isNotifyDiscord = !!isNotifyDiscord;
     if (isNotifyDiscord) {
       newPatch.channelAnnouncementId = announcementChannel;
     }
