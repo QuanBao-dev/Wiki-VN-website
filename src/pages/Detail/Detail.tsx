@@ -47,6 +47,7 @@ const Detail = () => {
   const [url, setUrl] = useState("");
   const [isHide, setIsHide] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [errorPatch, setErrorPatch] = useState("");
   let [detailState, setDetailState] = useState(
     (cachesStore.currentState().caches.VNs &&
     cachesStore.currentState().caches.VNs[id as string]
@@ -115,8 +116,13 @@ const Detail = () => {
     true,
     true,
     setIsLoading,
-    () => {
-      setPatch({} as Patch);
+    (error: any) => {
+      if (error.message === "Not a member") {
+        setErrorPatch("Early access patch");
+        setPatch(error);
+      } else {
+        setPatch({} as Patch);
+      }
     }
   );
   let relationsData = {};
@@ -139,15 +145,28 @@ const Detail = () => {
   }
   return (
     <div className="app-wrapper">
-      <Popup
-        title={"Thank you!"}
-        description={
-          "If you like these free translation patches on this website and want to say thanks, or encourage me to do more, you can consider buying me a coffee! And If possible, please buy the game from SHOP to support the author of the game"
-        }
-        url={url}
-        isHide={isHide}
-        setIsHide={setIsHide}
-      />
+      {!errorPatch && (
+        <Popup
+          title={"Thank you!"}
+          description={
+            "If you like these free translation patches on this website and want to say thanks, or encourage me to do more, you can consider buying me a coffee! And If possible, please buy the game from SHOP to support the author of the game"
+          }
+          url={url}
+          isHide={isHide}
+          setIsHide={setIsHide}
+        />
+      )}
+      {errorPatch && (
+        <Popup
+          title={"Early Access!"}
+          description={
+            "This is the early access patch of this game. You can access this after becoming a member."
+          }
+          url={url}
+          isHide={isHide}
+          setIsHide={setIsHide}
+        />
+      )}
 
       <div className="black-background" ref={blackBackgroundRef}></div>
       <div
@@ -450,7 +469,9 @@ const Detail = () => {
                 trigger={trigger}
               />
             )}
-            <legend>Releases</legend>
+            <legend>
+              {patch.isMemberOnly ? "Early Access " : ""} Releases
+            </legend>
             <ul className="release-list">
               {patch.linkDownloads.map(({ label, url }, key) => {
                 return (

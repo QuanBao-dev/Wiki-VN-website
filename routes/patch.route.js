@@ -34,12 +34,8 @@ const userModel = require("../models/user.model");
 
 route.get("/", async (req, res) => {
   const page = parseInt(req.query.page || 0);
-  const isMemberOnly = req.query.isMemberOnly === "true";
   try {
     const patches = await Patch.aggregate([
-      {
-        $match: { isMemberOnly },
-      },
       {
         $group: {
           _id: { $toDate: "$createdAt" },
@@ -70,6 +66,15 @@ async function isUserFreeAds(userId) {
   if (!user) return false;
   return user.isFreeAds;
 }
+async function isMember(userId) {
+  const user = await userModel
+    .findOne({ userId })
+    .select({ _id: 0, role: 1 })
+    .lean();
+  if (!user) return false;
+  return ["Admin", "Member", "Supporter"].includes(user.role);
+}
+
 route.get("/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -88,9 +93,22 @@ route.get("/:id", async (req, res) => {
           originalLinkDownloads: 1,
           shrinkMeLinkDownloads: 1,
           affiliateLinks: 1,
+          isMemberOnly: 1,
         })
         .lean(),
     ]);
+    if (patch.isMemberOnly && !(await isMember(userId))) {
+      return res.status(400).send({
+        error: {
+          message: "Not a member",
+          linkDownloads: patch.originalLinkDownloads.map(({ label }) => ({
+            label,
+          })),
+          affiliateLinks: patch.affiliateLinks,
+          isMemberOnly: patch.isMemberOnly,
+        },
+      });
+    }
     if (!patch) return res.status(400).send({ error: "patch doesn't exist" });
     res.send({
       message: {
@@ -99,6 +117,7 @@ route.get("/:id", async (req, res) => {
           ? patch.originalLinkDownloads
           : patch.originalLinkDownloads,
         affiliateLinks: patch.affiliateLinks,
+        isMemberOnly: patch.isMemberOnly,
       },
     });
   } catch (error) {
@@ -108,68 +127,85 @@ route.get("/:id", async (req, res) => {
 });
 
 route.post("/", verifyRole("Admin"), async (req, res) => {
-  const { vnId, type, linkDownload, dataVN, isAddingNewPatch } = req.body;
+  const {
+    vnId,
+    type,
+    linkDownload,
+    dataVN,
+    isAddingNewPatch,
+    isMemberOnly,
+    announcementChannel,
+    isNotifyDiscord,
+  } = req.body;
   try {
     let newPatch = await Patch.findOne({ vnId: parseInt(vnId) });
-    if (type === "download") {
-      // const ouoLinkDownload = {
-      //   label: linkDownload.label,
-      //   url: await urlShortenerOuo(linkDownload.url),
-      // };
-      const shrinkEarnLinkDownload = {
-        label: linkDownload.label,
-        url: await urlShortenerShrinkEarn(linkDownload.url),
-      };
-      const shrinkMeLinkDownload = {
-        label: linkDownload.label,
-        url: await urlShortenerShrinkme(shrinkEarnLinkDownload.url),
-      };
-      if (!newPatch) {
-        newPatch = new Patch({
-          vnId,
-          // linkDownloads: [ouoLinkDownload],
-          originalLinkDownloads: [linkDownload],
-          shrinkMeLinkDownloads: [shrinkMeLinkDownload],
-          shrinkEarnLinkDownloads: [shrinkEarnLinkDownload],
-          dataVN,
-        });
-        const users = await userModel.find({
-          votedVnIdList: parseInt(vnId),
-          isVerified: true,
-          isNotSpam: true,
-        });
-        for (let i = 0; i < users.length; i++) {
-          const user = users[i];
-          user.votedVNsTranslatedAt = new Date(Date.now());
-          await user.save();
+    console.log(linkDownload);
+    if (linkDownload.label !== "") {
+      if (type === "download") {
+        // const ouoLinkDownload = {
+        //   label: linkDownload.label,
+        //   url: await urlShortenerOuo(linkDownload.url),
+        // };
+        const shrinkEarnLinkDownload = {
+          label: linkDownload.label,
+          url: await urlShortenerShrinkEarn(linkDownload.url),
+        };
+        const shrinkMeLinkDownload = {
+          label: linkDownload.label,
+          url: await urlShortenerShrinkme(shrinkEarnLinkDownload.url),
+        };
+        if (!newPatch) {
+          newPatch = new Patch({
+            vnId,
+            // linkDownloads: [ouoLinkDownload],
+            originalLinkDownloads: [linkDownload],
+            shrinkMeLinkDownloads: [shrinkMeLinkDownload],
+            shrinkEarnLinkDownloads: [shrinkEarnLinkDownload],
+            dataVN,
+          });
+          const users = await userModel.find({
+            votedVnIdList: parseInt(vnId),
+            isVerified: true,
+            isNotSpam: true,
+          });
+          for (let i = 0; i < users.length; i++) {
+            const user = users[i];
+            user.votedVNsTranslatedAt = new Date(Date.now());
+            await user.save();
+          }
+        }
+        if (newPatch.shrinkMeLinkDownloads) {
+          if (!isAddingNewPatch) {
+            // newPatch.linkDownloads = [ouoLinkDownload];
+            newPatch.originalLinkDownloads = [linkDownload];
+            newPatch.shrinkMeLinkDownloads = [shrinkMeLinkDownload];
+            newPatch.shrinkEarnLinkDownloads = [shrinkEarnLinkDownload];
+          } else {
+            // newPatch.linkDownloads.push(ouoLinkDownload);
+            newPatch.originalLinkDownloads.push(linkDownload);
+            newPatch.shrinkMeLinkDownloads.push(shrinkMeLinkDownload);
+            newPatch.shrinkEarnLinkDownloads.push(shrinkEarnLinkDownload);
+          }
         }
       }
-      if (newPatch.shrinkMeLinkDownloads) {
-        if (!isAddingNewPatch) {
-          // newPatch.linkDownloads = [ouoLinkDownload];
-          newPatch.originalLinkDownloads = [linkDownload];
-          newPatch.shrinkMeLinkDownloads = [shrinkMeLinkDownload];
-          newPatch.shrinkEarnLinkDownloads = [shrinkEarnLinkDownload];
+      if (type === "affiliate") {
+        if (!newPatch) {
+          newPatch = new Patch({
+            vnId,
+            dataVN,
+          });
+        }
+        if (isAddingNewPatch) {
+          newPatch.affiliateLinks.push(linkDownload);
         } else {
-          // newPatch.linkDownloads.push(ouoLinkDownload);
-          newPatch.originalLinkDownloads.push(linkDownload);
-          newPatch.shrinkMeLinkDownloads.push(shrinkMeLinkDownload);
-          newPatch.shrinkEarnLinkDownloads.push(shrinkEarnLinkDownload);
+          newPatch.affiliateLinks = [linkDownload];
         }
       }
     }
-    if (type === "affiliate") {
-      if (!newPatch) {
-        newPatch = new Patch({
-          vnId,
-          dataVN,
-        });
-      }
-      if (isAddingNewPatch) {
-        newPatch.affiliateLinks.push(linkDownload);
-      } else {
-        newPatch.affiliateLinks = [linkDownload];
-      }
+    newPatch.isMemberOnly = isMemberOnly;
+    if (isNotifyDiscord) {
+      newPatch.channelAnnouncementId = announcementChannel;
+      newPatch.isNotifyDiscord = isNotifyDiscord;
     }
     await newPatch.save();
     res.send({ message: "success" });

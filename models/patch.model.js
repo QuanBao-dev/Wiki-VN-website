@@ -33,10 +33,17 @@ const patchSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  isMemberOnly:{
-    type:Boolean,
-    default: false
-  }
+  isMemberOnly: {
+    type: Boolean,
+    default: false,
+  },
+  isNotifyDiscord: {
+    type: Boolean,
+    default: false,
+  },
+  channelAnnouncementId: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("patch", patchSchema);

@@ -86,17 +86,19 @@ const Popup = ({ title, description, url, isHide, setIsHide }: Props) => {
               Buy me a coffee
             </span>
           </a>
-          <a
-            className="button-link-download"
-            href={url}
-            target={"_blank"}
-            rel="noreferrer"
-            onClick={(e) => {
-              setIsHide(true);
-            }}
-          >
-            <span>Continue</span>
-          </a>
+          {title !== "Early Access!" && (
+            <a
+              className="button-link-download"
+              href={url}
+              target={"_blank"}
+              rel="noreferrer"
+              onClick={(e) => {
+                setIsHide(true);
+              }}
+            >
+              <span>Continue</span>
+            </a>
+          )}
         </div>
       </div>
     </div>
