@@ -160,7 +160,7 @@ const Detail = () => {
         <Popup
           title={"Early Access!"}
           description={
-            "This is the early access patch of this game. You can access this after becoming a member."
+            "This is the early access patch of this game. You can access this after you logged in with a member account or a supporter account."
           }
           url={url}
           isHide={isHide}
