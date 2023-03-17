@@ -36,6 +36,7 @@ route.get("/", async (req, res) => {
   const page = parseInt(req.query.page || 0);
   try {
     const patches = await Patch.aggregate([
+      { $match: { isMemberOnly: false } },
       {
         $group: {
           _id: { $toDate: "$createdAt" },
@@ -72,7 +73,7 @@ async function isMember(userId) {
     .select({ _id: 0, role: 1 })
     .lean();
   if (!user) return false;
-  return ["Admin", "Member","Supporter"].includes(user.role);
+  return ["Admin", "Member", "Supporter"].includes(user.role);
 }
 
 route.get("/:id", async (req, res) => {
