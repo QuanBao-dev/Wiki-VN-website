@@ -36,7 +36,6 @@ route.get("/", async (req, res) => {
   const page = parseInt(req.query.page || 0);
   try {
     const patches = await Patch.aggregate([
-      { $match: { isMemberOnly: false } },
       {
         $group: {
           _id: { $toDate: "$createdAt" },
