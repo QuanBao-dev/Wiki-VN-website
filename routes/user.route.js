@@ -681,9 +681,10 @@ async function updateAllBMC() {
               ratio = 10;
               isYearly = true;
             }
-            const endFreeAdsDate =
-              new Date(member.subscription_current_period_start).getTime() +
-              3600 * 1000 * 24 * (isYearly ? 365 : 31);
+            const endFreeAdsDate = !member.subscription_current_period_end
+              ? new Date(member.subscription_current_period_start).getTime() +
+                3600 * 1000 * 24 * (isYearly ? 365 : 31)
+              : new Date(member.subscription_current_period_end).getTime();
             if (Date.now() - endFreeAdsDate < 0) {
               if (
                 user.isFreeAds !== true ||
