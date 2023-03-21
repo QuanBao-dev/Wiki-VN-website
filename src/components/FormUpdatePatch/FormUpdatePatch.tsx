@@ -1,7 +1,7 @@
 import "./FormUpdatePatch.css";
 import Input from "../Input/Input";
 import { useRef, useEffect, useState } from "react";
-import { catchError, fromEvent, of, pluck, switchMap } from "rxjs";
+import { catchError, debounceTime, exhaustMap, fromEvent, of, pluck } from "rxjs";
 import { ajax } from "rxjs/ajax";
 import { VisualNovel } from "../../Interfaces/visualNovelList";
 interface Props {
@@ -24,7 +24,8 @@ const FormUpdatePatch = ({ dataVN, setTrigger, trigger }: Props) => {
   useEffect(() => {
     const subscription = fromEvent(buttonRef.current, "click")
       .pipe(
-        switchMap(() =>
+        debounceTime(1000),
+        exhaustMap(() =>
           ajax({
             url: "/api/patch/",
             method: "POST",
@@ -38,8 +39,8 @@ const FormUpdatePatch = ({ dataVN, setTrigger, trigger }: Props) => {
               dataVN: dataVN,
               isAddingNewPatch: checkBoxRef.current.checked,
               isMemberOnly: checkBoxIsMemberOnlyRef.current.checked,
-              announcementChannel,
-              isNotifyDiscord:isNotify
+              announcementChannel: isNotify ? announcementChannel : undefined,
+              isNotifyDiscord: isNotify,
             },
           }).pipe(
             pluck("response", "message"),
@@ -56,7 +57,7 @@ const FormUpdatePatch = ({ dataVN, setTrigger, trigger }: Props) => {
       subscription.unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataVN.id, trigger, announcementChannel]);
+  }, [dataVN.id, trigger, announcementChannel, isNotify]);
   return (
     <fieldset>
       <legend>Form Update Patch</legend>
