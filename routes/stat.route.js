@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
           $group: {
             _id: null,
             length: {
-              $sum: { $size: "$shrinkMeLinkDownloads" },
+              $sum: { $size: "$originalLinkDownloads" },
             },
           },
         },

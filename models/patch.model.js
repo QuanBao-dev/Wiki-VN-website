@@ -9,14 +9,14 @@ const patchSchema = mongoose.Schema({
     type: [{ label: String, url: String, _id: false }],
     require: true,
   },
-  shrinkMeLinkDownloads: {
-    type: [{ label: String, url: String, _id: false }],
-    default: [],
-  },
-  shrinkEarnLinkDownloads: {
-    type: [{ label: String, url: String, _id: false }],
-    default: [],
-  },
+  // shrinkMeLinkDownloads: {
+  //   type: [{ label: String, url: String, _id: false }],
+  //   default: [],
+  // },
+  // shrinkEarnLinkDownloads: {
+  //   type: [{ label: String, url: String, _id: false }],
+  //   default: [],
+  // },
   vnId: { type: Number, require: true },
   dataVN: { type: Map, require: true },
   affiliateLinks: {

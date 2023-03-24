@@ -91,7 +91,6 @@ route.get("/:id", async (req, res) => {
           vnId: 1,
           linkDownloads: 1,
           originalLinkDownloads: 1,
-          shrinkMeLinkDownloads: 1,
           affiliateLinks: 1,
           isMemberOnly: 1,
         })
@@ -113,9 +112,7 @@ route.get("/:id", async (req, res) => {
     res.send({
       message: {
         vnId: patch.vnId,
-        linkDownloads: !isFreeAds
-          ? patch.originalLinkDownloads
-          : patch.originalLinkDownloads,
+        linkDownloads: patch.originalLinkDownloads,
         affiliateLinks: patch.affiliateLinks,
         isMemberOnly: patch.isMemberOnly,
       },
@@ -146,21 +143,19 @@ route.post("/", verifyRole("Admin"), async (req, res) => {
         //   label: linkDownload.label,
         //   url: await urlShortenerOuo(linkDownload.url),
         // };
-        const shrinkEarnLinkDownload = {
-          label: linkDownload.label,
-          url: await urlShortenerShrinkEarn(linkDownload.url),
-        };
-        const shrinkMeLinkDownload = {
-          label: linkDownload.label,
-          url: await urlShortenerShrinkme(shrinkEarnLinkDownload.url),
-        };
+        // const shrinkEarnLinkDownload = {
+        //   label: linkDownload.label,
+        //   url: await urlShortenerShrinkEarn(linkDownload.url),
+        // };
+        // const shrinkMeLinkDownload = {
+        //   label: linkDownload.label,
+        //   url: await urlShortenerShrinkme(shrinkEarnLinkDownload.url),
+        // };
         if (!newPatch) {
           newPatch = new Patch({
             vnId,
             // linkDownloads: [ouoLinkDownload],
             originalLinkDownloads: [linkDownload],
-            shrinkMeLinkDownloads: [shrinkMeLinkDownload],
-            shrinkEarnLinkDownloads: [shrinkEarnLinkDownload],
             dataVN,
           });
           const users = await userModel.find({
@@ -178,13 +173,13 @@ route.post("/", verifyRole("Admin"), async (req, res) => {
           if (!isAddingNewPatch) {
             // newPatch.linkDownloads = [ouoLinkDownload];
             newPatch.originalLinkDownloads = [linkDownload];
-            newPatch.shrinkMeLinkDownloads = [shrinkMeLinkDownload];
-            newPatch.shrinkEarnLinkDownloads = [shrinkEarnLinkDownload];
+            // newPatch.shrinkMeLinkDownloads = [shrinkMeLinkDownload];
+            // newPatch.shrinkEarnLinkDownloads = [shrinkEarnLinkDownload];
           } else {
             // newPatch.linkDownloads.push(ouoLinkDownload);
             newPatch.originalLinkDownloads.push(linkDownload);
-            newPatch.shrinkMeLinkDownloads.push(shrinkMeLinkDownload);
-            newPatch.shrinkEarnLinkDownloads.push(shrinkEarnLinkDownload);
+            // newPatch.shrinkMeLinkDownloads.push(shrinkMeLinkDownload);
+            // newPatch.shrinkEarnLinkDownloads.push(shrinkEarnLinkDownload);
           }
         }
       }
