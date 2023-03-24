@@ -83,8 +83,7 @@ route.get("/:id", async (req, res) => {
       const user = await verify(req.signedCookies.token, process.env.JWT_KEY);
       userId = user.userId;
     } catch (error) {}
-    const [isFreeAds, patch] = await Promise.all([
-      isUserFreeAds(userId),
+    const [patch] = await Promise.all([
       Patch.findOne({ vnId: id })
         .select({
           _id: 0,
@@ -169,7 +168,7 @@ route.post("/", verifyRole("Admin"), async (req, res) => {
             await user.save();
           }
         }
-        if (newPatch.shrinkMeLinkDownloads) {
+        if (newPatch.originalLinkDownloads) {
           if (!isAddingNewPatch) {
             // newPatch.linkDownloads = [ouoLinkDownload];
             newPatch.originalLinkDownloads = [linkDownload];
