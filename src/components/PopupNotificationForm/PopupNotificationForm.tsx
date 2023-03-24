@@ -80,18 +80,8 @@ const PopupNotificationForm = () => {
       messageRef.current.value = ``;
       return;
     }
-    titleRef.current.value = `Thank you for your support`;
-    messageRef.current.value = `Hi ${
-      notificationState.username
-    }! Now you can freely download the patches on this website without ads ${
-      notificationState.endFreeAdsDate
-        ? "for 1 month since the day you supported"
-        : "as long as you are still a membership"
-    }. ${
-      notificationState.endFreeAdsDate
-        ? `This will be end at ${notificationState.endFreeAdsDate}`
-        : ""
-    }`;
+    titleRef.current.value = `Hi ${notificationState.username}!`;
+    messageRef.current.value = ``;
   }, [
     notificationState.username,
     notificationState.endFreeAdsDate,

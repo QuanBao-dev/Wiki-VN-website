@@ -58,14 +58,14 @@ route.get("/", async (req, res) => {
   }
 });
 
-async function isUserFreeAds(userId) {
-  const user = await userModel
-    .findOne({ userId })
-    .select({ _id: 0, isFreeAds: 1 })
-    .lean();
-  if (!user) return false;
-  return user.isFreeAds;
-}
+// async function isUserFreeAds(userId) {
+//   const user = await userModel
+//     .findOne({ userId })
+//     .select({ _id: 0, isFreeAds: 1 })
+//     .lean();
+//   if (!user) return false;
+//   return user.isFreeAds;
+// }
 async function isMember(userId) {
   const user = await userModel
     .findOne({ userId })

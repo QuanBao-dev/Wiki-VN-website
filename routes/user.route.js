@@ -733,8 +733,12 @@ async function updateAllBMC() {
               return {
                 ...user,
                 becomingMemberAt: member.subscription_current_period_start,
-                cancelingMemberAt: member.subscription_current_period_end,
-                endFreeAdsDate: member.subscription_current_period_end,
+                cancelingMemberAt:
+                  member.subscription_current_period_end ||
+                  new Date(endFreeAdsDate).toUTCString(),
+                endFreeAdsDate:
+                  member.subscription_current_period_end ||
+                  new Date(endFreeAdsDate).toUTCString(),
                 isFreeAds: true,
                 boost: parseInt(member.subscription_coffee_price) / ratio,
                 role: "Member",
