@@ -790,7 +790,7 @@ async function deleteInactiveAccount() {
       const user = await userModel.findOne({ userId });
       if (
         Date.now() >=
-          new Date(user.createdAt).getTime() + 3600 * 1000 * 24 * 1 &&
+          new Date(user.createdAt).getTime() + 3600 * 1000 * 1 * 1 &&
         (!user.isVerified || !user.isNotSpam)
       ) {
         await user.delete();
