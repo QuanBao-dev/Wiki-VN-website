@@ -279,10 +279,10 @@ function RowTable({
           <option value="false">false</option>
         </select>
       </td>
-      <td>{becomingSupporterAt ? becomingSupporterAt : "none"}</td>
-      <td>{becomingMemberAt ? becomingMemberAt : "none"}</td>
-      <td>{cancelingMemberAt ? cancelingMemberAt : "none"}</td>
-      <td>{endFreeAdsDate ? endFreeAdsDate : "none"}</td>
+      <td>{becomingSupporterAt ? becomingSupporterAt : "...."}</td>
+      <td>{becomingMemberAt ? becomingMemberAt : "...."}</td>
+      <td>{cancelingMemberAt ? cancelingMemberAt : "...."}</td>
+      <td>{endFreeAdsDate ? endFreeAdsDate : "...."}</td>
       <td>
         <ButtonDeleteUser
           userId={userId}

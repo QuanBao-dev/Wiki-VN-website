@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 
 import Donate from "../Donate/Donate";
 import { fromEvent } from "rxjs";
+import { Link } from "react-router-dom";
 
 interface Props {
   title: string;
@@ -98,6 +99,18 @@ const Popup = ({ title, description, url, isHide, setIsHide }: Props) => {
             >
               <span>Continue</span>
             </a>
+          )}
+          {title === "Early Access!" && (
+            <Link
+              className="button-link-login"
+              to={"/login"}
+              rel="noreferrer"
+              onClick={() => {
+                setIsHide(true);
+              }}
+            >
+              <span>Login</span>
+            </Link>
           )}
         </div>
       </div>
