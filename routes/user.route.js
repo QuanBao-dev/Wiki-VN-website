@@ -595,6 +595,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
       );
       if (!coffeeSupporter) {
         coffeeSupporter = new coffeeSupporterModel(supporter);
+        coffeeSupporters.push(coffeeSupporter)
         await coffeeSupporter.save();
         continue;
       }
@@ -656,6 +657,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
       );
       if (!coffeeMember) {
         coffeeMember = new coffeeMemberModel(member);
+        coffeeMembers.push(coffeeMember)
         await coffeeMember.save();
         continue;
       }
