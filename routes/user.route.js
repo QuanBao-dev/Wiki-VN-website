@@ -22,7 +22,7 @@ const coffeeSupporterModel = require("../models/coffeeSupporter.model");
 const rateLimit = require("express-rate-limit");
 
 const apiLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000, // 15 minutes
   max: 20, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
@@ -31,7 +31,7 @@ const apiLimiter = rateLimit({
 router.post("/BMC/", async (req, res) => {
   try {
     console.log(req.body);
-    await updateAllBMC(true);
+    await updateAllBMC(true, 1);
     res.send({ message: "Success" });
   } catch (error) {
     if (error) return res.status(400).send({ error });
@@ -68,7 +68,7 @@ router.post("/kofi/", async (req, res) => {
     }
     coffee.url = data.url;
     await coffee.save();
-    await updateAllBMC();
+    await updateAllBMC(true, 1);
     res.send({ message: "Success" });
   } catch (error) {
     if (error) return res.status(400).send({ error: error.message });
@@ -78,31 +78,40 @@ router.post("/kofi/", async (req, res) => {
 
 router.get("/", verifyRole("Admin"), async (req, res) => {
   try {
-    const finalResult = await updateAllBMC();
+    const finalResult = await updateAllBMC(true, 1);
     res.send({
       message: finalResult,
     });
   } catch (error) {
-    if (error) return res.status(400).send({ error: error.message });
-    res.status(404).send({ error: "Something went wrong" });
+    console.log(error.message);
+    try {
+      const finalResult = await updateAllBMC();
+      console.log("temporary");
+      res.send({
+        message: finalResult,
+      });
+    } catch (error) {
+      if (error) return res.status(400).send({ error: error.message });
+      res.status(404).send({ error: "Something went wrong" });
+    }
   }
 });
 
-async function getAllSupporters() {
+async function getAllSupporters(lastPage) {
   const BuyMeCoffee = new BMC(process.env.SUGOICOFFEETOKEN);
-  const { last_page } = await BuyMeCoffee.Supporters();
+  if (!lastPage) lastPage = (await BuyMeCoffee.Supporters()).last_page;
   const data = [];
-  for (let i = 1; i <= last_page; i++) {
+  for (let i = 1; i <= lastPage; i++) {
     const dataEachPage = await BuyMeCoffee.Supporters(i);
     data.push(...dataEachPage.data);
   }
   return { data };
 }
-async function getAllSubscriptions() {
+async function getAllSubscriptions(lastPage) {
   const BuyMeCoffee = new BMC(process.env.SUGOICOFFEETOKEN);
-  const { last_page } = await BuyMeCoffee.Subscriptions();
+  if (!lastPage) lastPage = (await BuyMeCoffee.Subscriptions()).last_page;
   const data = [];
-  for (let i = 1; i <= last_page; i++) {
+  for (let i = 1; i <= 1; i++) {
     const dataEachPage = await BuyMeCoffee.Subscriptions(i);
     data.push(...dataEachPage.data);
   }
@@ -137,7 +146,7 @@ router.post("/login", apiLimiter, async (req, res) => {
       return res.status(400).send({ error: "Email or Password is wrong" });
     }
     if (!user.isNotSpam || !user.isVerified) {
-      const allSupporters = (await updateAllBMC())
+      const allSupporters = (await updateAllBMC(true, 1))
         .filter(({ role }) => ["Member", "Supporter", "Admin"].includes(role))
         .map(({ email }) => email);
       if (!allSupporters.includes(user.email) && user.role !== "Admin") {
@@ -193,7 +202,10 @@ router.post("/register", apiLimiter, async (req, res) => {
       userModel.findOne({ username }),
     ]);
     if (emailExist && emailExist.isNotSpam) {
-      return res.status(400).send({ error: "Email already existed" });
+      return res.status(400).send({
+        error:
+          "Email already existed, if you are the owner of this email, please login",
+      });
     }
     // if (!(await isValidEmail(email))) {
     //   return res.status(400).send({
@@ -210,7 +222,7 @@ router.post("/register", apiLimiter, async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     newUser.password = await bcrypt.hash(password, salt);
     await newUser.save();
-    const allSupporters = (await updateAllBMC())
+    const allSupporters = (await updateAllBMC(true, 1))
       .filter(({ role }) => ["Member", "Supporter", "Admin"].includes(role))
       .map(({ email }) => email);
     if (!allSupporters.includes(newUser.email) && newUser.role !== "Admin") {
@@ -469,7 +481,7 @@ router.put(
         user.isNotSpam = false;
         await user.save();
         // await verifyEmailUser(user);
-        const allSupporters = (await updateAllBMC())
+        const allSupporters = (await updateAllBMC(true, 1))
           .filter(({ role }) => ["Member", "Supporter", "Admin"].includes(role))
           .map(({ email }) => email);
         if (!allSupporters.includes(user.email) && user.role !== "Admin") {
@@ -509,7 +521,7 @@ router.put(
   }
 );
 
-async function updateAllBMC(isFetchApiBMC) {
+async function updateAllBMC(isFetchApiBMC, lastPage) {
   await deleteInactiveAccount();
 
   let users, supporters, members, peopleFromKofi;
@@ -565,10 +577,154 @@ async function updateAllBMC(isFetchApiBMC) {
           $sort: { createdAt: -1 },
         },
       ]),
-      getAllSupporters(),
-      getAllSubscriptions(),
+      getAllSupporters(lastPage),
+      getAllSubscriptions(lastPage),
       coffeeModel.find({}).lean(),
     ]);
+    console.log("ok");
+    for (let i = 0; i < supporters.data.length; i++) {
+      const supporter = supporters.data[i];
+      let coffeeSupporter = await coffeeSupporterModel.findOne({
+        payer_email: supporter.payer_email,
+      });
+      if (!coffeeSupporter) {
+        coffeeSupporter = new coffeeSupporterModel(supporter);
+        await coffeeSupporter.save();
+        continue;
+      }
+      if (
+        coffeeSupporter.support_id !== supporter.support_id ||
+        coffeeSupporter.support_note !== supporter.support_note ||
+        coffeeSupporter.support_coffees !== supporter.support_coffees ||
+        coffeeSupporter.transaction_id !== supporter.transaction_id ||
+        coffeeSupporter.support_visibility !== supporter.support_visibility ||
+        coffeeSupporter.support_created_on !== supporter.support_created_on ||
+        coffeeSupporter.support_updated_on !== supporter.support_updated_on ||
+        coffeeSupporter.transfer_id !== supporter.transfer_id ||
+        coffeeSupporter.supporter_name !== supporter.supporter_name ||
+        coffeeSupporter.support_coffee_price !==
+          supporter.support_coffee_price ||
+        coffeeSupporter.support_email !== supporter.support_email ||
+        coffeeSupporter.is_refunded !== supporter.is_refunded ||
+        coffeeSupporter.support_currency !== supporter.support_currency ||
+        coffeeSupporter.referer !== supporter.referer ||
+        coffeeSupporter.country !== supporter.country ||
+        coffeeSupporter.order_payload !== supporter.order_payload ||
+        coffeeSupporter.support_hidden !== supporter.support_hidden ||
+        coffeeSupporter.refunded_at !== supporter.refunded_at ||
+        coffeeSupporter.payer_email !== supporter.payer_email ||
+        coffeeSupporter.payment_platform !== supporter.payment_platform ||
+        coffeeSupporter.payer_name !== supporter.payer_name
+      ) {
+        coffeeSupporter.support_id = supporter.support_id;
+        coffeeSupporter.support_note = supporter.support_note;
+        coffeeSupporter.support_coffees = supporter.support_coffees;
+        coffeeSupporter.transaction_id = supporter.transaction_id;
+        coffeeSupporter.support_visibility = supporter.support_visibility;
+        coffeeSupporter.support_created_on = supporter.support_created_on;
+        coffeeSupporter.support_updated_on = supporter.support_updated_on;
+        coffeeSupporter.transfer_id = supporter.transfer_id;
+        coffeeSupporter.supporter_name = supporter.supporter_name;
+        coffeeSupporter.support_coffee_price = supporter.support_coffee_price;
+        coffeeSupporter.support_email = supporter.support_email;
+        coffeeSupporter.is_refunded = supporter.is_refunded;
+        coffeeSupporter.support_currency = supporter.support_currency;
+        coffeeSupporter.referer = supporter.referer;
+        coffeeSupporter.country = supporter.country;
+        coffeeSupporter.order_payload = supporter.order_payload;
+        coffeeSupporter.support_hidden = supporter.support_hidden;
+        coffeeSupporter.refunded_at = supporter.refunded_at;
+        coffeeSupporter.payer_email = supporter.payer_email;
+        coffeeSupporter.payment_platform = supporter.payment_platform;
+        coffeeSupporter.payer_name = supporter.payer_name;
+        await coffeeSupporter.save();
+      }
+    }
+
+    for (let j = 0; j < members.data.length; j++) {
+      const member = members.data[j];
+      let coffeeMember = await coffeeMemberModel.findOne({
+        payer_email: member.payer_email,
+      });
+      if (!coffeeMember) {
+        coffeeMember = new coffeeMemberModel(member);
+        await coffeeMember.save();
+        continue;
+      }
+      if (
+        coffeeMember.subscription_id !== member.subscription_id ||
+        coffeeMember.subscription_cancelled_on !==
+          member.subscription_cancelled_on ||
+        coffeeMember.subscription_created_on !==
+          member.subscription_created_on ||
+        coffeeMember.subscription_updated_on !==
+          member.subscription_updated_on ||
+        coffeeMember.subscription_current_period_start !==
+          member.subscription_current_period_start ||
+        coffeeMember.subscription_current_period_end !==
+          member.subscription_current_period_end ||
+        coffeeMember.subscription_coffee_price !==
+          member.subscription_coffee_price ||
+        coffeeMember.subscription_coffee_num !==
+          member.subscription_coffee_num ||
+        coffeeMember.subscription_is_cancelled !==
+          member.subscription_is_cancelled ||
+        coffeeMember.subscription_is_cancelled_at_period_end !==
+          member.subscription_is_cancelled_at_period_end ||
+        coffeeMember.subscription_currency !== member.subscription_currency ||
+        coffeeMember.subscription_message !== member.subscription_message ||
+        coffeeMember.message_visibility !== member.message_visibility ||
+        coffeeMember.subscription_duration_type !==
+          member.subscription_duration_type ||
+        coffeeMember.referer !== member.referer ||
+        coffeeMember.country !== member.country ||
+        coffeeMember.is_razorpay !== member.is_razorpay ||
+        coffeeMember.subscription_hidden !== member.subscription_hidden ||
+        coffeeMember.membership_level_id !== member.membership_level_id ||
+        coffeeMember.is_manual_payout !== member.is_manual_payout ||
+        coffeeMember.is_paused !== member.is_paused ||
+        coffeeMember.stripe_status !== member.stripe_status ||
+        coffeeMember.transaction_id !== member.transaction_id ||
+        coffeeMember.payer_email !== member.payer_email ||
+        coffeeMember.payer_name !== member.payer_name
+      ) {
+        coffeeMember.subscription_id = member.subscription_id;
+        coffeeMember.subscription_cancelled_on =
+          member.subscription_cancelled_on;
+        coffeeMember.subscription_created_on = member.subscription_created_on;
+        coffeeMember.subscription_updated_on = member.subscription_updated_on;
+        coffeeMember.subscription_current_period_start =
+          member.subscription_current_period_start;
+        coffeeMember.subscription_current_period_end =
+          member.subscription_current_period_end;
+        coffeeMember.subscription_coffee_price =
+          member.subscription_coffee_price;
+        coffeeMember.subscription_coffee_num = member.subscription_coffee_num;
+        coffeeMember.subscription_is_cancelled =
+          member.subscription_is_cancelled;
+        coffeeMember.subscription_is_cancelled_at_period_end =
+          member.subscription_is_cancelled_at_period_end;
+        coffeeMember.subscription_currency = member.subscription_currency;
+        coffeeMember.subscription_message = member.subscription_message;
+        coffeeMember.message_visibility = member.message_visibility;
+        coffeeMember.subscription_duration_type =
+          member.subscription_duration_type;
+        coffeeMember.referer = member.referer;
+        coffeeMember.country = member.country;
+        coffeeMember.is_razorpay = member.is_razorpay;
+        coffeeMember.subscription_hidden = member.subscription_hidden;
+        coffeeMember.membership_level_id = member.membership_level_id;
+        coffeeMember.is_manual_payout = member.is_manual_payout;
+        coffeeMember.is_paused = member.is_paused;
+        coffeeMember.stripe_status = member.stripe_status;
+        coffeeMember.transaction_id = member.transaction_id;
+        coffeeMember.payer_email = member.payer_email;
+        coffeeMember.payer_name = member.payer_name;
+        await coffeeMember.save();
+      }
+    }
+    supporters = { data: await coffeeSupporterModel.find({}).lean() };
+    members = { data: await coffeeMemberModel.find({}).lean() };
   }
   let temp = supporters.data.reverse().reduce((ans, v) => {
     ans[v.payer_email] = v;
