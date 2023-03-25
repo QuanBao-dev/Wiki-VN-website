@@ -111,7 +111,7 @@ async function getAllSubscriptions(lastPage) {
   const BuyMeCoffee = new BMC(process.env.SUGOICOFFEETOKEN);
   if (!lastPage) lastPage = (await BuyMeCoffee.Subscriptions()).last_page;
   const data = [];
-  for (let i = 1; i <= 1; i++) {
+  for (let i = 1; i <= lastPage; i++) {
     const dataEachPage = await BuyMeCoffee.Subscriptions(i);
     data.push(...dataEachPage.data);
   }
@@ -595,33 +595,35 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
       );
       if (!coffeeSupporter) {
         coffeeSupporter = new coffeeSupporterModel(supporter);
-        coffeeSupporters.push(coffeeSupporter)
+        coffeeSupporters.push(coffeeSupporter);
         await coffeeSupporter.save();
         continue;
       }
       if (
-        coffeeSupporter.support_id !== supporter.support_id ||
-        coffeeSupporter.support_note !== supporter.support_note ||
-        coffeeSupporter.support_coffees !== supporter.support_coffees ||
-        coffeeSupporter.transaction_id !== supporter.transaction_id ||
-        coffeeSupporter.support_visibility !== supporter.support_visibility ||
-        coffeeSupporter.support_created_on !== supporter.support_created_on ||
-        coffeeSupporter.support_updated_on !== supporter.support_updated_on ||
-        coffeeSupporter.transfer_id !== supporter.transfer_id ||
-        coffeeSupporter.supporter_name !== supporter.supporter_name ||
-        coffeeSupporter.support_coffee_price !==
-          supporter.support_coffee_price ||
-        coffeeSupporter.support_email !== supporter.support_email ||
-        coffeeSupporter.is_refunded !== supporter.is_refunded ||
-        coffeeSupporter.support_currency !== supporter.support_currency ||
-        coffeeSupporter.referer !== supporter.referer ||
-        coffeeSupporter.country !== supporter.country ||
-        coffeeSupporter.order_payload !== supporter.order_payload ||
-        coffeeSupporter.support_hidden !== supporter.support_hidden ||
-        coffeeSupporter.refunded_at !== supporter.refunded_at ||
-        coffeeSupporter.payer_email !== supporter.payer_email ||
-        coffeeSupporter.payment_platform !== supporter.payment_platform ||
-        coffeeSupporter.payer_name !== supporter.payer_name
+        new Date(coffeeSupporter.support_created_on) <
+          new Date(supporter.support_created_on) &&
+        (coffeeSupporter.support_id !== supporter.support_id ||
+          coffeeSupporter.support_note !== supporter.support_note ||
+          coffeeSupporter.support_coffees !== supporter.support_coffees ||
+          coffeeSupporter.transaction_id !== supporter.transaction_id ||
+          coffeeSupporter.support_visibility !== supporter.support_visibility ||
+          coffeeSupporter.support_created_on !== supporter.support_created_on ||
+          coffeeSupporter.support_updated_on !== supporter.support_updated_on ||
+          coffeeSupporter.transfer_id !== supporter.transfer_id ||
+          coffeeSupporter.supporter_name !== supporter.supporter_name ||
+          coffeeSupporter.support_coffee_price !==
+            supporter.support_coffee_price ||
+          coffeeSupporter.support_email !== supporter.support_email ||
+          coffeeSupporter.is_refunded !== supporter.is_refunded ||
+          coffeeSupporter.support_currency !== supporter.support_currency ||
+          coffeeSupporter.referer !== supporter.referer ||
+          coffeeSupporter.country !== supporter.country ||
+          coffeeSupporter.order_payload !== supporter.order_payload ||
+          coffeeSupporter.support_hidden !== supporter.support_hidden ||
+          coffeeSupporter.refunded_at !== supporter.refunded_at ||
+          coffeeSupporter.payer_email !== supporter.payer_email ||
+          coffeeSupporter.payment_platform !== supporter.payment_platform ||
+          coffeeSupporter.payer_name !== supporter.payer_name)
       ) {
         coffeeSupporter.support_id = supporter.support_id;
         coffeeSupporter.support_note = supporter.support_note;
@@ -657,46 +659,48 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
       );
       if (!coffeeMember) {
         coffeeMember = new coffeeMemberModel(member);
-        coffeeMembers.push(coffeeMember)
+        coffeeMembers.push(coffeeMember);
         await coffeeMember.save();
         continue;
       }
       if (
-        coffeeMember.subscription_id !== member.subscription_id ||
-        coffeeMember.subscription_cancelled_on !==
-          member.subscription_cancelled_on ||
-        coffeeMember.subscription_created_on !==
-          member.subscription_created_on ||
-        coffeeMember.subscription_updated_on !==
-          member.subscription_updated_on ||
-        coffeeMember.subscription_current_period_start !==
-          member.subscription_current_period_start ||
-        coffeeMember.subscription_current_period_end !==
-          member.subscription_current_period_end ||
-        coffeeMember.subscription_coffee_price !==
-          member.subscription_coffee_price ||
-        coffeeMember.subscription_coffee_num !==
-          member.subscription_coffee_num ||
-        coffeeMember.subscription_is_cancelled !==
-          member.subscription_is_cancelled ||
-        coffeeMember.subscription_is_cancelled_at_period_end !==
-          member.subscription_is_cancelled_at_period_end ||
-        coffeeMember.subscription_currency !== member.subscription_currency ||
-        coffeeMember.subscription_message !== member.subscription_message ||
-        coffeeMember.message_visibility !== member.message_visibility ||
-        coffeeMember.subscription_duration_type !==
-          member.subscription_duration_type ||
-        coffeeMember.referer !== member.referer ||
-        coffeeMember.country !== member.country ||
-        coffeeMember.is_razorpay !== member.is_razorpay ||
-        coffeeMember.subscription_hidden !== member.subscription_hidden ||
-        coffeeMember.membership_level_id !== member.membership_level_id ||
-        coffeeMember.is_manual_payout !== member.is_manual_payout ||
-        coffeeMember.is_paused !== member.is_paused ||
-        coffeeMember.stripe_status !== member.stripe_status ||
-        coffeeMember.transaction_id !== member.transaction_id ||
-        coffeeMember.payer_email !== member.payer_email ||
-        coffeeMember.payer_name !== member.payer_name
+        new Date(coffeeMember.subscription_current_period_start) <
+          new Date(member.subscription_current_period_start) &&
+        (coffeeMember.subscription_id !== member.subscription_id ||
+          coffeeMember.subscription_cancelled_on !==
+            member.subscription_cancelled_on ||
+          coffeeMember.subscription_created_on !==
+            member.subscription_created_on ||
+          coffeeMember.subscription_updated_on !==
+            member.subscription_updated_on ||
+          coffeeMember.subscription_current_period_start !==
+            member.subscription_current_period_start ||
+          coffeeMember.subscription_current_period_end !==
+            member.subscription_current_period_end ||
+          coffeeMember.subscription_coffee_price !==
+            member.subscription_coffee_price ||
+          coffeeMember.subscription_coffee_num !==
+            member.subscription_coffee_num ||
+          coffeeMember.subscription_is_cancelled !==
+            member.subscription_is_cancelled ||
+          coffeeMember.subscription_is_cancelled_at_period_end !==
+            member.subscription_is_cancelled_at_period_end ||
+          coffeeMember.subscription_currency !== member.subscription_currency ||
+          coffeeMember.subscription_message !== member.subscription_message ||
+          coffeeMember.message_visibility !== member.message_visibility ||
+          coffeeMember.subscription_duration_type !==
+            member.subscription_duration_type ||
+          coffeeMember.referer !== member.referer ||
+          coffeeMember.country !== member.country ||
+          coffeeMember.is_razorpay !== member.is_razorpay ||
+          coffeeMember.subscription_hidden !== member.subscription_hidden ||
+          coffeeMember.membership_level_id !== member.membership_level_id ||
+          coffeeMember.is_manual_payout !== member.is_manual_payout ||
+          coffeeMember.is_paused !== member.is_paused ||
+          coffeeMember.stripe_status !== member.stripe_status ||
+          coffeeMember.transaction_id !== member.transaction_id ||
+          coffeeMember.payer_email !== member.payer_email ||
+          coffeeMember.payer_name !== member.payer_name)
       ) {
         coffeeMember.subscription_id = member.subscription_id;
         coffeeMember.subscription_cancelled_on =
