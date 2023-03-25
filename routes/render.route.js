@@ -6,6 +6,7 @@ const { default: axios } = require("axios");
 router.get("/vns/:vnId", async (req, res) => {
   try {
     const { vnId } = req.params;
+    console.log(vnId);
     let data = {
       filters: ["id", "=", "v" + vnId],
       fields:

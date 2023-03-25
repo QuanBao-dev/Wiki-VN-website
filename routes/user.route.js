@@ -548,8 +548,11 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
           $sort: { createdAt: -1 },
         },
       ]),
-      coffeeSupporterModel.find({}).lean(),
-      coffeeMemberModel.find({}).lean(),
+      coffeeSupporterModel.find({}).sort({ support_created_on: -1 }).lean(),
+      coffeeMemberModel
+        .find({})
+        .sort({ subscription_current_period_start: -1 })
+        .lean(),
       coffeeModel.find({}).lean(),
     ]);
     supporters = { data: supporters };
@@ -723,8 +726,18 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
         await coffeeMember.save();
       }
     }
-    supporters = { data: await coffeeSupporterModel.find({}).lean() };
-    members = { data: await coffeeMemberModel.find({}).lean() };
+    supporters = {
+      data: await coffeeSupporterModel
+        .find({})
+        .sort({ support_created_on: -1 })
+        .lean(),
+    };
+    members = {
+      data: await coffeeMemberModel
+        .find({})
+        .sort({ subscription_current_period_start: -1 })
+        .lean(),
+    };
   }
   let temp = supporters.data.reverse().reduce((ans, v) => {
     ans[v.payer_email] = v;
@@ -882,10 +895,10 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
               ratio = 10;
               isYearly = true;
             }
-            const endFreeAdsDate = !member.subscription_current_period_end
-              ? new Date(member.subscription_current_period_start).getTime() +
-                3600 * 1000 * 24 * (isYearly ? 365 : 31)
-              : new Date(member.subscription_current_period_end).getTime();
+            const endFreeAdsDate =
+              new Date(member.subscription_current_period_start).getTime() +
+              3600 * 1000 * 24 * (isYearly ? 365 : 31);
+            
             if (Date.now() - endFreeAdsDate < 0) {
               if (
                 user.isFreeAds !== true ||
@@ -934,12 +947,8 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
               return {
                 ...user,
                 becomingMemberAt: member.subscription_current_period_start,
-                cancelingMemberAt:
-                  member.subscription_current_period_end ||
-                  new Date(endFreeAdsDate).toUTCString(),
-                endFreeAdsDate:
-                  member.subscription_current_period_end ||
-                  new Date(endFreeAdsDate).toUTCString(),
+                cancelingMemberAt: new Date(endFreeAdsDate).toUTCString(),
+                endFreeAdsDate: new Date(endFreeAdsDate).toUTCString(),
                 isFreeAds: true,
                 boost: parseInt(member.subscription_coffee_price) / ratio,
                 role: "Member",
