@@ -31,7 +31,7 @@ const apiLimiter = rateLimit({
 router.post("/BMC/", async (req, res) => {
   try {
     console.log(req.body);
-    await updateAllBMC();
+    await updateAllBMC(true);
     res.send({ message: "Success" });
   } catch (error) {
     if (error) return res.status(400).send({ error });
@@ -509,36 +509,67 @@ router.put(
   }
 );
 
-async function updateAllBMC() {
+async function updateAllBMC(isFetchApiBMC) {
   await deleteInactiveAccount();
-  let [users, supporters, members, peopleFromKofi] = await Promise.all([
-    userModel.aggregate([
-      {
-        $project: {
-          _id: 0,
-          userId: 1,
-          email: 1,
-          username: 1,
-          createdAt: 1,
-          isVerified: 1,
-          isFreeAds: 1,
-          role: 1,
-          boost: 1,
-          votedVnIdList: 1,
-          isNotSpam: 1,
-          discordUsername: 1,
+
+  let users, supporters, members, peopleFromKofi;
+  if (!isFetchApiBMC) {
+    [users, supporters, members, peopleFromKofi] = await Promise.all([
+      userModel.aggregate([
+        {
+          $project: {
+            _id: 0,
+            userId: 1,
+            email: 1,
+            username: 1,
+            createdAt: 1,
+            isVerified: 1,
+            isFreeAds: 1,
+            role: 1,
+            boost: 1,
+            votedVnIdList: 1,
+            isNotSpam: 1,
+            discordUsername: 1,
+          },
         },
-      },
-      {
-        $sort: { createdAt: -1 },
-      },
-    ]),
-    coffeeSupporterModel.find({}).lean(),
-    coffeeMemberModel.find({}).lean(),
-    coffeeModel.find({}).lean(),
-  ]);
-  supporters = { data: supporters };
-  members = { data: members };
+        {
+          $sort: { createdAt: -1 },
+        },
+      ]),
+      coffeeSupporterModel.find({}).lean(),
+      coffeeMemberModel.find({}).lean(),
+      coffeeModel.find({}).lean(),
+    ]);
+    supporters = { data: supporters };
+    members = { data: members };
+  } else {
+    [users, supporters, members, peopleFromKofi] = await Promise.all([
+      userModel.aggregate([
+        {
+          $project: {
+            _id: 0,
+            userId: 1,
+            email: 1,
+            username: 1,
+            createdAt: 1,
+            isVerified: 1,
+            isFreeAds: 1,
+            role: 1,
+            boost: 1,
+            votedVnIdList: 1,
+            isNotSpam: 1,
+            discordUsername: 1,
+          },
+        },
+        {
+          $sort: { createdAt: -1 },
+        },
+      ]),
+      getAllSupporters(),
+      getAllSubscriptions(),
+      coffeeModel.find({}).lean(),
+    ]);
+  }
   let temp = supporters.data.reverse().reduce((ans, v) => {
     ans[v.payer_email] = v;
     return ans;
