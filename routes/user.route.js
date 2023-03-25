@@ -585,11 +585,14 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
       coffeeModel.find({}).lean(),
     ]);
     console.log("ok");
+    let coffeeSupporters = await coffeeSupporterModel
+      .find({})
+      .sort({ support_created_on: -1 });
     for (let i = 0; i < supporters.data.length; i++) {
       const supporter = supporters.data[i];
-      let coffeeSupporter = await coffeeSupporterModel.findOne({
-        payer_email: supporter.payer_email,
-      });
+      let coffeeSupporter = coffeeSupporters.find(
+        (v) => v.payer_email === supporter.payer_email
+      );
       if (!coffeeSupporter) {
         coffeeSupporter = new coffeeSupporterModel(supporter);
         await coffeeSupporter.save();
@@ -643,12 +646,14 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
         await coffeeSupporter.save();
       }
     }
-
+    let coffeeMembers = await coffeeMemberModel
+      .find({})
+      .sort({ subscription_current_period_start: -1 });
     for (let j = 0; j < members.data.length; j++) {
       const member = members.data[j];
-      let coffeeMember = await coffeeMemberModel.findOne({
-        payer_email: member.payer_email,
-      });
+      let coffeeMember = coffeeMembers.find(
+        (v) => v.payer_email === member.payer_email
+      );
       if (!coffeeMember) {
         coffeeMember = new coffeeMemberModel(member);
         await coffeeMember.save();
@@ -727,16 +732,10 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
       }
     }
     supporters = {
-      data: await coffeeSupporterModel
-        .find({})
-        .sort({ support_created_on: -1 })
-        .lean(),
+      data: coffeeSupporters,
     };
     members = {
-      data: await coffeeMemberModel
-        .find({})
-        .sort({ subscription_current_period_start: -1 })
-        .lean(),
+      data: coffeeMembers,
     };
   }
   let temp = supporters.data.reverse().reduce((ans, v) => {
@@ -898,7 +897,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
             const endFreeAdsDate =
               new Date(member.subscription_current_period_start).getTime() +
               3600 * 1000 * 24 * (isYearly ? 365 : 31);
-            
+
             if (Date.now() - endFreeAdsDate < 0) {
               if (
                 user.isFreeAds !== true ||
