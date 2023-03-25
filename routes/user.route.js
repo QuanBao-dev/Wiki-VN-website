@@ -17,9 +17,20 @@ const BMC = require("../utils");
 const notificationModel = require("../models/notification.model");
 const coffeeModel = require("../models/coffee.model");
 const tokenModel = require("../models/token.model");
+const coffeeMemberModel = require("../models/coffeeMember.model");
+const coffeeSupporterModel = require("../models/coffeeSupporter.model");
+const rateLimit = require("express-rate-limit");
+
+const apiLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 15 minutes
+  max: 20, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
 
 router.post("/BMC/", async (req, res) => {
   try {
+    console.log(req.body);
     await updateAllBMC();
     res.send({ message: "Success" });
   } catch (error) {
@@ -98,7 +109,7 @@ async function getAllSubscriptions() {
   return { data };
 }
 
-router.post("/login", async (req, res) => {
+router.post("/login", apiLimiter, async (req, res) => {
   const result = loginValidation(req.body);
   if (result.error) {
     return res.status(400).send({ error: result.error.details[0].message });
@@ -166,7 +177,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post("/register", async (req, res) => {
+router.post("/register", apiLimiter, async (req, res) => {
   const result = registerValidation(req.body);
   if (result.error) {
     return res.status(400).send({ error: result.error.details[0].message });
@@ -522,11 +533,12 @@ async function updateAllBMC() {
         $sort: { createdAt: -1 },
       },
     ]),
-    getAllSupporters(),
-    getAllSubscriptions(),
+    coffeeSupporterModel.find({}).lean(),
+    coffeeMemberModel.find({}).lean(),
     coffeeModel.find({}).lean(),
   ]);
-
+  supporters = { data: supporters };
+  members = { data: members };
   let temp = supporters.data.reverse().reduce((ans, v) => {
     ans[v.payer_email] = v;
     return ans;

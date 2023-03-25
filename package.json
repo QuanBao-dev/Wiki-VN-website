@@ -63,11 +63,14 @@
   },
   "devDependencies": {
     "concurrently": "^7.3.0",
+    "fs": "^0.0.1-security",
+    "iconv-lite": "^0.6.3",
     "nodemon": "^2.0.19"
   },
   "nodemonConfig": {
     "ignore": [
-      "src/*"
+      "src/*",
+      "data/*"
     ]
   }
 }
