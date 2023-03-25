@@ -35,15 +35,17 @@ router.post("/kofi/", async (req, res) => {
     if (data.verification_token !== process.env.SUGOIKOFITOKEN) {
       return res.status(401).send({ error: "Access Denied" });
     }
-    let coffee = await coffeeModel.findOne({ email: data.email });
+    let coffee = await coffeeModel.findOne({
+      email: data.email.toLocaleLowerCase(),
+    });
     if (!coffee) {
       coffee = new coffeeModel({
-        email: data.email,
+        email: data.email.toLocaleLowerCase(),
         type: data.type,
         fromName: data.from_name,
       });
     }
-    coffee.email = data.email;
+    coffee.email = data.email.toLocaleLowerCase();
     coffee.type = data.type;
     coffee.fromName = data.from_name;
     coffee.amount = parseFloat(data.amount);
@@ -744,24 +746,95 @@ async function updateAllBMC() {
                 role: "Member",
               };
             }
-            if (user.isFreeAds !== false || user.boost !== 1) {
-              const userData = await userModel.findOne({
-                userId: user.userId,
-              });
-              userData.isFreeAds = false;
-              userData.boost = 1;
-              userData.role = "User";
-              await userData.save();
+            for (let i = 0; i < supporters.data.length; i++) {
+              const supporter = supporters.data[i];
+              if (
+                supporter.payer_email === user.email ||
+                supporter.payer_email.toLocaleLowerCase() ===
+                  user.email.toLocaleLowerCase()
+              ) {
+                const endFreeAdsDate =
+                  new Date(supporter.support_created_on).getTime() +
+                  3600 * 1000 * 24 * 31;
+                if (Date.now() - endFreeAdsDate < 0) {
+                  if (
+                    user.role !== "Supporter" ||
+                    user.boost !== 5 ||
+                    !user.isNotSpam
+                  ) {
+                    let [userData, notification] = await Promise.all([
+                      userModel.findOne({
+                        userId: user.userId,
+                      }),
+                      notificationModel.findOne({
+                        userId: user.userId,
+                      }),
+                    ]);
+                    userData.isFreeAds = true;
+                    userData.role = "Supporter";
+                    userData.isNotSpam = true;
+                    userData.isVerified = true;
+                    userData.boost = 5;
+                    if (!notification) {
+                      notification = new notificationModel({
+                        userId: user.userId,
+                        title: "",
+                        message: "",
+                      });
+                    }
+                    notification.title = "Thank you for your support";
+                    notification.message = `Hi ${
+                      user.username
+                    }! Now your vote is counted as 5 votes for 1 month since the last day you supported. This will be end at ${new Date(
+                      endFreeAdsDate
+                    ).toUTCString()}`;
+                    await Promise.all([userData.save(), notification.save()]);
+                  }
+                  return {
+                    ...user,
+                    becomingSupporterAt: supporter.support_created_on,
+                    endFreeAdsDate: new Date(endFreeAdsDate).toUTCString(),
+                    isFreeAds: true,
+                    boost: 5,
+                    role: "Supporter",
+                  };
+                }
+                if (user.isFreeAds !== false || user.boost !== 1) {
+                  const userData = await userModel.findOne({
+                    userId: user.userId,
+                  });
+                  userData.isFreeAds = false;
+                  userData.boost = 1;
+                  userData.role = "User";
+                  await userData.save();
+                }
+                return {
+                  ...user,
+                  becomingSupporterAt: supporter.support_created_on,
+                  isFreeAds: false,
+                  endFreeAdsDate: new Date(endFreeAdsDate).toUTCString(),
+                  role: "User",
+                };
+              }
             }
-            return {
-              ...user,
-              becomingMemberAt: member.subscription_current_period_start,
-              cancelingMemberAt: member.subscription_current_period_end,
-              endFreeAdsDate: member.subscription_current_period_end,
-              isFreeAds: false,
-              boost: 1,
-              role: "User",
-            };
+            // if (user.isFreeAds !== false || user.boost !== 1) {
+            //   const userData = await userModel.findOne({
+            //     userId: user.userId,
+            //   });
+            //   userData.isFreeAds = false;
+            //   userData.boost = 1;
+            //   userData.role = "User";
+            //   await userData.save();
+            // }
+            // return {
+            //   ...user,
+            //   becomingMemberAt: member.subscription_current_period_start,
+            //   cancelingMemberAt: member.subscription_current_period_end,
+            //   endFreeAdsDate: member.subscription_current_period_end,
+            //   isFreeAds: false,
+            //   boost: 1,
+            //   role: "User",
+            // };
           }
         }
         return user;
