@@ -2,7 +2,7 @@ const route = require("express").Router();
 const { verifyRole } = require("../middlewares/verifyRole");
 const Patch = require("../models/patch.model");
 // const ouo = require("ouo.io")(process.env.OUO);
-const fetch = require("node-fetch");
+// const fetch = require("node-fetch");
 const { verify } = require("jsonwebtoken");
 const userModel = require("../models/user.model");
 
@@ -83,18 +83,30 @@ route.get("/:id", async (req, res) => {
       const user = await verify(req.signedCookies.token, process.env.JWT_KEY);
       userId = user.userId;
     } catch (error) {}
-    const [patch] = await Promise.all([
-      Patch.findOne({ vnId: id })
-        .select({
-          _id: 0,
-          vnId: 1,
-          linkDownloads: 1,
-          originalLinkDownloads: 1,
-          affiliateLinks: 1,
-          isMemberOnly: 1,
-        })
-        .lean(),
-    ]);
+    const patch = await Patch.findOne({ vnId: id })
+      .select({
+        _id: 0,
+        vnId: 1,
+        linkDownloads: 1,
+        originalLinkDownloads: 1,
+        affiliateLinks: 1,
+        isMemberOnly: 1,
+        publishDate: 1,
+        isAutoUpdate: 1,
+      })
+      .lean();
+    if (
+      patch.isMemberOnly &&
+      patch.publishDate &&
+      new Date(patch.publishDate).getTime() < Date.now()
+    ) {
+      const patchDB = Patch.findOne({ vnId: id });
+      patchDB.isNotifyDiscord = true;
+      patchDB.isMemberOnly = false;
+      patchDB.channelAnnouncementId = "1063717809114329140";
+      await patchDB.save();
+      patch.isMemberOnly = patchDB.isMemberOnly;
+    }
     if (patch.isMemberOnly && !(await isMember(userId))) {
       return res.status(400).send({
         error: {
@@ -114,6 +126,7 @@ route.get("/:id", async (req, res) => {
         linkDownloads: patch.originalLinkDownloads,
         affiliateLinks: patch.affiliateLinks,
         isMemberOnly: patch.isMemberOnly,
+        publishDate: patch.publishDate,
       },
     });
   } catch (error) {
@@ -135,7 +148,6 @@ route.post("/", verifyRole("Admin"), async (req, res) => {
   } = req.body;
   try {
     let newPatch = await Patch.findOne({ vnId: parseInt(vnId) });
-    console.log(linkDownload);
     if (linkDownload.label !== "") {
       if (type === "download") {
         // const ouoLinkDownload = {
@@ -201,6 +213,17 @@ route.post("/", verifyRole("Admin"), async (req, res) => {
     if (isNotifyDiscord) {
       newPatch.channelAnnouncementId = announcementChannel;
     }
+    if (newPatch.isMemberOnly) {
+      const datePublishTime =
+        new Date(newPatch.createdAt).getTime() + 3600 * 1000 * 24 * 7;
+      if (Date.now() < datePublishTime) {
+        newPatch.publishDate = new Date(datePublishTime);
+      } else {
+        newPatch.publishDate = null;
+      }
+    } else {
+      newPatch.publishDate = null;
+    }
     await newPatch.save();
     res.send({ message: "success" });
   } catch (error) {
@@ -231,22 +254,22 @@ route.delete("/:vnId", verifyRole("Admin"), async (req, res) => {
 //   });
 // }
 
-async function urlShortenerShrinkme(string) {
-  const data = await fetch(
-    `https://shrinkme.io/api?api=${process.env.SHRINKME}&url=${string}`
-  );
-  const json = await data.json();
-  console.log(json);
-  return json.shortenedUrl;
-}
+// async function urlShortenerShrinkme(string) {
+//   const data = await fetch(
+//     `https://shrinkme.io/api?api=${process.env.SHRINKME}&url=${string}`
+//   );
+//   const json = await data.json();
+//   console.log(json);
+//   return json.shortenedUrl;
+// }
 
-async function urlShortenerShrinkEarn(string) {
-  const data = await fetch(
-    `https://shrinkearn.com/api?api=${process.env.SHRINKEARN}&url=${string}`
-  );
-  const json = await data.json();
-  console.log(json);
-  return json.shortenedUrl;
-}
+// async function urlShortenerShrinkEarn(string) {
+//   const data = await fetch(
+//     `https://shrinkearn.com/api?api=${process.env.SHRINKEARN}&url=${string}`
+//   );
+//   const json = await data.json();
+//   console.log(json);
+//   return json.shortenedUrl;
+// }
 
 module.exports = route;

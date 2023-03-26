@@ -44,6 +44,9 @@ const patchSchema = mongoose.Schema({
   channelAnnouncementId: {
     type: String,
   },
+  publishDate: {
+    type: Date,
+  },
 });
 
 module.exports = mongoose.model("patch", patchSchema);

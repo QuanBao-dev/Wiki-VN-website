@@ -470,7 +470,10 @@ const Detail = () => {
               />
             )}
             <legend>
-              {patch.isMemberOnly ? "Early Access " : ""} Releases
+              {patch.isMemberOnly ? "Early Access " : ""} Releases 
+              {userStore.currentState().role === "Admin"
+                ? ` (${new Date(patch.publishDate).toUTCString()})`
+                : ""}
             </legend>
             <ul className="release-list">
               {patch.linkDownloads.map(({ label, url }, key) => {
