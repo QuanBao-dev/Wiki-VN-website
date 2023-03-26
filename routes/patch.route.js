@@ -92,7 +92,6 @@ route.get("/:id", async (req, res) => {
         affiliateLinks: 1,
         isMemberOnly: 1,
         publishDate: 1,
-        isAutoUpdate: 1,
       })
       .lean();
     if (
@@ -104,6 +103,8 @@ route.get("/:id", async (req, res) => {
       patchDB.isNotifyDiscord = true;
       patchDB.isMemberOnly = false;
       patchDB.channelAnnouncementId = "1063717809114329140";
+      await patchDB.save();
+      patchDB.isNotifyDiscord = false;
       await patchDB.save();
       patch.isMemberOnly = patchDB.isMemberOnly;
     }
