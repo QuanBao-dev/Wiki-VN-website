@@ -470,8 +470,8 @@ const Detail = () => {
               />
             )}
             <legend>
-              {patch.isMemberOnly ? "Early Access " : ""} Releases 
-              {userStore.currentState().role === "Admin"
+              {patch.isMemberOnly ? "Early Access " : ""} Releases
+              {userStore.currentState().role === "Admin" && patch.isMemberOnly
                 ? ` (${new Date(patch.publishDate).toUTCString()})`
                 : ""}
             </legend>
