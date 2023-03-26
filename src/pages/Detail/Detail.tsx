@@ -471,7 +471,9 @@ const Detail = () => {
             )}
             <legend>
               {patch.isMemberOnly ? "Early Access " : ""} Releases
-              {userStore.currentState().role === "Admin" && patch.isMemberOnly
+              {userStore.currentState().role === "Admin" &&
+              patch.isMemberOnly &&
+              patch.publishDate
                 ? ` (${new Date(patch.publishDate).toUTCString()})`
                 : ""}
             </legend>

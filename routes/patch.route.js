@@ -99,12 +99,10 @@ route.get("/:id", async (req, res) => {
       patch.publishDate &&
       new Date(patch.publishDate).getTime() < Date.now()
     ) {
-      const patchDB = Patch.findOne({ vnId: id });
+      const patchDB = await Patch.findOne({ vnId: id });
       patchDB.isNotifyDiscord = true;
       patchDB.isMemberOnly = false;
       patchDB.channelAnnouncementId = "1063717809114329140";
-      await patchDB.save();
-      patchDB.isNotifyDiscord = false;
       await patchDB.save();
       patch.isMemberOnly = patchDB.isMemberOnly;
     }
