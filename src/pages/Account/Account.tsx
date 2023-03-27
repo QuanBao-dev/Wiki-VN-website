@@ -121,6 +121,12 @@ const Account = () => {
               Edit
             </button>
           </div>
+          <div className="detail-account-item">
+            <div>
+              <label>Role</label>
+              <div>{userState.role}</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
