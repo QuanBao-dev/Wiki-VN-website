@@ -20,6 +20,7 @@ const tokenModel = require("../models/token.model");
 const coffeeMemberModel = require("../models/coffeeMember.model");
 const coffeeSupporterModel = require("../models/coffeeSupporter.model");
 const rateLimit = require("express-rate-limit");
+const addMonths = require("@jsbits/add-months");
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -725,9 +726,9 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
             supporter.payer_email.toLocaleLowerCase() ===
               user.email.toLocaleLowerCase()
           ) {
-            const endFreeAdsDate =
-              new Date(supporter.support_created_on).getTime() +
-              3600 * 1000 * 24 * 31;
+            const endFreeAdsDate = new Date(
+              addMonths(new Date(supporter.support_created_on), 1, true)
+            ).getTime();
             if (Date.now() - endFreeAdsDate < 0) {
               if (
                 user.role !== "Supporter" ||
@@ -843,9 +844,13 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
               ratio = 10;
               isYearly = true;
             }
-            const endFreeAdsDate =
-              new Date(member.subscription_current_period_start).getTime() +
-              3600 * 1000 * 24 * (isYearly ? 365 : 31);
+            const endFreeAdsDate = new Date(
+              addMonths(
+                new Date(member.subscription_current_period_start),
+                isYearly ? 12 : 1,
+                true
+              )
+            ).getTime();
 
             if (Date.now() - endFreeAdsDate < 0) {
               if (
@@ -909,9 +914,9 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
                 supporter.payer_email.toLocaleLowerCase() ===
                   user.email.toLocaleLowerCase()
               ) {
-                const endFreeAdsDate =
-                  new Date(supporter.support_created_on).getTime() +
-                  3600 * 1000 * 24 * 31;
+                const endFreeAdsDate = new Date(
+                  addMonths(new Date(supporter.support_created_on), 1, true)
+                ).getTime();
                 if (Date.now() - endFreeAdsDate < 0) {
                   if (
                     user.role !== "Supporter" ||
