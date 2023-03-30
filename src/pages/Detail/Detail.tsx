@@ -14,6 +14,7 @@ import { userStore } from "../../store/user";
 import Popup from "../../components/Popup/Popup";
 import Gif from "../../components/Gif/Gif";
 import { useInitStore } from "../Hooks/useInitStore";
+import { interval, takeWhile } from "rxjs";
 
 const VoterList = React.lazy(
   () => import("../../components/VoterList/VoterList")
@@ -61,6 +62,7 @@ const Detail = () => {
       ? cachesStore.currentState().caches.patches[id as string]
       : {}) as Patch
   );
+  const [remainingTime, setRemainingTime] = useState("00:00:00:00");
   const descriptionRef = useRef(document.createElement("div"));
   const imageZoomContainerRef = useRef(document.createElement("div"));
   const blackBackgroundRef = useRef(document.createElement("div"));
@@ -143,6 +145,20 @@ const Detail = () => {
       return ans;
     }, {});
   }
+  useEffect(() => {
+    const subscription = interval(1000)
+      .pipe(takeWhile(() => userStore.currentState().role === "Admin"))
+      .subscribe(() => {
+        setRemainingTime(
+          convertToClockTime(
+            (new Date(patch.publishDate).getTime() - Date.now() - 1000) / 1000
+          )
+        );
+      });
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [patch.publishDate, patch.vnId]);
   return (
     <div className="app-wrapper">
       {!errorPatch && (
@@ -474,7 +490,7 @@ const Detail = () => {
               {userStore.currentState().role === "Admin" &&
               patch.isMemberOnly &&
               patch.publishDate
-                ? ` (${new Date(patch.publishDate).toUTCString()})`
+                ? ` (${remainingTime})`
                 : ""}
             </legend>
             <ul className="release-list">
@@ -581,4 +597,17 @@ const Detail = () => {
   );
 };
 
+function convertToClockTime(time: number) {
+  const days = parseInt((time / 86400).toString());
+  const hours = parseInt(((time - days * 86400) / 3600).toString());
+  const minutes = parseInt(
+    ((time - days * 86400 - hours * 3600) / 60).toString()
+  );
+  const seconds = parseInt(
+    (time - days * 86400 - hours * 3600 - minutes * 60).toString()
+  );
+  return `${days > 9 ? "" : "0"}${days}:${hours > 9 ? "" : "0"}${hours}:${
+    minutes > 9 ? "" : "0"
+  }${minutes}:${seconds > 9 ? "" : "0"}${seconds}`;
+}
 export default Detail;
