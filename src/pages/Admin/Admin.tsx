@@ -143,7 +143,7 @@ const Admin = () => {
                   boost,
                   votedVnIdList,
                   isNotSpam,
-                  discordUsername
+                  discordUsername,
                 },
                 key
               ) => (
@@ -253,13 +253,11 @@ function RowTable({
       <td>
         <select defaultValue={(boost || 1).toString()} ref={boostRef}>
           <option value="1">1</option>
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="20">20</option>
-          <option value="25">25</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-          <option value="200">200</option>
+          {Array.from(Array(40).keys()).map((v) => (
+            <option key={v} value={`${(v + 1) * 5}`}>
+              {(v + 1) * 5}
+            </option>
+          ))}
         </select>
       </td>
       <td>{email}</td>

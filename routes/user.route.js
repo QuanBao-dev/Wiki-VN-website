@@ -710,6 +710,8 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
             temp[people.email].support_created_on = people.becomingSupporterAt;
           }
         }
+        temp[people.email].support_coffees = parseInt((people.amount || 5) / 5);
+        temp[people.email].support_coffee_price = "5.0000";
       }
     }
   });
@@ -730,9 +732,12 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
               addMonths(new Date(supporter.support_created_on), 1, true)
             ).getTime();
             if (Date.now() - endFreeAdsDate < 0) {
+              const boost =
+                parseInt(supporter.support_coffee_price) *
+                supporter.support_coffees;
               if (
                 user.role !== "Supporter" ||
-                user.boost !== 5 ||
+                user.boost !== boost ||
                 !user.isNotSpam
               ) {
                 let [userData, notification] = await Promise.all([
@@ -747,7 +752,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
                 userData.role = "Supporter";
                 userData.isNotSpam = true;
                 userData.isVerified = true;
-                userData.boost = 5;
+                userData.boost = boost;
                 if (!notification) {
                   notification = new notificationModel({
                     userId: user.userId,
@@ -768,7 +773,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
                 becomingSupporterAt: supporter.support_created_on,
                 endFreeAdsDate: new Date(endFreeAdsDate).toUTCString(),
                 isFreeAds: true,
-                boost: 5,
+                boost: boost,
                 role: "Supporter",
               };
             }
@@ -918,9 +923,12 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
                   addMonths(new Date(supporter.support_created_on), 1, true)
                 ).getTime();
                 if (Date.now() - endFreeAdsDate < 0) {
+                  const boost =
+                    parseInt(supporter.support_coffee_price) *
+                    supporter.support_coffees;
                   if (
                     user.role !== "Supporter" ||
-                    user.boost !== 5 ||
+                    user.boost !== boost ||
                     !user.isNotSpam
                   ) {
                     let [userData, notification] = await Promise.all([
@@ -935,7 +943,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
                     userData.role = "Supporter";
                     userData.isNotSpam = true;
                     userData.isVerified = true;
-                    userData.boost = 5;
+                    userData.boost = boost;
                     if (!notification) {
                       notification = new notificationModel({
                         userId: user.userId,
@@ -956,7 +964,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
                     becomingSupporterAt: supporter.support_created_on,
                     endFreeAdsDate: new Date(endFreeAdsDate).toUTCString(),
                     isFreeAds: true,
-                    boost: 5,
+                    boost: boost,
                     role: "Supporter",
                   };
                 }
