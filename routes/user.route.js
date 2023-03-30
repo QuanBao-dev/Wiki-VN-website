@@ -763,7 +763,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
                 notification.title = "Thank you for your support";
                 notification.message = `Hi ${
                   user.username
-                }! Now your vote is counted as 5 votes for 1 month since the last day you supported. This will be end at ${new Date(
+                }! Now your vote is counted as ${boost} votes and you will be able to access to early access patch for 1 month since the last day you supported. This will be end at ${new Date(
                   endFreeAdsDate
                 ).toUTCString()}`;
                 await Promise.all([userData.save(), notification.save()]);
@@ -954,7 +954,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
                     notification.title = "Thank you for your support";
                     notification.message = `Hi ${
                       user.username
-                    }! Now your vote is counted as 5 votes for 1 month since the last day you supported. This will be end at ${new Date(
+                    }! Now your vote is counted as ${boost} votes and you will be able to access to early access patch for 1 month since the last day you supported. This will be end at ${new Date(
                       endFreeAdsDate
                     ).toUTCString()}`;
                     await Promise.all([userData.save(), notification.save()]);
