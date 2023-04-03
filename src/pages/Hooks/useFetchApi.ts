@@ -19,7 +19,8 @@ export function useFetchApi<T>(
   condition: boolean = true,
   setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>,
   handleError?: any,
-  delayTime: number = 0
+  delayTime: number = 0,
+  setMaxPage?: React.Dispatch<React.SetStateAction<number>>
 ) {
   useEffect(() => {
     const subscription = timer(0)
@@ -44,10 +45,19 @@ export function useFetchApi<T>(
       )
       .subscribe((v: any) => {
         if (v && !v.error) {
-          if (isUpdatingCaches) updateCaches<T>(v as T[], type);
-          if (setState) setState(v as T);
+          if (setMaxPage) {
+            if (isUpdatingCaches) updateCaches<T>(v.data as T[], type);
+            if (setState) {
+              setState(v.data as T);
+              if (v.maxPage) setMaxPage(v.maxPage);
+            }
+          } else {
+            if (isUpdatingCaches) updateCaches<T>(v as T[], type);
+            if (setState) setState(v as T);
+          }
         } else {
-          if (handleError && typeof handleError === "function") handleError(v.error);
+          if (handleError && typeof handleError === "function")
+            handleError(v.error);
         }
         if (setIsLoading) setIsLoading(false);
       });

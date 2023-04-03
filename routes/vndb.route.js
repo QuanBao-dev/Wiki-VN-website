@@ -3,52 +3,113 @@ const express = require("express");
 const { nanoid } = require("nanoid");
 const router = express.Router();
 const VNDB = require("vndb-api");
+const tags = require("../data/tags.json");
 const vndb = new VNDB(nanoid(), {
   acquireTimeout: 1000,
   encoding: "utf-8",
 });
 
 router.get("/", async (req, res) => {
-  const { id, title, isLarger } = req.query;
-  let string = "";
+  let { id, title, isLarger, page, isCount, tags, isContainLastPage } =
+    req.query;
+  isContainLastPage = isContainLastPage === "true";
   let data = {
     filters: [],
     fields:
       "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases, screenshots.dims",
+    count: isCount === "true",
   };
+  if (page) data.page = page;
   if (id) {
     data.filters = [
       "and",
       ["id", isLarger ? ">=" : "=", "v" + id],
       ["id", "<=", "v" + (parseInt(id) + 10)],
     ];
-    if (string.length > 0)
-      string += ` and id ${isLarger ? ">=" : "="} ${id} and id <= ${
-        parseInt(id) + 10
-      }`;
-    else
-      string = `id ${isLarger ? ">=" : "="} ${id} and id <= ${
-        parseInt(id) + 10
-      }`;
   }
   if (title) {
     if (data.filters.length > 0) {
       data.filters.push(["search", "=", title]);
     } else {
-      data.filters = ["search", "=", title];
+      data.filters = ["and", ["search", "=", title]];
     }
-    if (string.length > 0) string += ` and search ~ "${title}"`;
-    else string = `search ~ "${title}"`;
+  }
+  if (tags) {
+    const list = tags.split(",").map((v) => "g" + v);
+    if (data.filters.length > 0) {
+      data.filters.push(...list.map((v) => ["tag", "=", v]));
+    } else {
+      data.filters = ["and", ...list.map((v) => ["tag", "=", v])];
+    }
   }
   try {
     const response = (await axios.post("https://api.vndb.org/kana/vn", data))
       .data;
+    if (!isContainLastPage) {
+      return res.send({
+        message: parseData(response.results),
+      });
+    }
     res.send({
-      message: parseData(response.results),
+      message: {
+        data: parseData(response.results),
+        maxPage: Math.ceil(response.count / 10),
+      },
     });
   } catch (error) {
     res.status(404).send({ error });
   }
+});
+
+router.get("/tags", (req, res) => {
+  const page = req.query.page;
+  const q = req.query.q;
+  const list = req.query.list;
+  const isNormal = req.query.isNormal;
+  if (isNormal === "true") {
+    if (!list || list === "undefined") {
+      return res.send({
+        message: [],
+      });
+    }
+    const tagsData = list.split(",").map((v) => {
+      const tag = tags.find(({ id }) => id === parseInt(v));
+      return { id: tag.id, name: tag.name };
+    });
+    return res.send({
+      message: tagsData,
+    });
+  }
+  const tagsData = tags.map((v) => ({
+    name: v.name,
+    id: v.id,
+    aliases: v.aliases,
+  }));
+  res.send({
+    message: {
+      data: tagsData
+        .filter(({ name, aliases }) => {
+          for (let i = 0; i < aliases.length; i++) {
+            if (aliases[i].match(new RegExp(q, "g"))) return true;
+          }
+          return !!name.match(new RegExp(q, "g"));
+        })
+        .slice((page - 1) * 10, page * 10)
+        .map((v) => ({
+          name: v.name,
+          id: v.id,
+        })),
+      last_visible_page: Math.ceil(tagsData.length / 10),
+    },
+  });
+});
+
+router.get("/tags/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const tag = tags.find((v) => v.id === id);
+  res.send({
+    message: tag,
+  });
 });
 
 router.get("/random", async (req, res) => {
@@ -160,7 +221,6 @@ router.get("/release", async (req, res) => {
     if (string.length > 0) string += " and platforms = " + platforms;
     else string = `platforms = ${platforms}`;
   }
-  console.log(string);
   try {
     const response = await vndb.query(
       `get release basic,details,vn,producers (${string})`

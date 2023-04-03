@@ -227,10 +227,13 @@ function RowTable({
   return (
     <tr>
       <td>{index + 1}</td>
-      <td>{discordUsername}</td>
+      <td style={{
+        whiteSpace:"nowrap"
+      }}>{discordUsername}</td>
       <td
         style={{
-          maxWidth: 100,
+          minWidth: 220,
+          fontSize: "0.8rem",
         }}
       >
         {votedVnIdList.map((v, key) => (
@@ -261,7 +264,9 @@ function RowTable({
         </select>
       </td>
       <td>{email}</td>
-      <td>{new Date(createdAt).toUTCString()}</td>
+      <td style={{ whiteSpace: "nowrap" }}>
+        {new Date(createdAt).toUTCString()}
+      </td>
       <td>{isVerified ? "true" : "false"}</td>
       <td>
         <input

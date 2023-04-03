@@ -4,6 +4,7 @@ table {
 
 table .tr {
   padding: 0.5rem;
+  height:fit-content
 }
 
 .admin-container {
@@ -17,14 +18,12 @@ table .tr {
 
 .app-container.dark-mode .admin-container th,
 .app-container.dark-mode .admin-container td {
-  min-width: 300px;
   border: 1px solid white;
 }
 
 .admin-container th,
 .admin-container td {
   padding: 0.5rem 1rem;
-  min-width: 300px;
   border: 1px solid black;
 }
 

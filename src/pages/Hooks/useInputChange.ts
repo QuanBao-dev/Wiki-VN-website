@@ -19,7 +19,7 @@ export const useInputChange = (
         tap((v) => {
           if (v !== homeStore.currentState().textSearch) {
             setSuggestionList([]);
-            setIndexActive(null);
+            setIndexActive(0);
           }
         }),
         filter(

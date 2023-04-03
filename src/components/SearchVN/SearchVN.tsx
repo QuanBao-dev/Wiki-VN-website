@@ -11,7 +11,7 @@ const SearchVN = () => {
   const inputSearchRef = useRef(document.createElement("input"));
   const suggestionListContainerRef = useRef(document.createElement("ul"));
   const [suggestions, setSuggestions] = useState<VisualNovel[] | []>([]);
-  const [indexActive, setIndexActive] = useState<number | null>(null);
+  const [indexActive, setIndexActive] = useState<number | null>(0);
   useInputChange(
     inputSearchRef,
     "/api/vndb?title={text}",

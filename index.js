@@ -5,7 +5,6 @@ const port = process.env.PORT || 5000;
 const mongoose = require("mongoose");
 const cloudinary = require("cloudinary");
 const cookieParser = require("cookie-parser");
-const rateLimit = require("express-rate-limit");
 const app = express();
 const server = require("http").Server(app);
 const io = require("socket.io")(server);

@@ -92,9 +92,3 @@
 .app-container.dark-mode .popup-wrapper {
   background-color: rgb(39, 42, 85);
 }
-
-@media (max-width: 448px) {
-  .popup-buttons a {
-    font-size: 1rem;
-  }
-}

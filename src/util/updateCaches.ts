@@ -46,3 +46,13 @@ export function updateCaches<T>(data: T[], type: string) {
     caches,
   });
 }
+
+export function deleteCachesField(keyDelete:string) {
+  let { caches } = cachesStore.currentState();
+  Object.keys(caches).forEach((key) => {
+    if (key.includes(keyDelete)) delete caches[key];
+  });
+  cachesStore.updateState({
+    caches,
+  });
+}

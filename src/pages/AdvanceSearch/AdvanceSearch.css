@@ -1,0 +1,60 @@
+.advance-search-container{
+  width: 100%;
+  min-height: 100vh;
+}
+
+.advance-search-wrapper{
+  display:flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  width: 100%;
+  background-color: #2a2a2a;
+  box-shadow: 0 0 10px 1px rgb(23, 23, 23);
+}
+
+.advance-search-wrapper fieldset{
+  padding: 0.6rem;
+  position: relative;
+  width: 100%;
+  margin: 0.4rem;
+  border-color: #505050;
+  font-family: 'Roboto', sans-serif, Arial, Helvetica;
+  background-color: #2a2a2a;
+}
+
+.search-button-submit{
+  padding: 0.5rem;
+  background-color: rgb(63, 51, 51);
+  color: white;
+  border-radius: 5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin: 0.5rem;
+}
+
+.card-list-vn{
+  position: relative;
+  width: 98%;
+  height: 10px;
+}
+
+.card-list-pages{
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.card-list-pages div,
+.card-list-pages select{
+  margin: 0.5rem;
+  padding: 5px 10px;
+  background-color: #2a2a2a;
+  box-shadow: 0 0 3px 1px rgb(159, 159, 1);
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+}
+
+.card-list-pages div.active{
+  background-color: rgb(131, 0, 0);
+}

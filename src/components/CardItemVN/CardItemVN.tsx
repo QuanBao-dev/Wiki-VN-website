@@ -8,8 +8,8 @@ import { generateUnrepeatedRandomNumber } from "../../util/generateRandomNumber"
 interface Props extends VisualNovel {
   trigger: boolean;
   setTrigger: React.Dispatch<React.SetStateAction<boolean>>;
-  isLoading: boolean;
   isNsfw: boolean;
+  isNormal: boolean;
 }
 const CardItemVN = ({
   title,
@@ -32,7 +32,10 @@ const CardItemVN = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [description]);
   return (
-    <Link to={`/vns/${id}`} className="card-item-vn-container">
+    <Link
+      to={`/vns/${id}`}
+      className="card-item-vn-container"
+    >
       <div className="container-image-frame">
         <img
           src={

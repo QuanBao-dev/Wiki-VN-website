@@ -1,6 +1,7 @@
-import { homeStore } from "./../../store/home";
-import { VisualNovel } from "./../../Interfaces/visualNovelList";
-import { useEffect } from "react";
+import { useEffect } from 'react';
+
+import { VisualNovel } from './../../Interfaces/visualNovelList';
+
 export function useCardListVNPosition(
   cardListVnContainerRef: React.MutableRefObject<HTMLElement>,
   list: VisualNovel[],
@@ -73,9 +74,6 @@ async function handleCardItem(
         Math.max(...sumColumnList) > 0
           ? `${Math.max(...sumColumnList)}px`
           : "fit-content";
-      window.scroll({
-        top: homeStore.currentState().currentScrollTop,
-      });
       res("Done");
     }, 100);
   });

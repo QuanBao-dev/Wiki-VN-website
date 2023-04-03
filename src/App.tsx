@@ -16,6 +16,7 @@ import Chat from "./pages/Chat/Chat";
 import About from "./pages/About/About";
 import PasswordReset from "./pages/PasswordReset/PasswordReset";
 import UserLostPassword from "./pages/UserLostPassword/UserLostPassword";
+import AdvanceSearch from "./pages/AdvanceSearch/AdvanceSearch";
 
 const RandomVNList = React.lazy(
   () => import("./components/RandomVNList/RandomVNList")
@@ -414,6 +415,7 @@ function App() {
             />
           )}
           <Route path="/about" element={<About />}></Route>
+          <Route path="/search/" element={<AdvanceSearch />}></Route>
         </Routes>
       </div>
     </BrowserRouter>
