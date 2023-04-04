@@ -459,9 +459,11 @@ function TagItem({
           <li>
             Category:{" "}
             {cat
-              .replace("cont", "content")
-              .replace("ero", "sexual content")
-              .replace("tech", "technical") || ""}
+              ? cat
+                  .replace("cont", "Content")
+                  .replace("ero", "Sexual content")
+                  .replace("tech", "Technical")
+              : ""}
           </li>
         )}
         {type && (
@@ -469,9 +471,9 @@ function TagItem({
             Type:{" "}
             {type
               ? type
-                  .replace("co", "company")
-                  .replace("in", "individual")
-                  .replace("ng", "amateur")
+                  .replace("co", "Company")
+                  .replace("in", "Individual")
+                  .replace("ng", "Amateur Group")
               : ""}
           </li>
         )}
