@@ -1,4 +1,4 @@
-export interface TagDetail {
+export interface Tag {
   aliases: string[];
   applicable: boolean;
   cat: string;
@@ -9,9 +9,6 @@ export interface TagDetail {
   parents: number[];
   searchable: boolean;
   vns: number;
+  lang: string;
+  type: string;
 }
-export interface Tag {
-  name: string;
-  id:number
-}
-

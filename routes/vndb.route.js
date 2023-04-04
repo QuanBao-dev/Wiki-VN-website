@@ -95,7 +95,13 @@ router.get("/tags", (req, res) => {
       .split(",")
       .map((v) => {
         const tag = tags.find(({ id }) => id === parseInt(v));
-        return { id: tag.id, name: tag.name, applicable: tag.applicable };
+        return {
+          id: tag.id,
+          name: tag.name,
+          cat: tag.cat,
+          description: tag.description,
+          applicable: tag.applicable,
+        };
       })
       .filter((v) => v.applicable === true);
     return res.send({
@@ -105,7 +111,9 @@ router.get("/tags", (req, res) => {
   const tagsData = tags.map((v) => ({
     name: v.name,
     id: v.id,
+    cat: v.cat,
     aliases: v.aliases,
+    description: v.description,
     applicable: v.applicable,
   }));
   res.send({
@@ -121,6 +129,8 @@ router.get("/tags", (req, res) => {
         .map((v) => ({
           name: v.name,
           id: v.id,
+          description: v.description,
+          cat: v.cat
         })),
       last_visible_page: Math.ceil(tagsData.length / 10),
     },
@@ -136,7 +146,7 @@ router.get("/producers/", async (req, res) => {
 
   let data = {
     filters: [],
-    fields: "id, name, aliases",
+    fields: "id, name, description, aliases, lang, type",
     count: true,
     page,
   };

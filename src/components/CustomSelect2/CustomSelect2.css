@@ -50,6 +50,8 @@
 .list-suggestion li,
 .list-suggestion div{
   padding-left: 1rem;
+  display: flex;
+  align-items: center;
   height: 35.2px;
   white-space: nowrap;
 }

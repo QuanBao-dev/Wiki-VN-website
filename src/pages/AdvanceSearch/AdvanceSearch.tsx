@@ -14,6 +14,7 @@ import { advanceSearchStore } from "../../store/advanceSearch";
 import cachesStore from "../../store/caches";
 import { deleteCachesField } from "../../util/updateCaches";
 import { useCardListVNPosition } from "../Hooks/useCardListVN";
+import { parseDescription } from "../../util/parseDescription";
 
 const AdvanceSearch = () => {
   const search = useLocation().search;
@@ -237,6 +238,50 @@ const AdvanceSearch = () => {
           Search
         </button>
       </div>
+      {tagList.length > 0 && (
+        <div className="description-list">
+          <fieldset className="description-item">
+            <legend>Tags</legend>
+            <ul className="tags-container">
+              {tagList.map(({ description, name, id, type, lang, cat }) => {
+                return (
+                  <TagItem
+                    description={description}
+                    name={name}
+                    type={type}
+                    key={id}
+                    lang={lang}
+                    cat={cat}
+                  />
+                );
+              })}
+            </ul>
+          </fieldset>
+        </div>
+      )}
+      {producerList.length > 0 && (
+        <div className="description-list">
+          <fieldset className="description-item">
+            <legend>Producers</legend>
+            <ul className="tags-container">
+              {producerList.map(
+                ({ description, name, id, type, lang, cat }) => {
+                  return (
+                    <TagItem
+                      description={description}
+                      name={name}
+                      type={type}
+                      key={id}
+                      lang={lang}
+                      cat={cat}
+                    />
+                  );
+                }
+              )}
+            </ul>
+          </fieldset>
+        </div>
+      )}
       <div className="card-list-vn" ref={cardListVnContainerRef}>
         {!isLoading2 &&
           vnList &&
@@ -384,7 +429,56 @@ const AdvanceSearch = () => {
     </div>
   );
 };
-
+function TagItem({
+  name,
+  description,
+  type,
+  lang,
+  cat,
+}: {
+  type: string;
+  name: string;
+  description: string;
+  lang: string;
+  cat: string;
+}) {
+  const itemRef = useRef(document.createElement("span"));
+  useEffect(() => {
+    itemRef.current.innerHTML = parseDescription(description);
+  }, [description]);
+  return (
+    <details className="tag-item">
+      <summary>{name}</summary>
+      <ul>
+        <li>
+          <span>Description: </span>
+          <span ref={itemRef}></span>
+        </li>
+        {lang && <li>Language: {lang || ""}</li>}
+        {cat && (
+          <li>
+            Category:{" "}
+            {cat
+              .replace("cont", "content")
+              .replace("ero", "sexual content")
+              .replace("tech", "technical") || ""}
+          </li>
+        )}
+        {type && (
+          <li>
+            Type:{" "}
+            {type
+              ? type
+                  .replace("co", "company")
+                  .replace("in", "individual")
+                  .replace("ng", "amateur")
+              : ""}
+          </li>
+        )}
+      </ul>
+    </details>
+  );
+}
 function encodeURL(str: string) {
   if (!str) return "";
   return str
