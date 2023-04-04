@@ -49,9 +49,8 @@
 
 .list-suggestion li,
 .list-suggestion div{
-  padding: 0.5rem;
   padding-left: 1rem;
-  max-height: 35.2px;
+  height: 35.2px;
   white-space: nowrap;
 }
 
