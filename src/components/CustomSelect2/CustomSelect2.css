@@ -3,10 +3,7 @@
   position: relative;
   width: 100%;
   margin: 0.4rem;
-  border-color: #505050;
   font-family: 'Roboto', sans-serif, Arial, Helvetica;
-  background-color: #2a2a2a;
-  line-height: normal!important;
 }
 
 .input-section-container{
@@ -41,9 +38,13 @@
   width: 100%;
   padding: 0;
   margin: 0;
-  background-color: rgb(40, 42, 59);
+  background-color: rgb(222, 222, 222);
   border: 1px solid rgb(126, 122, 122);
   overflow-x: hidden;
+}
+
+.dark-mode .list-suggestion li{
+  background-color: black;
 }
 
 .list-suggestion li,
@@ -59,15 +60,17 @@
 }
 
 .list-suggestion li:hover{
-  background-color: rgb(110, 110, 110);
   cursor: pointer;
+}
+
+.dark-mode .input-section-container input{
+  color: white;
 }
 
 .input-section-container input{
   width: 100%;
   background-color: transparent;
   outline: none;
-  color: white;
   border: none;
 }
 
@@ -80,32 +83,34 @@
 .all-options-selected span{
   white-space: nowrap;
   overflow: hidden;
+  padding: 5px 10px;
   border: 1px solid rgb(255, 9, 9);
-  background-color: hsl(240, 4%, 33%);
-  padding: 0.2rem 0.3rem;
   border-radius: 2px;
   margin-right: 0.3rem;
   margin-bottom: 0.3rem;
   cursor: pointer;
+  font-weight: 500;
   position: relative;
-  font-size: 0.8rem;
+  font-size: 1rem;
 }
 
 .all-options-selected span::before, 
 .all-options-selected span .one,
 .all-options-selected span .two{
   opacity: 0;
-  transition: 0.5s;
-  background-color: white;
+  transition: 1s;
+  background-color: black;
   position: absolute;
+  top:50%;
+  left:50%;
 }
 
 .all-options-selected span .one{
-  transform: translateX(-3px) translateY(2px) rotate(45deg);
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 .all-options-selected span .two{
-  transform: translateX(3px) translateY(2px) rotate(-45deg);
+  transform: translate(-50%, -50%) rotate(45deg);
 }
 
 .all-options-selected span:hover:before{
@@ -113,7 +118,7 @@
   opacity: 1;
   position: absolute;
   top: 0;
-  background-color: #2a2a2a88;
+  background-color: rgba(245, 245, 245, 0.333);
   left: 0;
   width: 100%;  
   height: 100%;

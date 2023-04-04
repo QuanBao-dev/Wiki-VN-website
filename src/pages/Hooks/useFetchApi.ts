@@ -49,6 +49,7 @@ export function useFetchApi<T>(
             if (isUpdatingCaches) updateCaches<T>(v.data as T[], type);
             if (setState) {
               setState(v.data as T);
+              if (v.maxPage === 0) setMaxPage(1);
               if (v.maxPage) setMaxPage(v.maxPage);
             }
           } else {

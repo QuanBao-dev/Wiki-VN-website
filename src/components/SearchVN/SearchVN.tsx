@@ -26,7 +26,7 @@ const SearchVN = () => {
     suggestions.length
   );
   return (
-    <div
+    <form
       className="search-VNs-container"
       onClick={() => {
         inputSearchRef.current.focus();
@@ -67,7 +67,7 @@ const SearchVN = () => {
           ))}
         </ul>
       )}
-    </div>
+    </form>
   );
 };
 

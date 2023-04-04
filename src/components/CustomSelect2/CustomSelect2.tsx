@@ -140,7 +140,7 @@ const CustomSelect2 = ({
       ref={customSelectContainerRef}
     >
       <legend className="label-select2">{label}</legend>
-      <div className="custom-select2-wrapper">
+      <form className="custom-select2-wrapper">
         <div
           className="input-section-container"
           onClick={() => {
@@ -175,6 +175,7 @@ const CustomSelect2 = ({
             ref={inputRef}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
+                e.preventDefault();
                 inputRef.current.value = "";
                 // if (listSuggestionRef.current.style.display === "none") {
                 //   const searchButton = document.querySelector(
@@ -271,7 +272,9 @@ const CustomSelect2 = ({
             <li
               style={{
                 backgroundColor:
-                  activeIndex === index ? "rgb(110, 110, 110)" : "",
+                  activeIndex === index ? "rgb(190 190 190 / 81%)" : "",
+                color:
+                  activeIndex === index ? "black" : "",
               }}
               className={
                 checkIfActiveItem(allSelectedOptions, data.id) ? "active" : ""
@@ -293,7 +296,7 @@ const CustomSelect2 = ({
             </li>
           ))}
         </ul>
-      </div>
+      </form>
     </fieldset>
   );
 };

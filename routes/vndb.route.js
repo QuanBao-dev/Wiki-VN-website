@@ -10,8 +10,16 @@ const vndb = new VNDB(nanoid(), {
 });
 
 router.get("/", async (req, res) => {
-  let { id, title, isLarger, page, isCount, tags, isContainLastPage } =
-    req.query;
+  let {
+    id,
+    title,
+    isLarger,
+    page,
+    isCount,
+    producers,
+    tags,
+    isContainLastPage,
+  } = req.query;
   isContainLastPage = isContainLastPage === "true";
   let data = {
     filters: [],
@@ -42,6 +50,17 @@ router.get("/", async (req, res) => {
       data.filters = ["and", ...list.map((v) => ["tag", "=", v])];
     }
   }
+  if (producers) {
+    const list = producers.split(",").map((v) => v);
+    if (data.filters.length > 0) {
+      data.filters.push(...list.map((v) => ["developer", "=", ["id", "=", v]]));
+    } else {
+      data.filters = [
+        "and",
+        ...list.map((v) => ["developer", "=", ["id", "=", v]]),
+      ];
+    }
+  }
   try {
     const response = (await axios.post("https://api.vndb.org/kana/vn", data))
       .data;
@@ -62,7 +81,7 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/tags", (req, res) => {
-  const page = req.query.page;
+  const page = req.query.page || 1;
   const q = req.query.q;
   const list = req.query.list;
   const isNormal = req.query.isNormal;
@@ -90,9 +109,9 @@ router.get("/tags", (req, res) => {
       data: tagsData
         .filter(({ name, aliases }) => {
           for (let i = 0; i < aliases.length; i++) {
-            if (aliases[i].match(new RegExp(q, "g"))) return true;
+            if (aliases[i].match(new RegExp(q, "i"))) return true;
           }
-          return !!name.match(new RegExp(q, "g"));
+          return !!name.match(new RegExp(q, "i"));
         })
         .slice((page - 1) * 10, page * 10)
         .map((v) => ({
@@ -104,11 +123,57 @@ router.get("/tags", (req, res) => {
   });
 });
 
-router.get("/tags/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  const tag = tags.find((v) => v.id === id);
+router.get("/producers/", async (req, res) => {
+  const page = parseInt(req.query.page || "1");
+  const q = req.query.q;
+  const list = req.query.list;
+  const isNormal = req.query.isNormal;
+  let producersIdList = [];
+
+  let data = {
+    filters: [],
+    fields: "id, name, aliases",
+    count: true,
+    page,
+  };
+  if (list && list !== "undefined") {
+    producersIdList = list.split(",").map((v) => ["id", "=", v]);
+    if (data.filters.length > 0) {
+      data.filters.push(...producersIdList);
+    } else {
+      data.filters = ["or", ...producersIdList];
+    }
+  }
+
+  if (q && q !== "undefined") {
+    if (data.filters.length > 0) {
+      data.filters.push(["search", "=", q]);
+    } else {
+      data.filters = ["and", ["search", "=", q]];
+    }
+  }
+  const response = (
+    await axios.post("https://api.vndb.org/kana/producer", data)
+  ).data;
+  const producersData = response.results;
+  if (isNormal) {
+    if (!list || list === "undefined") {
+      return res.send({
+        message: [],
+      });
+    }
+    return res.send({
+      message: producersData,
+    });
+  }
   res.send({
-    message: tag,
+    message: {
+      data: producersData.map((v) => ({
+        name: v.name,
+        id: v.id,
+      })),
+      last_visible_page: Math.ceil(response.count / 10),
+    },
   });
 });
 

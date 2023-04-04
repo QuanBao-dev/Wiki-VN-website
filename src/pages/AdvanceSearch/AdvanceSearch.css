@@ -3,13 +3,17 @@
   min-height: 100vh;
 }
 
+.advance-search-wrapper fieldset{
+  border-color: rgba(205, 205, 205, 0.486);
+  border-radius: 10px;
+  background-color: rgba(177, 177, 177, 0.155);
+}
+
 .advance-search-wrapper{
   display:flex;
   justify-content: flex-start;
   flex-wrap: wrap;
   width: 100%;
-  background-color: #2a2a2a;
-  box-shadow: 0 0 10px 1px rgb(23, 23, 23);
 }
 
 .advance-search-wrapper fieldset{
@@ -17,25 +21,38 @@
   position: relative;
   width: 100%;
   margin: 0.4rem;
-  border-color: #505050;
   font-family: 'Roboto', sans-serif, Arial, Helvetica;
-  background-color: #2a2a2a;
 }
 
 .search-button-submit{
   padding: 0.5rem;
-  background-color: rgb(63, 51, 51);
-  color: white;
   border-radius: 5px;
   font-weight: 600;
   text-transform: uppercase;
   margin: 0.5rem;
+  cursor: pointer;
+  border-color: rgba(240, 248, 255, 0.296);
+}
+
+.dark-mode .search-button-submit{
+  color: white;
+  background-color: rgba(240, 248, 255, 0.193);
 }
 
 .card-list-vn{
   position: relative;
   width: 98%;
   height: 10px;
+}
+
+.dark-mode .card-list-pages select{
+  background-color: transparent;
+  color: white;
+}
+
+.dark-mode .card-list-pages select option{
+  color: white;
+  background-color: black
 }
 
 .card-list-pages{
@@ -48,13 +65,11 @@
 .card-list-pages select{
   margin: 0.5rem;
   padding: 5px 10px;
-  background-color: #2a2a2a;
   box-shadow: 0 0 3px 1px rgb(159, 159, 1);
   border-radius: 5px;
   cursor: pointer;
-  color: white;
 }
 
 .card-list-pages div.active{
-  background-color: rgb(131, 0, 0);
+  background-color: rgba(255, 0, 0, 0.784);
 }

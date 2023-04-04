@@ -28,10 +28,12 @@ const AdvanceSearch = () => {
     }, {});
   if (!query.page) query.page = 1;
   const valueRef = useRef<{ id: number; name: string }[] | []>([]);
+  const valueProducerRef = useRef<{ id: number; name: string }[] | []>([]);
   const [isLoading2, setIsLoading2] = useState(
     advanceSearchStore.currentState().search !== search
   );
   const [triggerReset, setTriggerReset] = useState(true);
+  const [triggerProducerReset, setTriggerProducerReset] = useState(true);
   const [trigger, setTrigger] = useState(true);
   const selectRef = useRef(document.createElement("select"));
   const inputSearchKeyRef = useRef(document.createElement("input"));
@@ -41,29 +43,34 @@ const AdvanceSearch = () => {
     cachesStore.currentState().caches["dataSearch" + query.page] || []
   );
   const [maxPage, setMaxPage] = useState(
-    advanceSearchStore.currentState().search.replace(/page=[0-9]+/g, "") ===
-      search.replace(/page=[0-9]+/g, "")
-      ? advanceSearchStore.currentState().maxPage
-      : 1
+    advanceSearchStore.currentState().maxPage
   );
   const [numberOfColumn, setNumberOfColumn] = useState(4);
   const [tagList, setTagList] = useState<Tag[] | []>(
     cachesStore.currentState().caches["tags"] || []
+  );
+  const [producerList, setProducerList] = useState<Tag[] | []>(
+    cachesStore.currentState().caches["producers"] || []
   );
   const navigate = useNavigate();
   function updateSearchByTag(data: Tag[]) {
     valueRef.current = data;
     setTriggerReset(!triggerReset);
   }
+  function updateSearchByProducers(data: Tag[]) {
+    valueProducerRef.current = data;
+    setTriggerProducerReset(!triggerProducerReset);
+  }
 
   useEffect(() => {
-    selectRef.current.value = query.page;
+    if (selectRef.current) selectRef.current.value = query.page;
     advanceSearchStore.updateState({
       search,
       maxPage,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, maxPage]);
+
   useFetchApi(
     `/api/vndb/tags${
       query.tags ? `?list=${query.tags || ""}&` : "?"
@@ -74,16 +81,49 @@ const AdvanceSearch = () => {
     true,
     true
   );
+  useFetchApi(
+    `/api/vndb/producers${
+      query.producers ? `?list=${query.producers || ""}&` : "?"
+    }isNormal=true`,
+    setProducerList,
+    "producers",
+    [query.producers],
+    true,
+    true
+  );
+
+  useEffect(() => {
+    if (
+      advanceSearchStore.currentState().search.replace(/page=[0-9]+/g, "") !==
+        search.replace(/page=[0-9]+/g, "") ||
+      !cachesStore.currentState().caches["dataSearch" + query.page]
+    ) {
+      setVNList([]);
+      setIsLoading2(true);
+    } else {
+      setVNList(
+        cachesStore.currentState().caches["dataSearch" + query.page] || []
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query.page]);
 
   useEffect(() => {
     updateSearchByTag(tagList);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tagList]);
+  useEffect(() => {
+    updateSearchByProducers(producerList);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [producerList]);
+
   useFetchApi(
     `/api/vndb?title=${query.textSearch || ""}&page=${query.page}&isCount=${
       advanceSearchStore.currentState().search.replace(/page=[0-9]+/g, "") !==
       search.replace(/page=[0-9]+/g, "")
-    }&tags=${query.tags || ""}&isContainLastPage=true`,
+    }&tags=${query.tags || ""}&producers=${
+      query.producers || ""
+    }&isContainLastPage=true`,
     setVNList,
     "dataSearch" + query.page,
     [search],
@@ -103,7 +143,11 @@ const AdvanceSearch = () => {
         navigate(
           `/search?textSearch=${encodeURL(
             inputSearchKeyRef.current.value || ""
-          )}&tags=${valueRef.current.map(({ id }) => id).join(",")}`
+          )}&page=1&tags=${valueRef.current
+            .map(({ id }) => id)
+            .join(",")}&producers=${valueProducerRef.current
+            .map(({ id }) => id)
+            .join(",")}`
         );
       }
     );
@@ -127,7 +171,7 @@ const AdvanceSearch = () => {
       setNumberOfColumn(2);
     }
   }, []);
-  console.log(numberOfColumn)
+
   useEffect(() => {
     const subscription = fromEvent(window, "resize")
       .pipe(debounceTime(500))
@@ -182,6 +226,13 @@ const AdvanceSearch = () => {
           triggerReset={triggerReset}
           url={"/api/vndb/tags"}
         />
+        <CustomSelect2
+          defaultValue={valueProducerRef.current}
+          valueRef={valueProducerRef}
+          label={"Search by producers"}
+          triggerReset={triggerProducerReset}
+          url={"/api/vndb/producers"}
+        />
         <button className="search-button-submit" ref={buttonSearchRef}>
           Search
         </button>
@@ -224,34 +275,23 @@ const AdvanceSearch = () => {
               key={key}
               isLoading={true}
               height={300}
-              width={`${100 / numberOfColumn - 1}%`}
+              width={`${100 / numberOfColumn - 2}%`}
               LoadingComponent={undefined}
               margin={3}
             />
           ))}
       </div>
+
       {maxPage > 1 && (
         <div className="card-list-pages">
           <div
             onClick={() => {
-              if (
-                advanceSearchStore
-                  .currentState()
-                  .search.replace(/page=[0-9]+/g, "") !==
-                  search.replace(/page=[0-9]+/g, "") ||
-                !cachesStore.currentState().caches["dataSearch" + query.page]
-              ) {
-                setVNList([]);
-                setIsLoading2(true);
-              } else {
-                setVNList(
-                  cachesStore.currentState().caches["dataSearch" + 1] || []
-                );
-              }
               navigate(
                 `/search?textSearch=${
                   query.textSearch || ""
                 }&page=${1}&tags=${valueRef.current
+                  .map(({ id }) => id)
+                  .join(",")}&producers=${valueProducerRef.current
                   .map(({ id }) => id)
                   .join(",")}`
               );
@@ -271,28 +311,14 @@ const AdvanceSearch = () => {
                 className={query.page === v + 1 ? "active" : ""}
                 key={index}
                 onClick={() => {
-                  if (
-                    advanceSearchStore
-                      .currentState()
-                      .search.replace(/page=[0-9]+/g, "") !==
-                      search.replace(/page=[0-9]+/g, "") ||
-                    !cachesStore.currentState().caches[
-                      "dataSearch" + query.page
-                    ]
-                  ) {
-                    setVNList([]);
-                    setIsLoading2(true);
-                  } else {
-                    setVNList(
-                      cachesStore.currentState().caches[
-                        "dataSearch" + (v + 1)
-                      ] || []
-                    );
-                  }
                   navigate(
                     `/search?textSearch=${query.textSearch || ""}&page=${
                       v + 1
-                    }&tags=${valueRef.current.map(({ id }) => id).join(",")}`
+                    }&tags=${valueRef.current
+                      .map(({ id }) => id)
+                      .join(",")}&producers=${valueProducerRef.current
+                      .map(({ id }) => id)
+                      .join(",")}`
                   );
                   window.scroll({
                     top: 0,
@@ -325,6 +351,8 @@ const AdvanceSearch = () => {
                 `/search?textSearch=${query.textSearch || ""}&page=${+e.target
                   .value}&tags=${valueRef.current
                   .map(({ id }) => id)
+                  .join(",")}&producers=${valueProducerRef.current
+                  .map(({ id }) => id)
                   .join(",")}`
               );
               window.scroll({ top: 0 });
@@ -336,25 +364,12 @@ const AdvanceSearch = () => {
           </select>
           <div
             onClick={() => {
-              if (
-                advanceSearchStore
-                  .currentState()
-                  .search.replace(/page=[0-9]+/g, "") !==
-                  search.replace(/page=[0-9]+/g, "") ||
-                !cachesStore.currentState().caches["dataSearch" + query.page]
-              ) {
-                setVNList([]);
-                setIsLoading2(true);
-              } else {
-                setVNList(
-                  cachesStore.currentState().caches["dataSearch" + maxPage] ||
-                    []
-                );
-              }
               navigate(
                 `/search?textSearch=${
                   query.textSearch || ""
                 }&page=${maxPage}&tags=${valueRef.current
+                  .map(({ id }) => id)
+                  .join(",")}&producers=${valueProducerRef.current
                   .map(({ id }) => id)
                   .join(",")}`
               );

@@ -13,7 +13,15 @@ export const useInputKeydown = (
   useEffect(() => {
     const subscription = fromEvent(inputSearchRef.current, "keydown").subscribe(
       (e) => {
-        if ((e as any).keyCode === 13 && indexActive !== null && indexActive !== 0) {
+        if ((e as any).key === "ArrowUp" && indexActive !== null) {
+          e.preventDefault();
+          if (indexActive - 1 >= 0) setIndexActive(indexActive - 1);
+        }
+        if (
+          (e as any).key === "Enter" &&
+          indexActive !== null &&
+          indexActive !== 0
+        ) {
           return navigate(
             (
               suggestionListContainerRef.current.children[
@@ -22,11 +30,7 @@ export const useInputKeydown = (
             ).href.replace(window.location.href, "")
           );
         }
-        if ((e as any).keyCode === 38 && indexActive !== null && indexActive !== 0) {
-          e.preventDefault();
-          if (indexActive - 1 >= 0) setIndexActive(indexActive - 1);
-        }
-        if ((e as any).keyCode === 13 && indexActive === 0) {
+        if ((e as any).key === "Enter" && indexActive === 0) {
           return navigate(
             `/search${
               inputSearchRef.current.value
@@ -35,7 +39,7 @@ export const useInputKeydown = (
             }`
           );
         }
-        if ((e as any).keyCode === 40) {
+        if ((e as any).key === "ArrowDown" && indexActive !== null) {
           e.preventDefault();
           if (indexActive === null) return setIndexActive(1);
           if (indexActive + 1 <= maxLength) setIndexActive(indexActive + 1);
@@ -46,5 +50,5 @@ export const useInputKeydown = (
       subscription.unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [indexActive]);
+  }, [indexActive, maxLength]);
 };
