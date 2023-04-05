@@ -463,7 +463,7 @@ const Detail = () => {
                 {detailState.screens && detailState.screens.length <= 1 && (
                   <img
                     src={
-                      !detailState.image_nsfw
+                      !detailState.image_nsfw || !userStore.currentState().isFilterNsfw
                         ? detailState.image
                         : detailState.screens &&
                           detailState.screens.filter(({ nsfw }) => !nsfw)[0]
