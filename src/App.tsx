@@ -95,6 +95,16 @@ function App() {
       <div
         className={`app-container${userState.isDarkMode ? " dark-mode" : ""}`}
       >
+        {userStore.currentState().isShowNotiFilter && (
+          <PopupNotification
+            message={
+              "By activating this mode, you will not be protected from explicit images. Do you want to continue?"
+            }
+            title={"Be careful!!"}
+            isNoFetch={true}
+          />
+        )}
+
         <PopupNotification
           message={notificationData.message}
           title={notificationData.title}

@@ -1,4 +1,4 @@
-.popup-notification-container{
+.popup-notification-container {
   position: fixed;
   top: 0;
   left: 0;
@@ -9,19 +9,20 @@
   justify-content: center;
   z-index: 1000;
   background-color: rgba(128, 128, 128, 0.562);
+  line-height: 2rem;
 }
 
 .popup-notification-container h1,
-.popup-notification-container p{
+.popup-notification-container p {
   margin: 1rem;
 }
 
-.app-container.dark-mode .popup-notification-wrapper{
+.app-container.dark-mode .popup-notification-wrapper {
   background-color: rgb(39, 42, 85);
   color: white;
 }
 
-.popup-notification-wrapper{
+.popup-notification-wrapper {
   background-color: white;
   color: black;
   max-width: 700px;
@@ -31,8 +32,9 @@
   box-shadow: 0 0 5px 1px white;
 }
 
-.popup-notification-wrapper button{
-  margin:  1rem 1rem 1rem auto;
+.popup-notification-wrapper button {
+  margin: 10px 5px;
+  box-shadow: 0 0 3px 1px rgb(192, 192, 192);
   display: block;
   background-color: blueviolet;
   color: white;
@@ -42,4 +44,10 @@
   outline: none;
   border: 0;
   cursor: pointer;
+}
+
+.popup-button-container {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
 }

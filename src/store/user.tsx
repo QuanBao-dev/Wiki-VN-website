@@ -14,6 +14,8 @@ interface UserStore {
   boost: number;
   discordUsername: string;
   isCoolDown: boolean;
+  isFilterNsfw: boolean;
+  isShowNotiFilter: boolean
 }
 
 export const userStore = createStore<UserStore>({
@@ -31,4 +33,6 @@ export const userStore = createStore<UserStore>({
   boost: 1,
   discordUsername: "No username",
   isCoolDown: true,
+  isFilterNsfw: true,
+  isShowNotiFilter: false
 });

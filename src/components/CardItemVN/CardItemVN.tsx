@@ -5,6 +5,7 @@ import { VisualNovel } from "../../Interfaces/visualNovelList";
 import { useEffect, useRef } from "react";
 import { parseDescription } from "../../util/parseDescription";
 import { generateUnrepeatedRandomNumber } from "../../util/generateRandomNumber";
+import { userStore } from "../../store/user";
 interface Props extends VisualNovel {
   trigger: boolean;
   setTrigger: React.Dispatch<React.SetStateAction<boolean>>;
@@ -39,7 +40,7 @@ const CardItemVN = ({
       <div className="container-image-frame">
         <img
           src={
-            !isNsfw
+            !isNsfw || !userStore.currentState().isFilterNsfw
               ? image
               : screens &&
                 screens.filter(({ nsfw }) => !nsfw)[randomRef.current]

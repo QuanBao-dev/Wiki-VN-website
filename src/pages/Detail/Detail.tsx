@@ -42,7 +42,9 @@ const convertObject = {
 };
 const Detail = () => {
   const { id } = useParams();
-  const [filterMode, setFilterMode] = useState(0);
+  const [filterMode, setFilterMode] = useState(
+    userStore.currentState().isFilterNsfw ? 0 : 1
+  );
   const [isShowExplicitImage, setIsShowExplicitImage] = useState(false);
   const [trigger, setTrigger] = useState(true);
   const [url, setUrl] = useState("");
@@ -215,22 +217,28 @@ const Detail = () => {
           <div className="image-wrapper">
             <img
               className={
-                detailState.image_nsfw && !isShowExplicitImage ? "nsfw" : ""
+                detailState.image_nsfw &&
+                !isShowExplicitImage &&
+                userStore.currentState().isFilterNsfw
+                  ? "nsfw"
+                  : ""
               }
               src={detailState.image}
               alt=""
             ></img>
-            {!isShowExplicitImage && detailState.image_nsfw && (
-              <div className="block-overlay">
-                <div>NSFW Image (18+)</div>
-                <div
-                  className="show-me-button"
-                  onClick={() => setIsShowExplicitImage(!isShowExplicitImage)}
-                >
-                  Show me anyway
+            {!isShowExplicitImage &&
+              detailState.image_nsfw &&
+              userStore.currentState().isFilterNsfw && (
+                <div className="block-overlay">
+                  <div>NSFW Image (18+)</div>
+                  <div
+                    className="show-me-button"
+                    onClick={() => setIsShowExplicitImage(!isShowExplicitImage)}
+                  >
+                    Show me anyway
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
           </div>
           <fieldset className="detail-title-table-info-container">
             <legend>Information</legend>

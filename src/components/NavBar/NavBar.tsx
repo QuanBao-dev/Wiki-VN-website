@@ -59,6 +59,11 @@ const NavBar = () => {
         window.localStorage.getItem("isDarkModeSVN") || "false"
       ),
     });
+    userStore.updateState({
+      isFilterNsfw: JSON.parse(
+        window.localStorage.getItem("isFilterNsfwSVN") || "true"
+      ),
+    });
     const subscription = fromEvent(logoutButtonRef.current, "click")
       .pipe(
         switchMap(() =>
@@ -185,6 +190,33 @@ const NavBar = () => {
           >
             {!userState.isDarkMode && <span>🌜</span>}
             {userState.isDarkMode && <span>🌞</span>}
+          </div>
+          <div className="link-account-setting">
+            {!userStore.currentState().isFilterNsfw && (
+              <i
+                className="fas fa-toggle-on"
+                onClick={() => {
+                  userStore.updateState({
+                    isShowNotiFilter: false,
+                    isFilterNsfw: true,
+                  });
+                  window.localStorage.setItem(
+                    "isFilterNsfwSVN",
+                    JSON.stringify(userStore.currentState().isFilterNsfw)
+                  );
+                }}
+              ></i>
+            )}
+            {userStore.currentState().isFilterNsfw && (
+              <i
+                className="fas fa-toggle-off"
+                onClick={() => {
+                  userStore.updateState({
+                    isShowNotiFilter: true,
+                  });
+                }}
+              ></i>
+            )}
           </div>
           {userState.role === "" && !isHide && (
             <NavLink

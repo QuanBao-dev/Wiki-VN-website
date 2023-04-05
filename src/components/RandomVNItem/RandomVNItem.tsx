@@ -6,6 +6,7 @@ import { VisualNovel } from "../../Interfaces/visualNovelList";
 import { Link } from "react-router-dom";
 import { parseDescription } from "../../util/parseDescription";
 import { generateUnrepeatedRandomNumber } from "../../util/generateRandomNumber";
+import { userStore } from "../../store/user";
 
 interface Props extends VisualNovel {}
 const RandomVNItem = ({
@@ -48,7 +49,7 @@ const RandomVNItem = ({
       <li className="random-vn-item" key={id}>
         <img
           src={
-            !image_nsfw
+            !image_nsfw || !userStore.currentState().isFilterNsfw
               ? image
               : screens &&
                 screens.filter(({ nsfw }) => !nsfw)[randomRef.current]
