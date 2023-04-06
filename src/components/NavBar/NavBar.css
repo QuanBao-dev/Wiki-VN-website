@@ -188,4 +188,20 @@
   .card-list-toggle-mode{
     font-size:0.8rem
   }
+
+  .fas.fa-toggle-on,
+  .fas.fa-toggle-off{
+    margin-left: 2px;
+    margin-right: 5px;
+  }
+
+  .navbar-wrapper{
+    margin: 0;
+  }
+
+  .right-side-link.account-detail img{
+    width: 35px;
+    height: 35px;
+    margin-right: 0;
+  }
 }
