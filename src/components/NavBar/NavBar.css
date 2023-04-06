@@ -60,11 +60,12 @@
 }
 
 .navbar-item .right-side-link{
-  margin-left: 1rem;
+  margin-left: 10px;
   text-decoration: none;
   color: white;
   font-size: 1.2rem;
   display: flex;
+  font-size: 1.1rem;
   align-items: center;
   cursor: pointer;
 }
@@ -148,9 +149,9 @@
 }
 
 .dark-mode-container{
-  margin-right: 0.2rem;
+  margin-right: 5px;
   cursor: pointer;
-  font-size: 2rem;
+  font-size: 1.7rem;
 }
 
 .unseen-message-amount{
@@ -174,6 +175,13 @@
   font-size: 2.2rem;
   margin-left: 10px;
   cursor: pointer;
+}
+
+.fas.fa-toggle-on,
+.fas.fa-toggle-off{
+  margin: 0;
+  font-size: 1.8rem;
+  margin-right: 5px
 }
 
 @media (max-width:501px) {

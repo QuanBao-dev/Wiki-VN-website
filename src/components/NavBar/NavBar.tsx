@@ -314,7 +314,7 @@ const NavBar = () => {
               target={"_blank"}
               rel="noreferrer"
             >
-              <span>Buy SVN a Coffee</span>
+              <span style={{fontSize:"1rem"}}>Buy SVN a Coffee</span>
               <Donate color={"#FFDD00"} />
             </a>
           )}
