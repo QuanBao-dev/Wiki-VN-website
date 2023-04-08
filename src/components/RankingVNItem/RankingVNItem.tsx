@@ -3,6 +3,7 @@ import { parseDescription } from "../../util/parseDescription";
 import { useEffect, useRef } from "react";
 import "./RankingVNItem.css";
 import { Link } from "react-router-dom";
+import { userStore } from "../../store/user";
 interface Props extends Partial<VisualNovel> {
   maxVotes: number;
 }
@@ -25,7 +26,7 @@ const RankingVNItem = ({
       <div className="ranking-vn-image-container">
         <img
           src={
-            !image_nsfw
+            !image_nsfw || !userStore.currentState().isFilterNsfw
               ? image
               : screens && screens.filter(({ nsfw }) => !nsfw)[0]
               ? screens.filter(({ nsfw }) => !nsfw)[0].image
