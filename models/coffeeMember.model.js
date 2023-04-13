@@ -25,5 +25,6 @@ const coffeeMemberSchema = new mongoose.Schema({
   transaction_id: String,
   payer_email: String,
   payer_name: String,
+  isNoUpdated: Boolean,
 });
 module.exports = mongoose.model("coffees-member", coffeeMemberSchema);

@@ -32,7 +32,7 @@ const apiLimiter = rateLimit({
 router.post("/BMC/", async (req, res) => {
   try {
     console.log(req.body);
-    await updateAllBMC(true, 1);
+    await updateAllBMC(true);
     res.send({ message: "Success" });
   } catch (error) {
     if (error) return res.status(400).send({ error });
@@ -110,13 +110,34 @@ async function getAllSupporters(lastPage) {
 }
 async function getAllSubscriptions(lastPage) {
   const BuyMeCoffee = new BMC(process.env.SUGOICOFFEETOKEN);
+  const rawLastPage = lastPage;
   if (!lastPage) lastPage = (await BuyMeCoffee.Subscriptions()).last_page;
   const data = [];
-  for (let i = 1; i <= lastPage; i++) {
+  for (let i = lastPage; i <= lastPage; i++) {
     const dataEachPage = await BuyMeCoffee.Subscriptions(i);
     data.push(...dataEachPage.data);
+    // if (!rawLastPage) {
+    //   await delay(10000);
+    // }
   }
   return { data };
+}
+function delay(time) {
+  return new Promise((resolve) => {
+    let count = 0;
+    console.log(
+      `Wait for ${parseInt(time / 1000)} seconds for the server to reset`
+    );
+    let interval = setInterval(() => {
+      count++;
+      // console.log(`${count}/${time / 1000}`);
+      if (count === parseInt(time / 1000)) {
+        console.log("Done");
+        clearInterval(interval);
+        resolve("Done");
+      }
+    }, 1000);
+  });
 }
 
 router.post("/login", apiLimiter, async (req, res) => {
@@ -600,6 +621,9 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
         await coffeeSupporter.save();
         continue;
       }
+      if (coffeeSupporter.isNoUpdated === true) {
+        continue;
+      }
       if (
         new Date(coffeeSupporter.support_created_on).getTime() <
         new Date(supporter.support_created_on).getTime()
@@ -640,6 +664,9 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
         coffeeMember = new coffeeMemberModel(member);
         coffeeMembers.push(coffeeMember);
         await coffeeMember.save();
+        continue;
+      }
+      if (coffeeMember.isNoUpdated === true) {
         continue;
       }
       if (

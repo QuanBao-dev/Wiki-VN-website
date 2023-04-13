@@ -21,6 +21,7 @@ const coffeeSupporterSchema = new mongoose.Schema({
   payer_email: String,
   payment_platform: String,
   payer_name: String,
+  isNoUpdated: Boolean,
 });
 
 module.exports = mongoose.model("coffees-supporter", coffeeSupporterSchema);
