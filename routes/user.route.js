@@ -113,12 +113,12 @@ async function getAllSubscriptions(lastPage) {
   const rawLastPage = lastPage;
   if (!lastPage) lastPage = (await BuyMeCoffee.Subscriptions()).last_page;
   const data = [];
-  for (let i = lastPage; i <= lastPage; i++) {
+  for (let i = 1; i <= lastPage; i++) {
     const dataEachPage = await BuyMeCoffee.Subscriptions(i);
     data.push(...dataEachPage.data);
-    // if (!rawLastPage) {
-    //   await delay(10000);
-    // }
+    if (!rawLastPage) {
+      await delay(10000);
+    }
   }
   return { data };
 }
