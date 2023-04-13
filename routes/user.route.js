@@ -745,86 +745,86 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
   supporters.data = Object.values(temp);
   // console.log(supporters.data);
   let finalResult = [];
-  // if (supporters.data)
-  //   finalResult = await Promise.all(
-  //     users.map(async (user) => {
-  //       for (let i = 0; i < supporters.data.length; i++) {
-  //         const supporter = supporters.data[i];
-  //         if (
-  //           supporter.payer_email === user.email ||
-  //           supporter.payer_email.toLocaleLowerCase() ===
-  //             user.email.toLocaleLowerCase()
-  //         ) {
-  //           const endFreeAdsDate = new Date(
-  //             addMonths(new Date(supporter.support_created_on), 1, true)
-  //           ).getTime();
-  //           if (Date.now() - endFreeAdsDate < 0) {
-  //             const boost =
-  //               parseInt(supporter.support_coffee_price) *
-  //               supporter.support_coffees;
-  //             if (
-  //               user.role !== "Supporter" ||
-  //               user.boost !== boost ||
-  //               !user.isNotSpam
-  //             ) {
-  //               let [userData, notification] = await Promise.all([
-  //                 userModel.findOne({
-  //                   userId: user.userId,
-  //                 }),
-  //                 notificationModel.findOne({
-  //                   userId: user.userId,
-  //                 }),
-  //               ]);
-  //               userData.isFreeAds = true;
-  //               userData.role = "Supporter";
-  //               userData.isNotSpam = true;
-  //               userData.isVerified = true;
-  //               userData.boost = boost;
-  //               if (!notification) {
-  //                 notification = new notificationModel({
-  //                   userId: user.userId,
-  //                   title: "",
-  //                   message: "",
-  //                 });
-  //               }
-  //               notification.title = "Thank you for your support";
-  //               notification.message = `Hi ${
-  //                 user.username
-  //               }! Now your vote is counted as ${boost} votes and you will be able to access to early access patch for 1 month since the last day you supported. This will be end at ${new Date(
-  //                 endFreeAdsDate
-  //               ).toUTCString()}`;
-  //               await Promise.all([userData.save(), notification.save()]);
-  //             }
-  //             return {
-  //               ...user,
-  //               becomingSupporterAt: supporter.support_created_on,
-  //               endFreeAdsDate: new Date(endFreeAdsDate).toUTCString(),
-  //               isFreeAds: true,
-  //               boost: boost,
-  //               role: "Supporter",
-  //             };
-  //           }
-  //           if (user.isFreeAds !== false || user.boost !== 1) {
-  //             const userData = await userModel.findOne({
-  //               userId: user.userId,
-  //             });
-  //             userData.isFreeAds = false;
-  //             userData.boost = 1;
-  //             userData.role = "User";
-  //             await userData.save();
-  //           }
-  //           return {
-  //             ...user,
-  //             becomingSupporterAt: supporter.support_created_on,
-  //             isFreeAds: false,
-  //             endFreeAdsDate: new Date(endFreeAdsDate).toUTCString(),
-  //             role: "User",
-  //           };
-  //         }
-  //       }
-  //       return user;
-  //     })
-  //   );
+  if (supporters.data)
+    finalResult = await Promise.all(
+      users.map(async (user) => {
+        for (let i = 0; i < supporters.data.length; i++) {
+          const supporter = supporters.data[i];
+          if (
+            supporter.payer_email === user.email ||
+            supporter.payer_email.toLocaleLowerCase() ===
+              user.email.toLocaleLowerCase()
+          ) {
+            const endFreeAdsDate = new Date(
+              addMonths(new Date(supporter.support_created_on), 1, true)
+            ).getTime();
+            if (Date.now() - endFreeAdsDate < 0) {
+              const boost =
+                parseInt(supporter.support_coffee_price) *
+                supporter.support_coffees;
+              if (
+                user.role !== "Supporter" ||
+                user.boost !== boost ||
+                !user.isNotSpam
+              ) {
+                let [userData, notification] = await Promise.all([
+                  userModel.findOne({
+                    userId: user.userId,
+                  }),
+                  notificationModel.findOne({
+                    userId: user.userId,
+                  }),
+                ]);
+                userData.isFreeAds = true;
+                userData.role = "Supporter";
+                userData.isNotSpam = true;
+                userData.isVerified = true;
+                userData.boost = boost;
+                if (!notification) {
+                  notification = new notificationModel({
+                    userId: user.userId,
+                    title: "",
+                    message: "",
+                  });
+                }
+                notification.title = "Thank you for your support";
+                notification.message = `Hi ${
+                  user.username
+                }! Now your vote is counted as ${boost} votes and you will be able to access to early access patch for 1 month since the last day you supported. This will be end at ${new Date(
+                  endFreeAdsDate
+                ).toUTCString()}`;
+                await Promise.all([userData.save(), notification.save()]);
+              }
+              return {
+                ...user,
+                becomingSupporterAt: supporter.support_created_on,
+                endFreeAdsDate: new Date(endFreeAdsDate).toUTCString(),
+                isFreeAds: true,
+                boost: boost,
+                role: "Supporter",
+              };
+            }
+            if (user.isFreeAds !== false || user.boost !== 1) {
+              const userData = await userModel.findOne({
+                userId: user.userId,
+              });
+              userData.isFreeAds = false;
+              userData.boost = 1;
+              userData.role = "User";
+              await userData.save();
+            }
+            return {
+              ...user,
+              becomingSupporterAt: supporter.support_created_on,
+              isFreeAds: false,
+              endFreeAdsDate: new Date(endFreeAdsDate).toUTCString(),
+              role: "User",
+            };
+          }
+        }
+        return user;
+      })
+    );
   let temp2 = members.data.reverse().reduce((ans, v) => {
     ans[v.payer_email] = v;
     return ans;
@@ -862,7 +862,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
   // console.log(temp2.map((v) => Object.values(v)[0]));
   if (members.data)
     finalResult = await Promise.all(
-      users.map(async (user) => {
+      finalResult.map(async (user) => {
         for (let i = 0; i < members.data.length; i++) {
           const member = members.data[i];
           if (
