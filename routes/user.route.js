@@ -32,7 +32,88 @@ const apiLimiter = rateLimit({
 router.post("/BMC/", async (req, res) => {
   try {
     console.log(req.body);
-    await updateAllBMC(true);
+    let { data } = JSON.parse(req.body);
+    const { object, id } = data;
+    const BuyMeCoffee = new BMC(process.env.SUGOICOFFEETOKEN);
+    switch (object) {
+      case "membership":
+        const member = await BuyMeCoffee.Subscription(id);
+        const coffeeMember = await coffeeMemberModel.findOne({
+          payer_email: member.payer_email,
+        });
+        if (!coffeeMember) {
+          const newCoffeeMember = new coffeeMemberModel(member);
+          await newCoffeeMember.save();
+        }
+        coffeeMember.subscription_id = member.subscription_id;
+        coffeeMember.subscription_cancelled_on =
+          member.subscription_cancelled_on;
+        coffeeMember.subscription_created_on = member.subscription_created_on;
+        coffeeMember.subscription_updated_on = member.subscription_updated_on;
+        coffeeMember.subscription_current_period_start =
+          member.subscription_current_period_start;
+        coffeeMember.subscription_current_period_end =
+          member.subscription_current_period_end;
+        coffeeMember.subscription_coffee_price =
+          member.subscription_coffee_price;
+        coffeeMember.subscription_coffee_num = member.subscription_coffee_num;
+        coffeeMember.subscription_is_cancelled =
+          member.subscription_is_cancelled;
+        coffeeMember.subscription_is_cancelled_at_period_end =
+          member.subscription_is_cancelled_at_period_end;
+        coffeeMember.subscription_currency = member.subscription_currency;
+        coffeeMember.subscription_message = member.subscription_message;
+        coffeeMember.message_visibility = member.message_visibility;
+        coffeeMember.subscription_duration_type =
+          member.subscription_duration_type;
+        coffeeMember.referer = member.referer;
+        coffeeMember.country = member.country;
+        coffeeMember.is_razorpay = member.is_razorpay;
+        coffeeMember.subscription_hidden = member.subscription_hidden;
+        coffeeMember.membership_level_id = member.membership_level_id;
+        coffeeMember.is_manual_payout = member.is_manual_payout;
+        coffeeMember.is_paused = member.is_paused;
+        coffeeMember.stripe_status = member.stripe_status;
+        coffeeMember.transaction_id = member.transaction_id;
+        coffeeMember.payer_email = member.payer_email;
+        coffeeMember.payer_name = member.payer_name;
+        await coffeeMember.save();
+        break;
+      case "donation":
+        const supporter = await BuyMeCoffee.Supporter(id);
+        const coffeeSupporter = await coffeeSupporterModel.findOne({
+          payer_email: supporter.payer_email,
+        });
+        if (!coffeeSupporter) {
+          const newCoffeeSupporter = new coffeeSupporterModel(supporter);
+          await newCoffeeSupporter.save();
+        }
+        coffeeSupporter.support_id = supporter.support_id;
+        coffeeSupporter.support_note = supporter.support_note;
+        coffeeSupporter.support_coffees = supporter.support_coffees;
+        coffeeSupporter.transaction_id = supporter.transaction_id;
+        coffeeSupporter.support_visibility = supporter.support_visibility;
+        coffeeSupporter.support_created_on = supporter.support_created_on;
+        coffeeSupporter.support_updated_on = supporter.support_updated_on;
+        coffeeSupporter.transfer_id = supporter.transfer_id;
+        coffeeSupporter.supporter_name = supporter.supporter_name;
+        coffeeSupporter.support_coffee_price = supporter.support_coffee_price;
+        coffeeSupporter.support_email = supporter.support_email;
+        coffeeSupporter.is_refunded = supporter.is_refunded;
+        coffeeSupporter.support_currency = supporter.support_currency;
+        coffeeSupporter.referer = supporter.referer;
+        coffeeSupporter.country = supporter.country;
+        coffeeSupporter.order_payload = supporter.order_payload;
+        coffeeSupporter.support_hidden = supporter.support_hidden;
+        coffeeSupporter.refunded_at = supporter.refunded_at;
+        coffeeSupporter.payer_email = supporter.payer_email;
+        coffeeSupporter.payment_platform = supporter.payment_platform;
+        coffeeSupporter.payer_name = supporter.payer_name;
+        await coffeeSupporter.save();
+        break;
+      default:
+        break;
+    }
     res.send({ message: "Success" });
   } catch (error) {
     if (error) return res.status(400).send({ error });
