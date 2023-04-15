@@ -1,13 +1,9 @@
 const { default: axios } = require("axios");
 const express = require("express");
-// const { nanoid } = require("nanoid");
+const { nanoid } = require("nanoid");
 const router = express.Router();
-// const VNDB = require("vndb-api");
+const VNDB = require("vndb-api");
 const tags = require("../data/tags.json");
-// const vndb = new VNDB(nanoid(), {
-//   acquireTimeout: 1000,
-//   encoding: "utf-8",
-// });
 
 router.get("/", async (req, res) => {
   let {
@@ -226,89 +222,6 @@ router.get("/random", async (req, res) => {
   }
 });
 
-// router.get("/release/:id", async (req, res) => {
-//   const { id } = req.params;
-//   let data = {
-//     filters: [],
-//     fields: "id, extlinks.url, extlinks.label, extlinks.name, vns.id",
-//   };
-
-//   if (id) {
-//     if (data.filters.length > 0) {
-//       data.filters.push(["id", "=", id]);
-//     } else {
-//       data.filters = ["and", ["id", "=", id]];
-//     }
-//   }
-//   // if (id) {
-//   //   if (string.length > 0) string += " and id = " + id;
-//   //   else string = `id = ${id}`;
-//   // }
-//   // if (released) {
-//   //   if (string.length > 0) string += " and released = " + released;
-//   //   else string = `released = ${released}`;
-//   // }
-//   // if (vn) {
-//   //   if (string.length > 0) string += " and vn = " + vn;
-//   //   else string = `vn = ${vn}`;
-//   // }
-//   // if (producer) {
-//   //   if (string.length > 0) string += " and producer = " + producer;
-//   //   else string = `producer = ${producer}`;
-//   // }
-//   // if (title) {
-//   //   if (string.length > 0) string += " and title = " + title;
-//   //   else string = `title = ${title}`;
-//   // }
-//   // if (original) {
-//   //   if (string.length > 0) string += " and original = " + original;
-//   //   else string = `original = ${original}`;
-//   // }
-//   // if (patch) {
-//   //   if (string.length > 0) string += " and patch = " + patch;
-//   //   else string = `patch = ${patch}`;
-//   // }
-//   // if (freeware) {
-//   //   if (string.length > 0) string += " and freeware = " + freeware;
-//   //   else string = `freeware = ${freeware}`;
-//   // }
-//   // if (doujin) {
-//   //   if (string.length > 0) string += " and doujin = " + doujin;
-//   //   else string = `doujin = ${doujin}`;
-//   // }
-//   // if (type) {
-//   //   if (string.length > 0) string += " and type = " + type;
-//   //   else string = `type = ${type}`;
-//   // }
-//   // if (gtin) {
-//   //   if (string.length > 0) string += " and gtin = " + gtin;
-//   //   else string = `gtin = ${gtin}`;
-//   // }
-//   // if (catalog) {
-//   //   if (string.length > 0) string += " and catalog = " + catalog;
-//   //   else string = `catalog = ${catalog}`;
-//   // }
-//   // if (languages) {
-//   //   if (string.length > 0) string += " and languages = " + languages;
-//   //   else string = `languages = ${languages}`;
-//   // }
-//   // if (platforms) {
-//   //   if (string.length > 0) string += " and platforms = " + platforms;
-//   //   else string = `platforms = ${platforms}`;
-//   // }
-//   try {
-//     const response = (
-//       await axios.post("https://api.vndb.org/kana/release", data)
-//     ).data;
-//     res.send({
-//       message: response,
-//     });
-//   } catch (error) {
-//     res.status(404).send({ error });
-//   }
-// });
-
-
 router.get("/stats", async (req, res) => {
   try {
     const response = (await axios.get("https://api.vndb.org/kana/stats")).data;
@@ -317,6 +230,22 @@ router.get("/stats", async (req, res) => {
     });
   } catch (error) {
     res.status(404).send({ error });
+  }
+});
+router.get("/:vnId/relations", async (req, res) => {
+  const vnId = parseInt(req.params.vnId);
+  try {
+    const vndb = new VNDB(nanoid(), {
+      acquireTimeout: 10000,
+      encoding: "utf-8",
+    });  
+    let items = [];
+    items = (await vndb.query(`get vn relations (id = ${vnId})`)).items;
+    res.send({
+      message: items[0].relations,
+    });
+  } catch (error) {
+    console.log({ error });
   }
 });
 
