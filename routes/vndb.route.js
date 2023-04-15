@@ -4,7 +4,15 @@ const { nanoid } = require("nanoid");
 const router = express.Router();
 const VNDB = require("vndb-api");
 const tags = require("../data/tags.json");
-
+let vndb;
+try {
+  vndb = new VNDB(nanoid(), {
+    acquireTimeout: 10000,
+    encoding: "utf-8",
+  });
+} catch (error) {
+  console.log(error)
+}
 router.get("/", async (req, res) => {
   let {
     id,
@@ -126,7 +134,7 @@ router.get("/tags", (req, res) => {
           name: v.name,
           id: v.id,
           description: v.description,
-          cat: v.cat
+          cat: v.cat,
         })),
       last_visible_page: Math.ceil(tagsData.length / 10),
     },
@@ -234,11 +242,8 @@ router.get("/stats", async (req, res) => {
 });
 router.get("/:vnId/relations", async (req, res) => {
   const vnId = parseInt(req.params.vnId);
+  if(!vndb) return res.status(404).send({error:"vndb disconnected"})
   try {
-    const vndb = new VNDB(nanoid(), {
-      acquireTimeout: 10000,
-      encoding: "utf-8",
-    });  
     let items = [];
     items = (await vndb.query(`get vn relations (id = ${vnId})`)).items;
     res.send({
@@ -246,6 +251,7 @@ router.get("/:vnId/relations", async (req, res) => {
     });
   } catch (error) {
     console.log({ error });
+    res.status(404).send({ error });
   }
 });
 
