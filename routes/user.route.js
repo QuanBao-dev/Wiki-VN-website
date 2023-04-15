@@ -31,7 +31,7 @@ const apiLimiter = rateLimit({
 
 router.post("/BMC/", async (req, res) => {
   try {
-    console.log(req.body);
+    console.log(req.headers);
     let { data } = req.body;
     const { object, id } = data;
     const BuyMeCoffee = new BMC(process.env.SUGOICOFFEETOKEN);
@@ -998,6 +998,9 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
                   userData.isFreeAds = false;
                   userData.boost = 1;
                   userData.role = "User";
+                  user.boost = 1;
+                  user.role ="User";
+                  user.isFreeAds = false;
                   await userData.save();
                 }
                 return {
@@ -1121,6 +1124,9 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
               userData.isFreeAds = false;
               userData.boost = 1;
               userData.role = "User";
+              user.boost = 1;
+              user.role ="User";
+              user.isFreeAds = false;
               await userData.save();
             }
             return {
