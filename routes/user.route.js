@@ -32,7 +32,7 @@ const apiLimiter = rateLimit({
 router.post("/BMC/", async (req, res) => {
   try {
     console.log(req.body);
-    let { data } = JSON.parse(req.body);
+    let { data } = req.body;
     const { object, id } = data;
     const BuyMeCoffee = new BMC(process.env.SUGOICOFFEETOKEN);
     switch (object) {
