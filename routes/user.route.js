@@ -79,7 +79,7 @@ router.post("/BMC/", async (req, res) => {
         coffeeMember.payer_name = member.payer_name;
         await coffeeMember.save();
         break;
-      case "donation":
+      case "payment":
         const supporter = await BuyMeCoffee.Supporter(id);
         const coffeeSupporter = await coffeeSupporterModel.findOne({
           payer_email: supporter.payer_email,
