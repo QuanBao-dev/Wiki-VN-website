@@ -11,7 +11,7 @@ try {
     encoding: "utf-8",
   });
 } catch (error) {
-  console.log(error)
+  console.log(error);
 }
 router.get("/", async (req, res) => {
   let {
@@ -28,7 +28,7 @@ router.get("/", async (req, res) => {
   let data = {
     filters: [],
     fields:
-      "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases, screenshots.dims",
+      "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases, screenshots.dims, tags.id, tags.rating, tags.name",
     count: isCount === "true",
   };
   if (page) data.page = page;
@@ -170,29 +170,34 @@ router.get("/producers/", async (req, res) => {
       data.filters = ["and", ["search", "=", q]];
     }
   }
-  const response = (
-    await axios.post("https://api.vndb.org/kana/producer", data)
-  ).data;
-  const producersData = response.results;
-  if (isNormal) {
-    if (!list || list === "undefined") {
+  try {
+    
+    const response = (
+      await axios.post("https://api.vndb.org/kana/producer", data)
+    ).data;
+    const producersData = response.results;
+    if (isNormal) {
+      if (!list || list === "undefined") {
+        return res.send({
+          message: [],
+        });
+      }
       return res.send({
-        message: [],
+        message: producersData,
       });
     }
-    return res.send({
-      message: producersData,
+    res.send({
+      message: {
+        data: producersData.map((v) => ({
+          name: v.name,
+          id: v.id,
+        })),
+        last_visible_page: Math.ceil(response.count / 10),
+      },
     });
+  } catch (error) {
+    res.status(404).send({ error });
   }
-  res.send({
-    message: {
-      data: producersData.map((v) => ({
-        name: v.name,
-        id: v.id,
-      })),
-      last_visible_page: Math.ceil(response.count / 10),
-    },
-  });
 });
 
 router.get("/random", async (req, res) => {
@@ -216,7 +221,7 @@ router.get("/random", async (req, res) => {
           .map((id) => ["id", "=", id]),
       ],
       fields:
-        "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases, screenshots.dims",
+        "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases, screenshots.dims, tags.name, tags.id, tags.rating",
     };
     const randomVNList = (
       await axios.post("https://api.vndb.org/kana/vn", data)
@@ -240,9 +245,32 @@ router.get("/stats", async (req, res) => {
     res.status(404).send({ error });
   }
 });
+
+router.get("/:vnId/tags", async (req, res) => {
+  const vnId = parseInt(req.params.vnId);
+  if (!vndb) return res.status(404).send({ error: "vndb disconnected" });
+  let data = {
+    filters: ["id", "=", "v" + vnId],
+    fields:
+      "tags.id, tags.rating, tags.name"
+  };
+
+  try {
+    const details = await (
+      await axios.post("https://api.vndb.org/kana/vn", data)
+    ).data;
+    res.send({
+      message: details.results[0].tags,
+    });
+  } catch (error) {
+    console.log({ error });
+    res.status(404).send({ error });
+  }
+});
+
 router.get("/:vnId/relations", async (req, res) => {
   const vnId = parseInt(req.params.vnId);
-  if(!vndb) return res.status(404).send({error:"vndb disconnected"})
+  if (!vndb) return res.status(404).send({ error: "vndb disconnected" });
   try {
     let items = [];
     items = (await vndb.query(`get vn relations (id = ${vnId})`)).items;
@@ -260,7 +288,7 @@ router.get("/:id", async (req, res) => {
   let data = {
     filters: ["id", "=", "v" + id],
     fields:
-      "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases, screenshots.dims",
+      "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases, screenshots.dims, tags.name, tags.id, tags.rating",
   };
   try {
     const details = await (
@@ -289,6 +317,9 @@ function parseData(data) {
         width: screenshot.dims[0],
         height: screenshot.dims[1],
       })),
+      tags: data.tags
+        .sort((a, b) => -a.rating + b.rating)
+        .map((tag) => ({ ...tag, rating: parseFloat(tag.rating).toFixed(1) })),
     };
   });
 }
