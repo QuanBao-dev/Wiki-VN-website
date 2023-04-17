@@ -21,7 +21,6 @@ const FormUpdatePatch = ({ dataVN, setTrigger, trigger }: Props) => {
   const [isNotify, setIsNotify] = useState(false);
   const buttonRef = useRef(document.createElement("button"));
   const selectRef = useRef(document.createElement("select"));
-  console.log(dataVN)
   useEffect(() => {
     const subscription = fromEvent(buttonRef.current, "click")
       .pipe(
