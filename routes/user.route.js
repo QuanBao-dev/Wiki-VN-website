@@ -29,12 +29,11 @@ const apiLimiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
+const BuyMeCoffee = new BMC(process.env.SUGOICOFFEETOKEN);
 router.post("/BMC/", async (req, res) => {
   try {
-    console.log(req.headers);
     let { data } = req.body;
     const { object, id } = data;
-    const BuyMeCoffee = new BMC(process.env.SUGOICOFFEETOKEN);
     switch (object) {
       case "membership":
         const member = await BuyMeCoffee.Subscription(id);
@@ -180,7 +179,6 @@ router.get("/", verifyRole("Admin"), async (req, res) => {
 });
 
 async function getAllSupporters(lastPage) {
-  const BuyMeCoffee = new BMC(process.env.SUGOICOFFEETOKEN);
   if (!lastPage) lastPage = (await BuyMeCoffee.Supporters()).last_page;
   const data = [];
   for (let i = 1; i <= lastPage; i++) {
@@ -190,7 +188,6 @@ async function getAllSupporters(lastPage) {
   return { data };
 }
 async function getAllSubscriptions(lastPage) {
-  const BuyMeCoffee = new BMC(process.env.SUGOICOFFEETOKEN);
   const rawLastPage = lastPage;
   if (!lastPage) lastPage = (await BuyMeCoffee.Subscriptions()).last_page;
   const data = [];
