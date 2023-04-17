@@ -223,6 +223,7 @@ route.post("/", verifyRole("Admin"), async (req, res) => {
     } else {
       newPatch.publishDate = null;
     }
+    newPatch.dataVN = dataVN;
     await newPatch.save();
     res.send({ message: "success" });
   } catch (error) {

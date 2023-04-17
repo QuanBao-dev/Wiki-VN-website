@@ -238,6 +238,21 @@ legend {
   text-align: center;
 }
 
+.detail-tag-list span {
+  padding: 0px 6px;
+  background-color: rgba(20, 16, 16, 0.405);
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  display: inline-block;
+  border-radius: 10px;
+  font-size: small;
+  cursor: pointer;
+}
+
 @media (max-width: 690px) {
   .detail-title-container {
     flex-direction: column;

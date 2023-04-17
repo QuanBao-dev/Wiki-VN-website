@@ -15,7 +15,7 @@ import Popup from "../../components/Popup/Popup";
 import Gif from "../../components/Gif/Gif";
 import { useInitStore } from "../Hooks/useInitStore";
 import { interval, takeWhile } from "rxjs";
-
+import tags from "../../data/tags.json";
 const VoterList = React.lazy(
   () => import("../../components/VoterList/VoterList")
 );
@@ -64,7 +64,6 @@ const Detail = () => {
       ? cachesStore.currentState().caches.patches[id as string]
       : {}) as Patch
   );
-  const [remainingTime, setRemainingTime] = useState("00:00:00:00");
   const descriptionRef = useRef(document.createElement("div"));
   const imageZoomContainerRef = useRef(document.createElement("div"));
   const blackBackgroundRef = useRef(document.createElement("div"));
@@ -147,20 +146,6 @@ const Detail = () => {
       return ans;
     }, {});
   }
-  useEffect(() => {
-    const subscription = interval(1000)
-      .pipe(takeWhile(() => userStore.currentState().role === "Admin"))
-      .subscribe(() => {
-        setRemainingTime(
-          convertToClockTime(
-            (new Date(patch.publishDate).getTime() - Date.now() - 1000) / 1000
-          )
-        );
-      });
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [patch.publishDate, patch.vnId]);
   return (
     <div className="app-wrapper">
       {!errorPatch && (
@@ -327,6 +312,58 @@ const Detail = () => {
             </table>
           </fieldset>
         </div>
+        {detailState.tags && detailState.tags.length > 0 && (
+          <fieldset className="detail-tag-list">
+            <legend>Tags</legend>
+            <div>
+              {detailState.tags
+                .filter((v) => v.rating >= 1.5 || (v as any)[1] >= 1.5)
+                .sort((a, b) => {
+                  if ((a as any).length) {
+                    return -(a as any)[1] + (b as any)[1];
+                  }
+                  return undefined;
+                })
+                .map((tag: any) => {
+                  if (tag.length) {
+                    const tagId = tag[0];
+                    const rating = tag[1];
+                    const tagName = tags.find((tag) => tag.id === tagId)?.name;
+                    if (!tagName) return undefined;
+                    return (
+                      <Link to={"/search?textSearch=&page=1&tags=" + tagId}>
+                        <span
+                          key={tagId}
+                          style={{
+                            fontSize: `${rating / 3.2}rem`,
+                          }}
+                        >
+                          {tagName} ({rating})
+                        </span>
+                      </Link>
+                    );
+                  }
+                  return (
+                    <Link
+                      to={
+                        "/search?textSearch=&page=1&tags=" +
+                        tag.id.replace("g", "")
+                      }
+                    >
+                      <span
+                        key={tag.id}
+                        style={{
+                          fontSize: `${tag.rating / 3.2}rem`,
+                        }}
+                      >
+                        {tag.name} ({tag.rating})
+                      </span>
+                    </Link>
+                  );
+                })}
+            </div>
+          </fieldset>
+        )}
         <fieldset className="description-container">
           <legend>Description</legend>
           <div ref={descriptionRef}></div>
@@ -463,7 +500,8 @@ const Detail = () => {
                 {detailState.screens && detailState.screens.length <= 1 && (
                   <img
                     src={
-                      !detailState.image_nsfw || !userStore.currentState().isFilterNsfw
+                      !detailState.image_nsfw ||
+                      !userStore.currentState().isFilterNsfw
                         ? detailState.image
                         : detailState.screens &&
                           detailState.screens.filter(({ nsfw }) => !nsfw)[0]
@@ -493,14 +531,7 @@ const Detail = () => {
                 trigger={trigger}
               />
             )}
-            <legend>
-              {patch.isMemberOnly ? "Early Access " : ""} Releases
-              {userStore.currentState().role === "Admin" &&
-              patch.isMemberOnly &&
-              patch.publishDate
-                ? ` (${remainingTime})`
-                : ""}
-            </legend>
+            <LegendClock patch={patch} />
             <ul className="release-list">
               {patch.linkDownloads.map(({ label, url }, key) => {
                 return (
@@ -604,6 +635,34 @@ const Detail = () => {
     </div>
   );
 };
+
+function LegendClock({ patch }: { patch: Patch }) {
+  const [remainingTime, setRemainingTime] = useState("00:00:00:00");
+  useEffect(() => {
+    const subscription = interval(1000)
+      .pipe(takeWhile(() => userStore.currentState().role === "Admin"))
+      .subscribe(() => {
+        setRemainingTime(
+          convertToClockTime(
+            (new Date(patch.publishDate).getTime() - Date.now() - 1000) / 1000
+          )
+        );
+      });
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [patch.publishDate, patch.vnId]);
+  return (
+    <legend>
+      {patch.isMemberOnly ? "Early Access " : ""} Releases
+      {userStore.currentState().role === "Admin" &&
+      patch.isMemberOnly &&
+      patch.publishDate
+        ? ` (${remainingTime})`
+        : ""}
+    </legend>
+  );
+}
 
 function convertToClockTime(time: number) {
   const days = parseInt((time / 86400).toString());

@@ -1,7 +1,9 @@
+import { Tag } from "./Tag";
+
 export interface VisualNovel {
   aliases: string[];
   description: string;
-  reason?:string;
+  reason?: string;
   id: number;
   image: string;
   image_flagging: ImageFlagging;
@@ -18,9 +20,10 @@ export interface VisualNovel {
   relations: Relation[] | [];
   original: string;
   released: string;
-  isPatchContained?:boolean;
-  votes?:number,
-  isTranslatable?:boolean
+  isPatchContained?: boolean;
+  votes?: number;
+  isTranslatable?: boolean;
+  tags: Tag[];
 }
 
 interface ImageFlagging {

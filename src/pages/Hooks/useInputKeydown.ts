@@ -14,7 +14,6 @@ export const useInputKeydown = (
     const subscription = fromEvent(inputSearchRef.current, "keydown").subscribe(
       (e) => {
         if ((e as any).key === "ArrowUp" && indexActive !== null) {
-          e.preventDefault();
           if (indexActive - 1 >= 0) setIndexActive(indexActive - 1);
         }
         if (
@@ -22,6 +21,7 @@ export const useInputKeydown = (
           indexActive !== null &&
           indexActive !== 0
         ) {
+          e.preventDefault();
           return navigate(
             (
               suggestionListContainerRef.current.children[
@@ -31,6 +31,7 @@ export const useInputKeydown = (
           );
         }
         if ((e as any).key === "Enter" && indexActive === 0) {
+          e.preventDefault();
           return navigate(
             `/search${
               inputSearchRef.current.value
@@ -40,7 +41,6 @@ export const useInputKeydown = (
           );
         }
         if ((e as any).key === "ArrowDown" && indexActive !== null) {
-          e.preventDefault();
           if (indexActive === null) return setIndexActive(1);
           if (indexActive + 1 <= maxLength) setIndexActive(indexActive + 1);
         }

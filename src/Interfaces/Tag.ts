@@ -9,6 +9,7 @@ export interface Tag {
   parents: number[];
   searchable: boolean;
   vns: number;
+  rating:number;
   lang: string;
   type: string;
 }

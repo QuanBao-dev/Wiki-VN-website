@@ -26,10 +26,10 @@ export const parseDescription = (description: string) => {
     .replace(/\]/g, ">")
     .replace("url=", 'a target="_blank" rel="noreferrer" href=')
     .replace("</url>", "</a>")
-    .replace(/\/p/g, "https://vndb.org/p")
-    .replace(/\/g/g, "https://vndb.org/g")
-    .replace(/\/s/g, "https://vndb.org/s")
-    .replace(/\/c/g, "https://vndb.org/c");
+    .replace(/(https:\/\/vndb.org)?\/p/g, "https://vndb.org/p")
+    .replace(/(https:\/\/vndb.org)?\/g/g, "https://vndb.org/g")
+    .replace(/(https:\/\/vndb.org)?\/s/g, "https://vndb.org/s")
+    .replace(/(https:\/\/vndb.org)?\/c/g, "https://vndb.org/c");
 
   return description.replace(/\[url=.+\].+\[\/url]/g, temp);
 };

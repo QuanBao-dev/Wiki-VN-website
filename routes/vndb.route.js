@@ -246,27 +246,27 @@ router.get("/stats", async (req, res) => {
   }
 });
 
-router.get("/:vnId/tags", async (req, res) => {
-  const vnId = parseInt(req.params.vnId);
-  if (!vndb) return res.status(404).send({ error: "vndb disconnected" });
-  let data = {
-    filters: ["id", "=", "v" + vnId],
-    fields:
-      "tags.id, tags.rating, tags.name"
-  };
+// router.get("/:vnId/tags", async (req, res) => {
+//   const vnId = parseInt(req.params.vnId);
+//   if (!vndb) return res.status(404).send({ error: "vndb disconnected" });
+//   let data = {
+//     filters: ["id", "=", "v" + vnId],
+//     fields:
+//       "tags.id, tags.rating, tags.name"
+//   };
 
-  try {
-    const details = await (
-      await axios.post("https://api.vndb.org/kana/vn", data)
-    ).data;
-    res.send({
-      message: details.results[0].tags,
-    });
-  } catch (error) {
-    console.log({ error });
-    res.status(404).send({ error });
-  }
-});
+//   try {
+//     const details = await (
+//       await axios.post("https://api.vndb.org/kana/vn", data)
+//     ).data;
+//     res.send({
+//       message: details.results[0].tags,
+//     });
+//   } catch (error) {
+//     console.log({ error });
+//     res.status(404).send({ error });
+//   }
+// });
 
 router.get("/:vnId/relations", async (req, res) => {
   const vnId = parseInt(req.params.vnId);
