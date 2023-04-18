@@ -214,7 +214,7 @@ route.post("/", verifyRole("Admin"), async (req, res) => {
     }
     if (newPatch.isMemberOnly) {
       const datePublishTime =
-        new Date(newPatch.createdAt).getTime() + 3600 * 1000 * 24 * 14;
+        new Date(newPatch.createdAt).getTime() + 3600 * 1000 * 24 * 8;
       if (Date.now() < datePublishTime) {
         newPatch.publishDate = new Date(datePublishTime);
       } else {
