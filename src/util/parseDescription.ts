@@ -2,10 +2,11 @@ export const parseDescription = (description: string) => {
   if (!description || description.trim() === "") return "No description";
   description = description
     .replace(/URL/gi, "url")
-    .replace(/(\[\/url)?\]\]/g, "[/url]]")
-    .replace(/\[From/gi, "(From")
-    .replace(/\[Edited from/gi, "(Edited From")
-    .replace(/\[Translated from/gi, "(Translated From");
+    .replace(/(\[\/url)?\]\]/g, "[/url]]");
+  if (description.match(/\[([ a-zA-Z0-9]+)?From/gi)) {
+    const text = (description.match(/\[([ a-zA-Z0-9]+)?From/gi) as any)[0];
+    description = description.replace(/\[([ a-zA-Z0-9]+)?From/gi, text.replace("[","("));
+  }
   return description
     .replace(/=(https:\/\/vndb.org)?\/p/g, "=https://vndb.org/p")
     .replace(/=(https:\/\/vndb.org)?\/g/g, "=https://vndb.org/g")
