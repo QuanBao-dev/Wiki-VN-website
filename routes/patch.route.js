@@ -144,6 +144,7 @@ route.post("/", verifyRole("Admin"), async (req, res) => {
     isMemberOnly,
     announcementChannel,
     isNotifyDiscord,
+    timeEarlyAccess,
   } = req.body;
   try {
     let newPatch = await Patch.findOne({ vnId: parseInt(vnId) });
@@ -214,7 +215,8 @@ route.post("/", verifyRole("Admin"), async (req, res) => {
     }
     if (newPatch.isMemberOnly) {
       const datePublishTime =
-        new Date(newPatch.createdAt).getTime() + 3600 * 1000 * 24 * 8;
+        new Date(newPatch.createdAt).getTime() +
+        3600 * 1000 * 24 * parseInt(timeEarlyAccess);
       if (Date.now() < datePublishTime) {
         newPatch.publishDate = new Date(datePublishTime);
       } else {

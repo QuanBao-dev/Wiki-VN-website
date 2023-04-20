@@ -23,3 +23,34 @@
   border: none;
   box-shadow: 0 0 5px 1px rgb(43, 42, 42);
 }
+
+.select-time-early-access{
+  margin-top:20px;
+  display: flex;
+  flex-direction: column;
+  align-content: flex-start;
+  justify-content: flex-start;
+}
+
+.select-time-early-access label{
+  font-weight: 600;
+  font-size: 1.2rem;
+  text-transform: capitalize;
+}
+
+.select-time-early-access select{
+  background-color: transparent;
+  border: none;
+  font-size: 1rem;
+  border-bottom: 1px solid black;
+  outline: none;
+}
+
+.dark-mode .select-time-early-access select{
+  color: white;
+  border-bottom: 1px solid white;
+}
+
+.select-time-early-access select option{
+  color: black;
+}

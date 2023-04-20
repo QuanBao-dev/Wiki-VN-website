@@ -331,9 +331,11 @@ const Detail = () => {
                     const tagName = tags.find((tag) => tag.id === tagId)?.name;
                     if (!tagName) return undefined;
                     return (
-                      <Link to={`/search?textSearch=&page=1&tags=${tagId}&producers=`}>
+                      <Link
+                        key={tagId}
+                        to={`/search?textSearch=&page=1&tags=${tagId}&producers=`}
+                      >
                         <span
-                          key={tagId}
                           style={{
                             fontSize: `${rating / 3.2}rem`,
                           }}
@@ -345,12 +347,13 @@ const Detail = () => {
                   }
                   return (
                     <Link
-                      to={
-                        `/search?textSearch=&page=1&tags=${tag.id.replace("g","")}&producers=`
-                      }
+                      key={tag.id}
+                      to={`/search?textSearch=&page=1&tags=${tag.id.replace(
+                        "g",
+                        ""
+                      )}&producers=`}
                     >
                       <span
-                        key={tag.id}
                         style={{
                           fontSize: `${tag.rating / 3.2}rem`,
                         }}

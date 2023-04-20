@@ -1,7 +1,14 @@
 import "./FormUpdatePatch.css";
 import Input from "../Input/Input";
 import { useRef, useEffect, useState } from "react";
-import { catchError, debounceTime, exhaustMap, fromEvent, of, pluck } from "rxjs";
+import {
+  catchError,
+  debounceTime,
+  exhaustMap,
+  fromEvent,
+  of,
+  pluck,
+} from "rxjs";
 import { ajax } from "rxjs/ajax";
 import { VisualNovel } from "../../Interfaces/visualNovelList";
 interface Props {
@@ -21,6 +28,7 @@ const FormUpdatePatch = ({ dataVN, setTrigger, trigger }: Props) => {
   const [isNotify, setIsNotify] = useState(false);
   const buttonRef = useRef(document.createElement("button"));
   const selectRef = useRef(document.createElement("select"));
+  const timeEarlyAccessSelectRef = useRef(document.createElement("select"));
   useEffect(() => {
     const subscription = fromEvent(buttonRef.current, "click")
       .pipe(
@@ -41,6 +49,7 @@ const FormUpdatePatch = ({ dataVN, setTrigger, trigger }: Props) => {
               isMemberOnly: checkBoxIsMemberOnlyRef.current.checked,
               announcementChannel: isNotify ? announcementChannel : undefined,
               isNotifyDiscord: isNotify,
+              timeEarlyAccess: timeEarlyAccessSelectRef.current.value,
             },
           }).pipe(
             pluck("response", "message"),
@@ -77,6 +86,16 @@ const FormUpdatePatch = ({ dataVN, setTrigger, trigger }: Props) => {
         type="text"
         inputRef={patchReleaseUrlInputRef}
       />
+      <div className="select-time-early-access">
+        <label htmlFor="time-early">Time early access</label>
+        <select id="time-early" ref={timeEarlyAccessSelectRef}>
+          {Array.from(Array(60).keys()).map((v) => (
+            <option key={v} value={v + 7}>
+              {v + 7}
+            </option>
+          ))}
+        </select>
+      </div>
       <div
         style={{
           marginTop: "1rem",
@@ -100,6 +119,7 @@ const FormUpdatePatch = ({ dataVN, setTrigger, trigger }: Props) => {
         <input
           id="checkbox-is-member-only"
           type="checkbox"
+          defaultChecked={true}
           ref={checkBoxIsMemberOnlyRef}
         />
         <label
