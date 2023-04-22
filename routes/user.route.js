@@ -1004,6 +1004,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
                   ...user,
                   becomingSupporterAt: supporter.support_created_on,
                   isFreeAds: false,
+                  boost: 1,
                   endFreeAdsDate: new Date(endFreeAdsDate).toUTCString(),
                   role: "User",
                 };
@@ -1130,6 +1131,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
               ...user,
               becomingSupporterAt: supporter.support_created_on,
               isFreeAds: false,
+              boost: 1,
               endFreeAdsDate: new Date(endFreeAdsDate).toUTCString(),
               role: "User",
             };
