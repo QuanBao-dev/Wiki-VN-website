@@ -881,7 +881,6 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
                 true
               )
             ).getTime();
-
             if (Date.now() - endFreeAdsDate < 0) {
               if (
                 user.role !== "Member" ||
@@ -996,7 +995,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
                   userData.boost = 1;
                   userData.role = "User";
                   user.boost = 1;
-                  user.role ="User";
+                  user.role = "User";
                   user.isFreeAds = false;
                   await userData.save();
                 }
@@ -1010,6 +1009,27 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
                 };
               }
             }
+            if (user.boost !== 1) {
+              const userData = await userModel.findOne({
+                userId: user.userId,
+              });
+              userData.isFreeAds = false;
+              userData.boost = 1;
+              userData.role = "User";
+              user.boost = 1;
+              user.role = "User";
+              user.isFreeAds = false;
+              await userData.save();
+            }
+            return {
+              ...user,
+              becomingMemberAt: member.subscription_current_period_start,
+              cancelingMemberAt: member.subscription_current_period_end,
+              isFreeAds: false,
+              boost: 1,
+              endFreeAdsDate: new Date(endFreeAdsDate).toUTCString(),
+              role: "User",
+            };
             // if (user.isFreeAds !== false || user.boost !== 1) {
             //   const userData = await userModel.findOne({
             //     userId: user.userId,
@@ -1123,7 +1143,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
               userData.boost = 1;
               userData.role = "User";
               user.boost = 1;
-              user.role ="User";
+              user.role = "User";
               user.isFreeAds = false;
               await userData.save();
             }
