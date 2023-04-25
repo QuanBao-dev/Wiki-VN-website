@@ -129,6 +129,7 @@ router.post("/kofi/", async (req, res) => {
     }
     let coffee = await coffeeModel.findOne({
       email: data.email.toLocaleLowerCase(),
+      type: data.type
     });
     if (!coffee) {
       coffee = new coffeeModel({
