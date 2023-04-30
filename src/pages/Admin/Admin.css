@@ -4,7 +4,7 @@ table {
 
 table .tr {
   padding: 0.5rem;
-  height:fit-content
+  height: fit-content;
 }
 
 .admin-container {
@@ -31,4 +31,45 @@ table .tr {
   display: inline-block;
   cursor: pointer;
   margin: 1rem;
+}
+
+.admin-button-edit-voted-vn-list {
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column-reverse;
+  left: 100%;
+}
+
+.table-edit-voted-vn-container {
+  min-width: 220px;
+  font-size: 0.8rem;
+  position: relative;
+}
+
+.table-edit-voted-vn-container:hover button{
+  opacity: 1;
+}
+
+.admin-button-edit-voted-vn-list button {
+  background-color: black;
+  color: white;
+  border: none;
+  margin-left: 2px;
+  opacity: 0;
+  transition: 0.5s;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.app-container.dark-mode .textarea-voted-vn-list {
+  color: rgb(146, 162, 255);
+}
+
+.textarea-voted-vn-list::-webkit-scrollbar-thumb {
+  background-color: orange;
+}
+.textarea-voted-vn-list::-webkit-scrollbar {
+  width: 5px;
+  background-color: aliceblue;
 }

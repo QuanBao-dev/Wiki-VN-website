@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import ButtonDeleteUser from "../../components/ButtonDeleteUser/ButtonDeleteUser";
 import { User } from "../../Interfaces/users";
 import { useFetchApi } from "../Hooks/useFetchApi";
-import { catchError, fromEvent, of, pluck, switchMap } from "rxjs";
+import { catchError, exhaustMap, fromEvent, of, pluck, switchMap } from "rxjs";
 import { ajax } from "rxjs/ajax";
 import { userStore } from "../../store/user";
 import ButtonEdit from "../../components/ButtonEdit/ButtonEdit";
@@ -227,22 +227,14 @@ function RowTable({
   return (
     <tr>
       <td>{index + 1}</td>
-      <td style={{
-        whiteSpace:"nowrap"
-      }}>{discordUsername}</td>
       <td
         style={{
-          minWidth: 220,
-          fontSize: "0.8rem",
+          whiteSpace: "nowrap",
         }}
       >
-        {votedVnIdList.map((v, key) => (
-          <span key={key}>
-            <Link to={`/vns/${v}`}>{v}</Link>
-            {", "}
-          </span>
-        ))}
+        {discordUsername}
       </td>
+      <VotedVNListUser votedVnIdList={votedVnIdList} userId={userId} />
       <td>{userId}</td>
       <td>{username}</td>
       <td>
@@ -323,3 +315,107 @@ function RowTable({
 }
 
 export default Admin;
+function VotedVNListUser({
+  votedVnIdList,
+  userId,
+}: {
+  votedVnIdList: number[];
+  userId: string;
+}) {
+  const [isEdit, setEdit] = useState(false);
+  const [votedVNIdListState, setVotedVNIdListState] =
+    useState<number[]>(votedVnIdList);
+  const listVNRef = useRef(document.createElement("div"));
+  const textareaRef = useRef(document.createElement("textarea"));
+  const submitButtonRef = useRef(document.createElement("button"));
+  useEffect(() => {
+    if (isEdit) {
+      textareaRef.current.style.width = `${100}%`;
+      textareaRef.current.style.height = `${listVNRef.current.offsetHeight}px`;
+      listVNRef.current.style.display = "none";
+    } else {
+      listVNRef.current.style.display = "block";
+    }
+  }, [isEdit]);
+  useEffect(() => {
+    const subscription = fromEvent(submitButtonRef.current, "click")
+      .pipe(
+        exhaustMap(() =>
+          ajax({
+            url: "/api/user/admin/edit",
+            body: {
+              votedVnIdList: textareaRef.current.value
+                .split(", ")
+                .map((v) => +v),
+              userId,
+            },
+            method: "PUT",
+          }).pipe(
+            pluck("response", "message"),
+            catchError((error) => of(error).pipe(pluck("response")))
+          )
+        )
+      )
+      .subscribe((v: any) => {
+        if (!v.error) {
+          setVotedVNIdListState(v);
+          setEdit(false);
+        } else {
+          console.log(v.error);
+        }
+      });
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [userId]);
+  return (
+    <td
+      className="table-edit-voted-vn-container"
+      style={{
+        paddingTop: isEdit ? 0 : undefined,
+        paddingBottom: isEdit ? 0 : undefined,
+      }}
+    >
+      <div className="admin-button-edit-voted-vn-list">
+        <button
+          style={{
+            display: !isEdit ? "none" : undefined,
+          }}
+          ref={submitButtonRef}
+        >
+          Submit
+        </button>
+        <button
+          style={{
+            backgroundColor: isEdit ? "red" : undefined,
+          }}
+          onClick={() => {
+            setEdit(!isEdit);
+          }}
+        >
+          {!isEdit ? "Edit" : "Cancel"}
+        </button>
+      </div>
+      <div ref={listVNRef}>
+        {votedVNIdListState.map((v, key) => (
+          <span key={key}>
+            <Link to={`/vns/${v}`}>{v}</Link>
+            {", "}
+          </span>
+        ))}
+      </div>
+      <textarea
+        ref={textareaRef}
+        defaultValue={votedVNIdListState.join(", ")}
+        className="textarea-voted-vn-list"
+        style={{
+          fontSize: "0.75rem",
+          resize: "none",
+          display: !isEdit ? "none" : undefined,
+          backgroundColor: "transparent",
+          border: "none",
+        }}
+      />
+    </td>
+  );
+}

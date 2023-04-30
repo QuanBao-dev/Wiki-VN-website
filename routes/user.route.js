@@ -129,7 +129,7 @@ router.post("/kofi/", async (req, res) => {
     }
     let coffee = await coffeeModel.findOne({
       email: data.email.toLocaleLowerCase(),
-      type: data.type
+      type: data.type,
     });
     if (!coffee) {
       coffee = new coffeeModel({
@@ -432,8 +432,23 @@ router.delete("/:userId", verifyRole("Admin"), async (req, res) => {
 });
 
 router.put("/admin/edit", verifyRole("Admin"), async (req, res) => {
-  const { isFreeAds, isVerified, userId, role, boost, isNotSpam } = req.body;
+  const {
+    isFreeAds,
+    isVerified,
+    userId,
+    role,
+    boost,
+    isNotSpam,
+    votedVnIdList,
+  } = req.body;
   try {
+    if (votedVnIdList) {
+      const user = await userModel.findOne({ userId });
+      user.votedVnIdList = votedVnIdList;
+      await user.save();
+      return res.send({ message: votedVnIdList });
+    }
+    if (!role) return res.status(400).send({ error: "Bad request" });
     const user = await userModel.findOne({ userId });
     if (user) {
       user.role = role;
