@@ -26,7 +26,12 @@ router.get("/", async (req, res) => {
           votesData: {
             $filter: {
               input: "$votesData",
-              cond: { $lte: ["$$this.boost", isLowTier ? 25 : 200] },
+              cond: {
+                $and: [
+                  { $gte: ["$$this.boost", 5] },
+                  { $lte: ["$$this.boost", isLowTier ? 25 : 200] },
+                ],
+              },
             },
           },
           isTranslatable: 1,
@@ -143,6 +148,7 @@ router.get("/:vnId", async (req, res) => {
               votedVnIdList: parseInt(vnId),
               isVerified: true,
               isNotSpam: true,
+              boost: { $gte: 5 },
             },
           },
         ]),
@@ -177,12 +183,14 @@ router.get("/:vnId", async (req, res) => {
             votedVnIdList: parseInt(vnId),
             isVerified: true,
             isNotSpam: true,
+            boost: { $gte: 5 },
           },
         },
       ]),
     ]);
     const validUsersLength = voters.reduce((ans, curr) => {
-      ans += curr.boost || 1;
+      if(!curr.boost || curr.boost === 1) return ans;
+      ans += curr.boost;
       return ans;
     }, 0);
 

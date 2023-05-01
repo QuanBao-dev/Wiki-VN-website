@@ -353,6 +353,7 @@ router.get("/:vnId/vote", async (req, res) => {
             votedVnIdList: parseInt(vnId),
             isVerified: true,
             isNotSpam: true,
+            boost: { $gte: 5 },
           },
         },
         { $sort: { boost: -1, _id: 1 } },
@@ -368,6 +369,7 @@ router.get("/:vnId/vote", async (req, res) => {
             votedVnIdList: parseInt(vnId),
             isVerified: true,
             isNotSpam: true,
+            boost: { $gte: 5 },
           },
         },
         {
