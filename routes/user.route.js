@@ -299,8 +299,8 @@ router.post("/register", apiLimiter, async (req, res) => {
       return res.status(400).send({ error: "Wrong confirmed password" });
     }
     const [emailExist, usernameExist] = await Promise.all([
-      userModel.findOne({ email }),
-      userModel.findOne({ username }),
+      userModel.findOne({ email: new RegExp(email, "i") }),
+      userModel.findOne({ username: new RegExp(username, "i") }),
     ]);
     if (emailExist && emailExist.isNotSpam) {
       return res.status(400).send({
@@ -554,7 +554,9 @@ router.put(
         const isExactPassword = await compare(password, user.password);
         if (!isExactPassword)
           return res.status(400).send({ error: "Wrong Password" });
-        const isUsernameExisted = await userModel.findOne({ username });
+        const isUsernameExisted = await userModel.findOne({
+          username: new RegExp(username, "i"),
+        });
         if (isUsernameExisted)
           return res.status(400).send({ error: "Username existed" });
         user.username = username;
