@@ -12,6 +12,7 @@ import { homeStore } from "../../store/home";
 import SkeletonLoading from "../SkeletonLoading/SkeletonLoading";
 import PersonalVoteList from "../PersonalVoteList/PersonalVoteList";
 import { userStore } from "../../store/user";
+import { useInitStore } from "../../pages/Hooks/useInitStore";
 const RankingVN = React.lazy(() => import("../RankingVN/RankingVN"));
 const CardItemVN = React.lazy(() => import("../CardItemVN/CardItemVN"));
 const CardListVN = () => {
@@ -20,6 +21,7 @@ const CardListVN = () => {
   const [indexActive, setIndexActive] = useState(
     homeStore.currentState().indexActive
   );
+  const [userState, setUserState] = useState(userStore.currentState());
   const [indexPollModeActive, setIndexPollModeActive] = useState(
     homeStore.currentState().indexPollModeActive
   );
@@ -61,7 +63,7 @@ const CardListVN = () => {
       setNumberOfColumn(2);
     }
   }, []);
-
+  useInitStore(userStore, setUserState);
   useEffect(() => {
     const subscription = fromEvent(window, "resize")
       .pipe(debounceTime(500))
@@ -116,10 +118,14 @@ const CardListVN = () => {
   );
 
   useFetchApi(
-    `/api/patch?page=${page}`,
+    `/api/patch?page=${page}${
+      ["Admin", "Member", "Supporter"].includes(userState.role)
+        ? "&isMemberOnly=true"
+        : ""
+    }`,
     setVisualNovelList,
     "VNs",
-    [page],
+    [page, userState.role],
     true,
     indexActive === 0 &&
       cachesStore.currentState().caches.VNs &&

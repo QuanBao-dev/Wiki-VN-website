@@ -17,6 +17,7 @@ import { useInitStore } from "../../pages/Hooks/useInitStore";
 import { userStore } from "../../store/user";
 import ChangeAccountInfoForm from "../ChangeAccountInfoForm/ChangeAccountInfoForm";
 import Donate from "../Donate/Donate";
+import cachesStore from "../../store/caches";
 
 const NavBar = () => {
   const posY1 = useRef(0);
@@ -86,6 +87,7 @@ const NavBar = () => {
             email: "",
             trigger: !userStore.currentState().trigger,
           });
+          cachesStore.updateState({caches:{}})
         }
       });
     return () => {

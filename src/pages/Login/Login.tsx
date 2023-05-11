@@ -16,6 +16,7 @@ import {
 
 import Input from "../../components/Input/Input";
 import { userStore } from "../../store/user";
+import cachesStore from "../../store/caches";
 
 const Login = () => {
   const emailRef = useRef(document.createElement("input"));
@@ -63,6 +64,7 @@ const Login = () => {
           userStore.updateState({
             trigger: !userStore.currentState().trigger,
           });
+          cachesStore.updateState({caches:{}})
         } else {
           setErrorMessage(res.error);
         }

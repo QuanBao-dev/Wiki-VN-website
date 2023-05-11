@@ -34,8 +34,10 @@ const userModel = require("../models/user.model");
 
 route.get("/", async (req, res) => {
   const page = parseInt(req.query.page || 0);
+  const isMemberOnly = req.query.isMemberOnly === "true";
   try {
     const patches = await Patch.aggregate([
+      { $match: { isMemberOnly } },
       {
         $group: {
           _id: { $toDate: "$createdAt" },
