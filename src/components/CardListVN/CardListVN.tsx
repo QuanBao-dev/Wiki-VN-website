@@ -174,7 +174,7 @@ const CardListVN = () => {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
+  }, [page, userState.role]);
   useEffect(() => {
     if (indexActive === 1) {
       setPage(homeStore.currentState().page);
