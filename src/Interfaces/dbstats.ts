@@ -12,6 +12,7 @@ export interface Dbstats {
 
 export interface SugoiVNDBStats {
   usersLength: number;
+  mtledVNLength2:number;
   mtledVNLength: number;
   releasesLength: number;
 }

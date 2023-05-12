@@ -32,6 +32,7 @@ export const homeStore = createStore<HomeStore>({
   stats: {
     usersLength: 0,
     mtledVNLength: 0,
+    mtledVNLength2: 0,
     releasesLength: 0,
   },
   maxVotes: 0,

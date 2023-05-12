@@ -37,7 +37,7 @@ route.get("/", async (req, res) => {
   const isMemberOnly = req.query.isMemberOnly === "true";
   try {
     const patches = await Patch.aggregate([
-      { $match: { isMemberOnly } },
+      { $match: !isMemberOnly ? { isMemberOnly } : {} },
       {
         $group: {
           _id: { $toDate: "$createdAt" },

@@ -2,10 +2,21 @@ const patchModel = require("../models/patch.model");
 const userModel = require("../models/user.model");
 const router = require("express").Router();
 router.get("/", async (req, res) => {
+  const isMemberOnly = req.query.isMemberOnly === "true";
   try {
-    const [users, mtledVNLength, releases] = await Promise.all([
+    const [users, mtledVNLength, releases, mtledVNLength2] = await Promise.all([
       userModel.aggregate([{ $match: { isVerified: true, isNotSpam: true } }]),
-      patchModel.countDocuments(),
+      patchModel.aggregate([
+        { $match: !isMemberOnly ? { isMemberOnly } : {} },
+        {
+          $group: {
+            _id: null,
+            length: {
+              $sum: 1,
+            },
+          },
+        },
+      ]),
       patchModel.aggregate([
         {
           $group: {
@@ -16,12 +27,15 @@ router.get("/", async (req, res) => {
           },
         },
       ]),
+      patchModel.countDocuments(),
     ]);
+    console.log(mtledVNLength);
     res.send({
       message: {
         usersLength: users.length,
-        mtledVNLength,
+        mtledVNLength: mtledVNLength[0].length,
         releasesLength: releases[0].length,
+        mtledVNLength2,
       },
     });
   } catch (error) {

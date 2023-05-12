@@ -7,17 +7,25 @@ import { useFetchApi } from "../../pages/Hooks/useFetchApi";
 import SkeletonLoading from "../SkeletonLoading/SkeletonLoading";
 import { homeStore } from "../../store/home";
 import cachesStore from "../../store/caches";
+import { userStore } from "../../store/user";
+import { useInitStore } from "../../pages/Hooks/useInitStore";
 
 const Stats = () => {
   const [stats, setStats] = useState<SugoiVNDBStats>(
     cachesStore.currentState().caches["SugoiVNDB"] || {}
   );
+  const [userState, setUserState] = useState(userStore.currentState());
   const [isLoading, setIsLoading] = useState(false);
+  useInitStore(userStore, setUserState);
   useFetchApi(
-    "/api/stats",
+    `/api/stats${
+      ["Admin", "Member", "Supporter"].includes(userState.role)
+        ? "?isMemberOnly=true"
+        : ""
+    }`,
     setStats,
     "SugoiVNDB",
-    [],
+    [userState.role],
     true,
     !cachesStore.currentState().caches["SugoiVNDB"],
     setIsLoading,
@@ -47,7 +55,7 @@ const Stats = () => {
       <div className="stats-wrapper">
         <div className="stats-item">
           <div>Translated Visual Novels</div>
-          <div>{stats?.mtledVNLength}</div>
+          <div>{stats?.mtledVNLength2}</div>
         </div>
         <div className="stats-item">
           <div>Released Patch</div>
