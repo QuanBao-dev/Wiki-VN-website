@@ -43,7 +43,7 @@ export const useInputChange = (
       )
       .subscribe((res) => {
         if (res && !res.error) {
-          console.log(inputRef.current.value);
+          // console.log(inputRef.current.value);
           if (inputRef.current.value === "") return;
           setSuggestionList(res as VisualNovel[]);
           updateCaches(res as any, "VNs");

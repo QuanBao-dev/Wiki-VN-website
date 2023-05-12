@@ -68,7 +68,7 @@ router.get("/", async (req, res) => {
   try {
     const response = (await axios.post("https://api.vndb.org/kana/vn", data))
       .data;
-    console.log(data);
+    // console.log(data);
     if (!isContainLastPage) {
       return res.send({
         message: parseData(response.results),

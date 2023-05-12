@@ -29,7 +29,6 @@ router.get("/", async (req, res) => {
       ]),
       patchModel.countDocuments(),
     ]);
-    console.log(mtledVNLength);
     res.send({
       message: {
         usersLength: users.length,
