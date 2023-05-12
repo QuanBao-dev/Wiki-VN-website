@@ -7,7 +7,11 @@ router.get("/", async (req, res) => {
     const [users, mtledVNLength, releases, mtledVNLength2] = await Promise.all([
       userModel.aggregate([{ $match: { isVerified: true, isNotSpam: true } }]),
       patchModel.aggregate([
-        { $match: !isMemberOnly ? { isMemberOnly } : {} },
+        {
+          $match: !isMemberOnly
+            ? { $or: [{ isMemberOnly: false }, { isMemberOnly: undefined }] }
+            : {},
+        },
         {
           $group: {
             _id: null,
