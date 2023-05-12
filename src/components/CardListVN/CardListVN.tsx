@@ -39,6 +39,7 @@ const CardListVN = () => {
   const [dbStats, setDbStats] = useState<Partial<Dbstats>>(
     cachesStore.currentState().caches.dbStats || {}
   );
+  const [homeStream, setHomeStream] = useState(homeStore.currentState());
 
   const [isLoading, setIsLoading] = useState(
     indexActive === 1
@@ -64,6 +65,7 @@ const CardListVN = () => {
     }
   }, []);
   useInitStore(userStore, setUserState);
+  useInitStore(homeStore, setHomeStream);
   useEffect(() => {
     const subscription = fromEvent(window, "resize")
       .pipe(debounceTime(500))
@@ -174,7 +176,7 @@ const CardListVN = () => {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, userState.role]);
+  }, [page, homeStream.stats.mtledVNLength]);
   useEffect(() => {
     if (indexActive === 1) {
       setPage(homeStore.currentState().page);
