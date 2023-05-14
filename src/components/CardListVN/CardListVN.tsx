@@ -120,10 +120,11 @@ const CardListVN = () => {
   );
 
   useFetchApi(
-    `/api/patch?page=${page}${"&isMemberOnly=true"
-      // ["Admin", "Member", "Supporter"].includes(userState.role)
-      //   ? "&isMemberOnly=true"
-      //   : ""
+    `/api/patch?page=${page}${
+      // "&isMemberOnly=true"
+      ["Admin", "Member", "Supporter"].includes(userState.role)
+        ? "&isMemberOnly=true"
+        : ""
     }`,
     setVisualNovelList,
     "VNs",

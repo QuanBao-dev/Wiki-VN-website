@@ -18,10 +18,11 @@ const Stats = () => {
   const [isLoading, setIsLoading] = useState(false);
   useInitStore(userStore, setUserState);
   useFetchApi(
-    `/api/stats${"?isMemberOnly=true"
-      // ["Admin", "Member", "Supporter"].includes(userState.role)
-      //   ? "?isMemberOnly=true"
-      //   : ""
+    `/api/stats${
+      // "?isMemberOnly=true"
+      ["Admin", "Member", "Supporter"].includes(userState.role)
+        ? "?isMemberOnly=true"
+        : ""
     }`,
     setStats,
     "SugoiVNDB",
