@@ -1117,7 +1117,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
               const boost =
                 parseInt(supporter.support_coffee_price) *
                 supporter.support_coffees;
-              if (user.role !== "Supporter") {
+              if (user.role !== "Supporter" || user.boost !== boost) {
                 let [userData, notification] = await Promise.all([
                   userModel.findOne({
                     userId: user.userId,
