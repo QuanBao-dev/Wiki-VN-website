@@ -5,7 +5,10 @@ export const parseDescription = (description: string) => {
     .replace(/(\[\/url)?\]\]/g, "[/url]]");
   if (description.match(/\[([ a-zA-Z0-9]+)?From/gi)) {
     const text = (description.match(/\[([ a-zA-Z0-9]+)?From/gi) as any)[0];
-    description = description.replace(/\[([ a-zA-Z0-9]+)?From/gi, text.replace("[","("));
+    description = description.replace(
+      /\[([ a-zA-Z0-9]+)?From/gi,
+      text.replace("[", "(")
+    );
   }
   return description
     .replace(/=(https:\/\/vndb\.org)?\/p/g, "=https://vndb.org/p")
@@ -17,5 +20,6 @@ export const parseDescription = (description: string) => {
     .replace(/\]/g, ">")
     .replace(/url=/g, 'a target="_blank" rel="noreferrer" href=')
     .replace(/<\/url>/g, "</a>")
-    .replace(/>>/g, ">)");
+    .replace(/>>/g, ">)")
+    .replace(/>$/g, ")");
 };

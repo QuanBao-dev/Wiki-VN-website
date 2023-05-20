@@ -16,6 +16,7 @@ import Gif from "../../components/Gif/Gif";
 import { useInitStore } from "../Hooks/useInitStore";
 import { interval, takeWhile } from "rxjs";
 import tags from "../../data/tags.json";
+import Characters from "../../components/Characters/Characters";
 const VoterList = React.lazy(
   () => import("../../components/VoterList/VoterList")
 );
@@ -152,7 +153,7 @@ const Detail = () => {
         <Popup
           title={"Thank you!"}
           description={
-            "If you like these free translation patches on this website and want to say thanks, or encourage me to do more, you can consider buying me a coffee! And If possible, please buy the game from SHOP to support the author of the game"
+            "If you like these free translation patches on this website and want to say thanks, or encourage me to do more, you can consider buying me a coffee! And If possible, please buy the game from SHOP to support the author of the game."
           }
           url={url}
           isHide={isHide}
@@ -633,6 +634,7 @@ const Detail = () => {
             <VoterList id={id} />
           </Suspense>
         )}
+        <Characters vnId={id as string} />
       </div>
     </div>
   );

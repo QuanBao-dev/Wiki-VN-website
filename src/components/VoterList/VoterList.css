@@ -29,6 +29,11 @@
   padding: 0 1rem;
 }
 
+.container-voter-item td::-webkit-scrollbar{
+  visibility: hidden;
+  height: 0;
+}
+
 .container-voter-item th{
   text-transform: uppercase;
 }

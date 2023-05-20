@@ -32,7 +32,6 @@ a{
   flex: 1 0 100%;
   align-items: flex-start;
   background-color: white;
-  overflow: hidden;
   padding-left: 0.3rem;
 }
 

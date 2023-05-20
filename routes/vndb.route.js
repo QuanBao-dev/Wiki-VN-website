@@ -283,6 +283,31 @@ router.get("/:vnId/relations", async (req, res) => {
     res.status(404).send({ error });
   }
 });
+router.get("/:vnId/characters", async (req, res) => {
+  const vnId = parseInt(req.params.vnId);
+  const page = +req.query.page;
+  const data = {
+    filters: ["vn", "=", ["id", "=", "v" + vnId]],
+    fields:
+      "id, name, original, vns.id, vns.spoiler, image.url, image.sexual, sex, vns.role, vns.title, vns.id, description, traits.name, traits.searchable, traits.name",
+    count: true,
+    page,
+  };
+  try {
+    const response = await axios.post(
+      "https://api.vndb.org/kana/character",
+      data
+    );
+    res.send({
+      message: {
+        data: response.data.results,
+        maxPage: Math.ceil(response.data.count / 10),
+      },
+    });
+  } catch (error) {
+    res.status(404).send({ error });
+  }
+});
 
 router.get("/:id", async (req, res) => {
   const { id } = req.params;

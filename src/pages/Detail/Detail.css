@@ -53,16 +53,16 @@ legend {
   color: red;
 }
 
-.image-wrapper .block-overlay div {
+.block-overlay div {
   font-weight: 600;
 }
 
-.image-wrapper .block-overlay .show-me-button {
+.block-overlay .show-me-button {
   color: blue;
   cursor: pointer;
 }
 
-.image-wrapper .block-overlay .show-me-button:hover {
+.block-overlay .show-me-button:hover {
   text-decoration: underline;
 }
 

@@ -2,7 +2,15 @@ import cachesStore from "../store/caches";
 
 export function updateCaches<T>(data: T[], type: string) {
   let { caches } = cachesStore.currentState();
-
+  if (typeof data === "number") {
+    caches = {
+      ...caches,
+      [type]: {
+        ...caches[type],
+        maxPage: data,
+      },
+    };
+  }
   if (type !== "VNs") {
     if ((data as any).id)
       caches = {
@@ -12,7 +20,7 @@ export function updateCaches<T>(data: T[], type: string) {
           [(data as any).id]: data,
         },
       };
-    else
+    else if (typeof data !== "number")
       caches = {
         ...caches,
         [type]: data,
@@ -47,7 +55,7 @@ export function updateCaches<T>(data: T[], type: string) {
   });
 }
 
-export function deleteCachesField(keyDelete:string) {
+export function deleteCachesField(keyDelete: string) {
   let { caches } = cachesStore.currentState();
   Object.keys(caches).forEach((key) => {
     if (key.includes(keyDelete)) delete caches[key];
