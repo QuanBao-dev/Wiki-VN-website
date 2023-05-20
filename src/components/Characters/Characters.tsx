@@ -59,7 +59,7 @@ const Characters = ({ vnId }: Props) => {
     `/api/vndb/${vnId}/characters?page=${pageActive}`,
     setCharacters,
     "characters" + vnId + "page" + pageActive,
-    [pageActive],
+    [pageActive, vnId],
     true,
     !(
       cachesStore.currentState().caches &&
@@ -78,7 +78,6 @@ const Characters = ({ vnId }: Props) => {
   if (!isLoading && characters.length === 0) {
     return <div></div>;
   }
-  console.log(characters);
   return (
     <fieldset
       className="characters-container-fieldset"
