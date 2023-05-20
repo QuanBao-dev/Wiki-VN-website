@@ -7,6 +7,7 @@ import { useFetchApi } from "../../pages/Hooks/useFetchApi";
 import { userStore } from "../../store/user";
 import Description from "../Description/Description";
 import cachesStore from "../../store/caches";
+import { Link } from "react-router-dom";
 
 interface Props {
   vnId: string;
@@ -77,6 +78,7 @@ const Characters = ({ vnId }: Props) => {
   if (!isLoading && characters.length === 0) {
     return <div></div>;
   }
+  console.log(characters);
   return (
     <fieldset
       className="characters-container-fieldset"
@@ -103,47 +105,64 @@ const Characters = ({ vnId }: Props) => {
         </button>
       )}
       {!isLoading &&
-        characters.map(({ name, image, original, id, description, traits }) => (
-          <div key={id} className="character-info">
-            <div className="image-character-container">
-              <ImageCharacterWrapper image={image} name={name} />
+        characters.map(
+          ({ name, image, original, id, description, traits, vns }) => (
+            <div key={id} className="character-info">
+              <div className="image-character-container">
+                <ImageCharacterWrapper image={image} name={name} />
+              </div>
+              <table className="information-character-container">
+                <thead>
+                  <tr>
+                    <th>Name:</th>
+                    <td>{name}</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>Original:</th>
+                    <td>{original}</td>
+                  </tr>
+                  {traits.length > 0 && (
+                    <tr>
+                      <th>Traits:</th>
+                      <td className="trait-list">
+                        {traits.map((trait) => (
+                          <div key={trait.id} className="trait">
+                            {trait.name}
+                          </div>
+                        ))}
+                      </td>
+                    </tr>
+                  )}
+                  {vns.length > 0 && (
+                    <tr>
+                      <th>VNs:</th>
+                      <td className="visual-novel-list">
+                        {vns.map(({ id, role, title }) => (
+                          <div key={id}>
+                            {(["primary","main"].includes(role) ? "" : role + " - ").replace(/side/g,"Side character")}
+                            <Link className="visual-novel" to={"/vns/" + id}>
+                              {title}
+                            </Link>
+                          </div>
+                        ))}
+                      </td>
+                    </tr>
+                  )}
+                  {description && (
+                    <tr>
+                      <th>Description:</th>
+                      <td className="description">
+                        <Description description={description} />
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
-            <table className="information-character-container">
-              <thead>
-                <tr>
-                  <th>Name:</th>
-                  <td>{name}</td>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th>Original:</th>
-                  <td>{original}</td>
-                </tr>
-                {traits.length > 0 && (
-                  <tr>
-                    <th>Traits:</th>
-                    <td className="trait-list">
-                      {traits.map((trait) => (
-                        <div key={trait.id} className="trait">
-                          {trait.name}
-                        </div>
-                      ))}
-                    </td>
-                  </tr>
-                )}
-                {description && (
-                  <tr>
-                    <th>Description:</th>
-                    <td className="description">
-                      <Description description={description} />
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        ))}
+          )
+        )}
       {isLoading && (
         <div
           style={{
