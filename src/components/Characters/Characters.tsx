@@ -139,20 +139,27 @@ const Characters = ({ vnId }: Props) => {
                     <tr>
                       <th>VNs:</th>
                       <td className="visual-novel-list">
-                        {vns.map(({ id, role, title }) => (
-                          <div key={id}>
-                            {(["primary", "main"].includes(role)
-                              ? ""
-                              : role + " - "
-                            ).replace(/side/g, "Side character")}
-                            <Link
-                              className="visual-novel"
-                              to={"/vns/" + id.replace("v", "")}
-                            >
-                              {title}
-                            </Link>
-                          </div>
-                        ))}
+                        <ul style={{ padding: 0, margin: 0 }}>
+                          {vns.map(({ id, role, title }) => (
+                            <li key={id}>
+                              <Link
+                                style={{
+                                  color:
+                                    role === "main"
+                                      ? "red"
+                                      : role === "primary"
+                                      ? "yellow"
+                                      : "",
+                                }}
+                                title={role}
+                                className="visual-novel"
+                                to={"/vns/" + id.replace("v", "")}
+                              >
+                                {title}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
                       </td>
                     </tr>
                   )}
