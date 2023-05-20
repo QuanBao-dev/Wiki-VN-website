@@ -208,8 +208,9 @@ function ImageCharacterWrapper({
   name: string;
 }) {
   const [isHidden, setIsHidden] = useState(
-    !!(image && image.sexual) && userStore.currentState().isFilterNsfw
+    image && image.sexual > 0.7 && userStore.currentState().isFilterNsfw
   );
+
   return (
     <div className="image-character-wrapper">
       <img
