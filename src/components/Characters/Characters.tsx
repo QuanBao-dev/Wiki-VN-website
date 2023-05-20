@@ -149,6 +149,8 @@ const Characters = ({ vnId }: Props) => {
                                       : role === "primary"
                                       ? "yellow"
                                       : "",
+                                  textShadow: "1px 1px black",
+                                  fontWeight: 600,
                                 }}
                                 title={role}
                                 className="visual-novel"
