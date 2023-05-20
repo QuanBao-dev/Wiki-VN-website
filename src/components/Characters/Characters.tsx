@@ -141,8 +141,14 @@ const Characters = ({ vnId }: Props) => {
                       <td className="visual-novel-list">
                         {vns.map(({ id, role, title }) => (
                           <div key={id}>
-                            {(["primary","main"].includes(role) ? "" : role + " - ").replace(/side/g,"Side character")}
-                            <Link className="visual-novel" to={"/vns/" + id}>
+                            {(["primary", "main"].includes(role)
+                              ? ""
+                              : role + " - "
+                            ).replace(/side/g, "Side character")}
+                            <Link
+                              className="visual-novel"
+                              to={"/vns/" + id.replace("v", "")}
+                            >
                               {title}
                             </Link>
                           </div>
