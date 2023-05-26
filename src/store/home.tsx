@@ -3,9 +3,11 @@ import { createStore } from "./createStore";
 interface HomeStore {
   lastPage: number;
   page: number;
+  pageExclusive: number;
   patchesPage: number;
   indexActive: number;
   indexPollModeActive: number;
+  indexUpdatedVNModeActive: number;
   maxVotes: number;
   maxVotesPersonalVN: number;
   isLoadingPersonalVN: boolean;
@@ -25,8 +27,10 @@ interface HomeStore {
 export const homeStore = createStore<HomeStore>({
   lastPage: 0,
   page: 0,
+  pageExclusive: 0,
   indexActive: 0,
   indexPollModeActive: 0,
+  indexUpdatedVNModeActive: 0,
   votesPageLowRank: 0,
   patchesPage: 0,
   stats: {
@@ -34,6 +38,7 @@ export const homeStore = createStore<HomeStore>({
     mtledVNLength: 0,
     mtledVNLength2: 0,
     releasesLength: 0,
+    mtledExclusiveVNLength: 0,
   },
   maxVotes: 0,
   maxVotesPersonalVN: 0,

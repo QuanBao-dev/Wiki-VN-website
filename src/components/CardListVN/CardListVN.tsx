@@ -25,6 +25,9 @@ const CardListVN = () => {
   const [indexPollModeActive, setIndexPollModeActive] = useState(
     homeStore.currentState().indexPollModeActive
   );
+  const [indexUpdatedVNModeActive, setIndexUpdatedVNModeActive] = useState(
+    homeStore.currentState().indexUpdatedVNModeActive
+  );
   const selectPageRef = useRef(document.createElement("select"));
   const [visualNovelList, setVisualNovelList] = useState<VisualNovel[] | []>(
     []
@@ -33,6 +36,11 @@ const CardListVN = () => {
   const [page, setPage] = useState(
     indexActive === 1
       ? homeStore.currentState().page
+      : indexUpdatedVNModeActive === 1 &&
+        !["Supporter", "Member", "Admin"].includes(
+          userStore.currentState().role
+        )
+      ? homeStore.currentState().pageExclusive
       : homeStore.currentState().patchesPage
   );
   const [triggerFetching, setTriggerFetching] = useState(true);
@@ -48,7 +56,13 @@ const CardListVN = () => {
       : cachesStore.currentState().caches.VNs &&
           !(
             Object.values(cachesStore.currentState().caches.VNs)
-              .filter((v: any) => v.isPatchContained)
+              .filter(
+                (v: any) =>
+                  v.isPatchContained &&
+                  (indexUpdatedVNModeActive === 1
+                    ? v.isExclusive === true
+                    : !v.isExclusive)
+              )
               .reduce((ans: any, curr: any) => {
                 ans[curr.index] = curr;
                 return ans;
@@ -125,16 +139,27 @@ const CardListVN = () => {
       ["Admin", "Member", "Supporter"].includes(userState.role)
         ? "&isMemberOnly=true"
         : ""
+    }${
+      indexUpdatedVNModeActive === 1 &&
+      !["Admin", "Member", "Supporter"].includes(userState.role)
+        ? "&isExclusive=true"
+        : ""
     }`,
     setVisualNovelList,
     "VNs",
-    [page, userState.role],
+    [page, userState.role, indexUpdatedVNModeActive],
     true,
     indexActive === 0 &&
       cachesStore.currentState().caches.VNs &&
       !(
         Object.values(cachesStore.currentState().caches.VNs)
-          .filter((v: any) => v.isPatchContained)
+          .filter(
+            (v: any) =>
+              v.isPatchContained &&
+              (indexUpdatedVNModeActive === 1
+                ? v.isExclusive === true
+                : !v.isExclusive)
+          )
           .reduce((ans: any, curr: any) => {
             ans[curr.index] = curr;
             return ans;
@@ -169,15 +194,26 @@ const CardListVN = () => {
         page,
       });
     } else {
-      homeStore.updateState({
-        lastPage: Math.ceil(
-          (homeStore.currentState().stats.mtledVNLength || 0) / 10
-        ),
-        patchesPage: page,
-      });
+      if (indexUpdatedVNModeActive === 1)
+        homeStore.updateState({
+          lastPage:
+            (homeStore.currentState().stats.mtledExclusiveVNLength || 0) / 10,
+          pageExclusive: page,
+        });
+      else
+        homeStore.updateState({
+          lastPage: Math.ceil(
+            (homeStore.currentState().stats.mtledVNLength || 0) / 10
+          ),
+          patchesPage: page,
+        });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, homeStream.stats.mtledVNLength]);
+  }, [
+    page,
+    homeStream.stats.mtledVNLength,
+    homeStream.stats.mtledExclusiveVNLength,
+  ]);
   useEffect(() => {
     if (indexActive === 1) {
       setPage(homeStore.currentState().page);
@@ -190,10 +226,23 @@ const CardListVN = () => {
       }
     }
     if (indexActive === 0) {
-      setPage(homeStore.currentState().patchesPage);
+      if (
+        indexUpdatedVNModeActive === 1 &&
+        !["Supporter", "Member", "Admin"].includes(
+          userStore.currentState().role
+        )
+      )
+        setPage(homeStore.currentState().pageExclusive);
+      else setPage(homeStore.currentState().patchesPage);
       if ((cachesStore.currentState() as any).caches.VNs) {
         const object = Object.values(cachesStore.currentState().caches.VNs)
-          .filter((v: any) => v.isPatchContained)
+          .filter(
+            (v: any) =>
+              v.isPatchContained &&
+              (indexUpdatedVNModeActive === 1
+                ? v.isExclusive === true
+                : !v.isExclusive)
+          )
           .reduce((ans: any, curr: any) => {
             ans[curr.index] = curr;
             return ans;
@@ -213,13 +262,23 @@ const CardListVN = () => {
     indexActive,
     indexPollModeActive,
     visualNovelList.length,
+    indexUpdatedVNModeActive,
   ]);
   let lastPage = 0;
   if (indexActive === 1) lastPage = Math.ceil(((dbStats.vn || 0) + 1646) / 10);
-  if (indexActive === 0)
-    lastPage = Math.ceil(
-      (homeStore.currentState().stats.mtledVNLength || 0) / 10
-    );
+  if (indexActive === 0) {
+    if (
+      indexUpdatedVNModeActive === 1 &&
+      !["Supporter", "Member", "Admin"].includes(userStore.currentState().role)
+    )
+      lastPage = Math.ceil(
+        (homeStore.currentState().stats.mtledExclusiveVNLength || 0) / 10
+      );
+    else
+      lastPage = Math.ceil(
+        (homeStore.currentState().stats.mtledVNLength || 0) / 10
+      );
+  }
   return (
     <div className="card-list-vn-container">
       <div>
@@ -272,6 +331,33 @@ const CardListVN = () => {
             Early access VNs
           </div> */}
         </div>
+        {!["Supporter", "Member", "Admin"].includes(
+          userStore.currentState().role
+        ) &&
+          indexActive === 0 && (
+            <div className="card-list-toggle-mode">
+              <div
+                className={indexUpdatedVNModeActive === 0 ? "active" : ""}
+                onClick={() => {
+                  setIndexUpdatedVNModeActive(0);
+                  homeStore.updateState({ indexUpdatedVNModeActive: 0 });
+                }}
+              >
+                Publish
+              </div>
+              <div
+                className={indexUpdatedVNModeActive === 1 ? "active" : ""}
+                onClick={() => {
+                  setIndexUpdatedVNModeActive(1);
+                  homeStore.updateState({
+                    indexUpdatedVNModeActive: 1,
+                  });
+                }}
+              >
+                Exclusive
+              </div>
+            </div>
+          )}
         {indexActive === 2 && (
           <div className="card-list-toggle-mode">
             <div

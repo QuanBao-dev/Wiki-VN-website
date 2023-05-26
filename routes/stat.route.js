@@ -4,13 +4,32 @@ const router = require("express").Router();
 router.get("/", async (req, res) => {
   const isMemberOnly = req.query.isMemberOnly === "true";
   try {
-    const [users, mtledVNLength, releases, mtledVNLength2] = await Promise.all([
+    const [
+      users,
+      mtledVNLength,
+      mtledExclusiveVNLength,
+      releases,
+      mtledVNLength2,
+    ] = await Promise.all([
       userModel.aggregate([{ $match: { isVerified: true, isNotSpam: true } }]),
       patchModel.aggregate([
         {
           $match: !isMemberOnly
             ? { $or: [{ isMemberOnly: false }, { isMemberOnly: undefined }] }
             : {},
+        },
+        {
+          $group: {
+            _id: null,
+            length: {
+              $sum: 1,
+            },
+          },
+        },
+      ]),
+      patchModel.aggregate([
+        {
+          $match: { isMemberOnly: true },
         },
         {
           $group: {
@@ -37,6 +56,7 @@ router.get("/", async (req, res) => {
       message: {
         usersLength: users.length,
         mtledVNLength: mtledVNLength[0].length,
+        mtledExclusiveVNLength: mtledExclusiveVNLength[0].length,
         releasesLength: releases[0].length,
         mtledVNLength2,
       },

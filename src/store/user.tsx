@@ -15,7 +15,8 @@ interface UserStore {
   discordUsername: string;
   isCoolDown: boolean;
   isFilterNsfw: boolean;
-  isShowNotiFilter: boolean
+  isExclusive: boolean;
+  isShowNotiFilter: boolean;
 }
 
 export const userStore = createStore<UserStore>({
@@ -24,6 +25,7 @@ export const userStore = createStore<UserStore>({
   username: "",
   role: "",
   trigger: true,
+  isExclusive: false,
   email: "",
   editMode: "username",
   isShowEditAccount: false,
@@ -34,5 +36,5 @@ export const userStore = createStore<UserStore>({
   discordUsername: "No username",
   isCoolDown: true,
   isFilterNsfw: true,
-  isShowNotiFilter: false
+  isShowNotiFilter: false,
 });

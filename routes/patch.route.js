@@ -35,11 +35,16 @@ const userModel = require("../models/user.model");
 route.get("/", async (req, res) => {
   const page = parseInt(req.query.page || 0);
   const isMemberOnly = req.query.isMemberOnly === "true";
+  const isExclusive = req.query.isExclusive === "true";
   try {
     const patches = await Patch.aggregate([
       {
         $match: !isMemberOnly
-          ? { $or: [{ isMemberOnly: false }, { isMemberOnly: undefined }] }
+          ? {
+              $or: isExclusive
+                ? [{ isMemberOnly: true }]
+                : [{ isMemberOnly: false }, { isMemberOnly: undefined }],
+            }
           : {},
       },
       {
@@ -56,7 +61,12 @@ route.get("/", async (req, res) => {
     res.send({
       message: patches.map((v, key) => {
         v.dataVN.createdAt = v.createdAt;
-        return { ...v.dataVN, isPatchContained: true, index: page * 10 + key };
+        return {
+          ...v.dataVN,
+          isPatchContained: true,
+          index: page * 10 + key,
+          isExclusive,
+        };
       }),
     });
   } catch (error) {
