@@ -19,7 +19,6 @@ const Stats = () => {
   useInitStore(userStore, setUserState);
   useFetchApi(
     `/api/stats${
-      // "?isMemberOnly=true"
       ["Admin", "Member", "Supporter"].includes(userState.role)
         ? "?isMemberOnly=true"
         : ""
