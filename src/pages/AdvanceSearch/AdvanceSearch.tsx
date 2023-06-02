@@ -3,7 +3,7 @@ import "./AdvanceSearch.css";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { debounceTime, fromEvent } from "rxjs";
-
+import Encoding from "encoding-japanese";
 import CardItemVN from "../../components/CardItemVN/CardItemVN";
 import CustomSelect2 from "../../components/CustomSelect2/CustomSelect2";
 import SkeletonLoading from "../../components/SkeletonLoading/SkeletonLoading";
@@ -159,7 +159,12 @@ const AdvanceSearch = () => {
   }, []);
 
   useEffect(() => {
-    inputSearchKeyRef.current.value = decodeURL(query.textSearch);
+    inputSearchKeyRef.current.value = Encoding.codeToString(
+      Encoding.convert(Encoding.urlDecode(decodeURL(query.textSearch)), {
+        from: "UTF8",
+        to: "UNICODE",
+      })
+    );
   }, [query.textSearch]);
   useEffect(() => {
     if (window.innerWidth > 1200) {

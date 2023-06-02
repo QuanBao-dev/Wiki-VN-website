@@ -614,10 +614,7 @@ const Detail = () => {
             <FormUpdateTranslatable dataVN={detailState} />
           </Suspense>
         )}
-        {(((!patch.linkDownloads || patch.linkDownloads.length === 0) &&
-          cachesState.caches["patches"] &&
-          !cachesState.caches["patches"].reason) ||
-          userStore.currentState().role === "Admin") && (
+        {cachesState.caches["patches"] && (
           <Suspense
             fallback={
               <div>

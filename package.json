@@ -6,6 +6,7 @@
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "@jsbits/add-months": "^1.1.2",
+    "@types/encoding-japanese": "^2.0.1",
     "@types/node": "^18.6.3",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
@@ -15,6 +16,7 @@
     "cookie": "^0.5.0",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.1",
+    "encoding-japanese": "^2.0.0",
     "express": "^4.18.1",
     "express-rate-limit": "^6.7.0",
     "joi": "^17.6.2",
