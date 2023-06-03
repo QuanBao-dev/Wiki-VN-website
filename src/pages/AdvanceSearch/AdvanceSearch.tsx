@@ -211,6 +211,13 @@ const AdvanceSearch = () => {
     0,
     numberOfColumn
   );
+  let vnListData = [] as VisualNovel[];
+  if ((vnList as any).maxPage) {
+    vnListData = Object.values(vnList);
+    vnListData = vnListData.slice(0, vnListData.length - 1);
+  } else {
+    vnListData = vnList;
+  }
   return (
     <div className="advance-search-container">
       <div className="advance-search-wrapper">
@@ -290,7 +297,7 @@ const AdvanceSearch = () => {
       <div className="card-list-vn" ref={cardListVnContainerRef}>
         {!isLoading2 &&
           vnList &&
-          vnList.map(
+          vnListData.map(
             ({ title, description, image, id, image_nsfw, screens }) => (
               <Suspense
                 key={id}
