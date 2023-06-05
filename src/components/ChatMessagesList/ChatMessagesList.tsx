@@ -3,6 +3,7 @@ import "./ChatMessagesList.css";
 import { ChatText } from "../../Interfaces/ChatText";
 import { userStore } from "../../store/user";
 import { parseDate } from "../../util/parseDate";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 interface Props {
   chatTexts: ChatText[];
@@ -58,7 +59,11 @@ const ChatMessagesList = ({ chatTexts, chatMessagesListRef }: Props) => {
             >
               <div className="text-message-info-container">
                 <span className="avatar-user">
-                  <img src={user.avatarImage || "/avatar.webp"} alt="" />
+                  <LazyLoadImage
+                    effect="opacity"
+                    src={user.avatarImage || "/avatar.webp"}
+                    alt=""
+                  />
                 </span>
                 <span
                   className="username"

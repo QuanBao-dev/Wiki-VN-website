@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { parseDescription } from "../../util/parseDescription";
 import { generateUnrepeatedRandomNumber } from "../../util/generateRandomNumber";
 import { userStore } from "../../store/user";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 interface Props extends VisualNovel {}
 const RandomVNItem = ({
@@ -47,7 +48,7 @@ const RandomVNItem = ({
       }}
     >
       <li className="random-vn-item" key={id}>
-        <img
+        <LazyLoadImage
           src={
             !image_nsfw || !userStore.currentState().isFilterNsfw
               ? image
@@ -57,7 +58,8 @@ const RandomVNItem = ({
               : "/nsfw-warning.webp"
           }
           alt=""
-        ></img>
+          effect="opacity"
+        />
         <h4>{title}</h4>
         <p ref={descriptionRef}></p>
       </li>

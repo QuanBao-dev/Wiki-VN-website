@@ -4,6 +4,7 @@ import { useFetchApi } from "../../pages/Hooks/useFetchApi";
 import { useInitStore } from "../../pages/Hooks/useInitStore";
 import { homeStore } from "../../store/home";
 import "./VoterList.css";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 interface Props {
   id?: string;
 }
@@ -55,7 +56,12 @@ const VoterList = ({ id }: Props) => {
                   <tr key={username} className="container-voter-item">
                     <td>
                       {avatarImage && (
-                        <img src={avatarImage} alt="" width={"40px"} />
+                        <LazyLoadImage
+                          src={avatarImage}
+                          alt=""
+                          width={"40px"}
+                          effect="opacity"
+                        />
                       )}
                       {!avatarImage && (
                         <img src={"/avatar.webp"} alt="" width={"40px"} />

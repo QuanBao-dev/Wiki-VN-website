@@ -8,6 +8,7 @@ import { userStore } from "../../store/user";
 import Description from "../Description/Description";
 import cachesStore from "../../store/caches";
 import { Link } from "react-router-dom";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 interface Props {
   vnId: string;
@@ -221,7 +222,8 @@ function ImageCharacterWrapper({
 
   return (
     <div className="image-character-wrapper">
-      <img
+      <LazyLoadImage
+        effect="opacity"
         style={{
           filter: isHidden ? "blur(10px)" : "",
         }}

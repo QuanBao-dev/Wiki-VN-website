@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { interval, takeWhile } from "rxjs";
 import { Screen } from "../../Interfaces/visualNovelList";
 import { generateUnrepeatedRandomNumber } from "../../util/generateRandomNumber";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 interface Props {
   screens: Partial<Screen>[];
@@ -30,17 +31,18 @@ const Gif = ({ screens, isNsfw = false }: Props) => {
   )
     return (
       <div>
-        <img src="/nsfw-warning.webp" alt="" />
+        <LazyLoadImage src="/nsfw-warning.webp" alt="" />
       </div>
     );
   return (
-    <img
+    <LazyLoadImage
+      effect="opacity"
       src={
         screens.filter(({ nsfw }) => (!isNsfw ? nsfw === isNsfw : true))[index]
           .image
       }
       alt=""
-    ></img>
+    />
   );
 };
 

@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { VisualNovel } from "../../Interfaces/visualNovelList";
 import { useInputChange } from "../../pages/Hooks/useInputChange";
 import { useInputKeydown } from "../../pages/Hooks/useInputKeydown";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 const SearchVN = () => {
   const inputSearchRef = useRef(document.createElement("input"));
@@ -45,7 +46,7 @@ const SearchVN = () => {
                   indexActive === key + 1 ? " active" : ""
                 }`}
               >
-                <img
+                <LazyLoadImage
                   src={
                     !suggestion.image_nsfw
                       ? suggestion.image
@@ -55,6 +56,7 @@ const SearchVN = () => {
                       : "/nsfw-warning.webp"
                   }
                   alt=""
+                  effect="opacity"
                 />
                 <div>
                   <h4>{(suggestion as any).title}</h4>

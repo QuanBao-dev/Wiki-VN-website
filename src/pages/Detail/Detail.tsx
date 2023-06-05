@@ -17,6 +17,7 @@ import { useInitStore } from "../Hooks/useInitStore";
 import { interval, takeWhile } from "rxjs";
 import tags from "../../data/tags.json";
 import Characters from "../../components/Characters/Characters";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 const VoterList = React.lazy(
   () => import("../../components/VoterList/VoterList")
 );
@@ -201,7 +202,8 @@ const Detail = () => {
         <h1 className="visual-novel-title">{detailState.title}</h1>
         <div className="detail-title-container">
           <div className="image-wrapper">
-            <img
+            <LazyLoadImage
+              effect="opacity"
               className={
                 detailState.image_nsfw &&
                 !isShowExplicitImage &&
@@ -211,7 +213,7 @@ const Detail = () => {
               }
               src={detailState.image}
               alt=""
-            ></img>
+            />
             {!isShowExplicitImage &&
               detailState.image_nsfw &&
               userStore.currentState().isFilterNsfw && (
@@ -396,7 +398,8 @@ const Detail = () => {
               {detailState.screens
                 .filter(({ nsfw }) => (filterMode === 0 ? !nsfw : true))
                 .map((screen, key) => (
-                  <img
+                  <LazyLoadImage
+                    effect="opacity"
                     key={key}
                     src={screen.image.replace("sf", "st")}
                     alt=""
@@ -484,7 +487,7 @@ const Detail = () => {
                         blackBackgroundRef.current.style.display = "block";
                       }, 100);
                     }}
-                  ></img>
+                  />
                 ))}
             </div>
           </fieldset>

@@ -17,6 +17,7 @@ import About from "./pages/About/About";
 import PasswordReset from "./pages/PasswordReset/PasswordReset";
 import UserLostPassword from "./pages/UserLostPassword/UserLostPassword";
 import AdvanceSearch from "./pages/AdvanceSearch/AdvanceSearch";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 const RandomVNList = React.lazy(
   () => import("./components/RandomVNList/RandomVNList")
@@ -161,7 +162,8 @@ function App() {
                     rel="noreferrer"
                   >
                     <h1>Join my Discord</h1>
-                    <img
+                    <LazyLoadImage
+                      effect="opacity"
                       src="https://media.discordapp.net/attachments/911517352418504707/1063951746436694076/62a07b53139aec4c1fd07771_discord-logo.png?width=1135&height=617"
                       alt=""
                     />
@@ -351,7 +353,8 @@ function App() {
                     rel="noreferrer"
                   >
                     <h1>Join my Discord</h1>
-                    <img
+                    <LazyLoadImage
+                      effect="opacity"
                       src="https://media.discordapp.net/attachments/911517352418504707/1063951746436694076/62a07b53139aec4c1fd07771_discord-logo.png?width=1135&height=617"
                       alt=""
                     />
@@ -425,7 +428,26 @@ function App() {
             />
           )}
           <Route path="/about" element={<About />}></Route>
-          <Route path="/search/" element={<AdvanceSearch />}></Route>
+          <Route
+            path="/search/"
+            element={
+              <Suspense
+                fallback={
+                  <h1 className="loading-3-dot">
+                    <i
+                      className="fas fa-spinner fa-pulse fa-5x"
+                      style={{
+                        display: "inline-block",
+                        margin: "auto",
+                      }}
+                    ></i>
+                  </h1>
+                }
+              >
+                <AdvanceSearch />
+              </Suspense>
+            }
+          ></Route>
         </Routes>
       </div>
     </BrowserRouter>

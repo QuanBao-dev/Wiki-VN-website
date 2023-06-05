@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 import { parseDescription } from "../../util/parseDescription";
 import { generateUnrepeatedRandomNumber } from "../../util/generateRandomNumber";
 import { userStore } from "../../store/user";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 interface Props extends VisualNovel {
   trigger: boolean;
   setTrigger: React.Dispatch<React.SetStateAction<boolean>>;
@@ -38,7 +39,8 @@ const CardItemVN = ({
       className="card-item-vn-container"
     >
       <div className="container-image-frame">
-        <img
+        <LazyLoadImage
+          effect="opacity"
           src={
             !isNsfw || !userStore.currentState().isFilterNsfw
               ? image
@@ -48,10 +50,10 @@ const CardItemVN = ({
               : "/nsfw-warning.webp"
           }
           alt=""
-          onLoad={() => {
+          afterLoad={() => {
             if (setTrigger) setTrigger(!trigger);
           }}
-        ></img>
+        />
       </div>
       <div className="card-item-vn-wrapper">
         <h1>{title}</h1>
