@@ -1,7 +1,8 @@
 .navbar-container{
-  position: sticky;
+  position: fixed;
   background-color: purple;
   top: 0;
+  width:100%;
   z-index:998;
   transition: 0.4s;
   transform: translateY(0);

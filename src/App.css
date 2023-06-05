@@ -33,6 +33,7 @@ a{
   align-items: flex-start;
   background-color: white;
   padding-left: 0.3rem;
+  margin-top: 30px;
 }
 
 .app-container{
