@@ -10,7 +10,6 @@ router.get("/", verifyRole("Admin", "Member"), async (req, res) => {
     const chatTexts = await chatTextModel.aggregate(
       [
         { $match: { type: type } },
-        { $sort: { createdAt: -1 } },
         {
           $group: {
             _id: { $toDate: "$createdAt" },
@@ -19,6 +18,7 @@ router.get("/", verifyRole("Admin", "Member"), async (req, res) => {
             createdAt: { $first: "$createdAt" },
           },
         },
+        { $sort: { _id: -1 } },
         { $skip: (page - 1) * 10 },
         { $limit: 10 },
         {

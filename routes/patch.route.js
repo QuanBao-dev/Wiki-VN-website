@@ -48,13 +48,13 @@ route.get("/", async (req, res) => {
               }
             : {},
         },
-        { $sort: { createdAt: -1 } },
         {
           $group: {
             _id: { $toDate: "$createdAt" },
             dataVN: { $first: "$dataVN" },
           },
         },
+        { $sort: { _id: -1 } },
         { $skip: 10 * page },
         { $limit: 10 },
       ],

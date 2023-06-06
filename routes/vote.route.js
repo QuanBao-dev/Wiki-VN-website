@@ -1,4 +1,3 @@
-const { default: mongoose } = require("mongoose");
 const { verifyRole } = require("../middlewares/verifyRole");
 const userModel = require("../models/user.model");
 const voteModel = require("../models/vote.model");
