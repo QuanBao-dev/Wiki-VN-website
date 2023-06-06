@@ -221,9 +221,7 @@ const AdvanceSearch = () => {
   return (
     <div className="advance-search-container">
       <div className="advance-search-wrapper">
-        <fieldset className="search-key-field" style={{
-          marginTop:40
-        }}>
+        <fieldset className="search-key-field">
           <legend className="label-select2">Search by key</legend>
           <div className="input-section-container">
             <input

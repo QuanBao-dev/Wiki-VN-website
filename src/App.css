@@ -33,12 +33,12 @@ a{
   align-items: flex-start;
   background-color: white;
   padding-left: 0.3rem;
-  margin-top: 30px;
 }
 
 .app-container{
   border-radius: 10px;
   box-shadow: 0 0 5px 1px rgb(155, 2, 155);
+  margin-top: 60px;
 }
 
 .app-container-2{

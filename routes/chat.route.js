@@ -7,30 +7,35 @@ router.get("/", verifyRole("Admin", "Member"), async (req, res) => {
   let page = req.query.page || 1;
   let type = req.query.type || "";
   try {
-    const chatTexts = await chatTextModel.aggregate([
-      { $match: { type: type } },
-      {
-        $group: {
-          _id: { $toDate: "$createdAt" },
-          text: { $first: "$text" },
-          userId: { $first: "$userId" },
-          createdAt: { $first: "$createdAt" },
+    const chatTexts = await chatTextModel.aggregate(
+      [
+        { $match: { type: type } },
+        { $sort: { createdAt: -1 } },
+        {
+          $group: {
+            _id: { $toDate: "$createdAt" },
+            text: { $first: "$text" },
+            userId: { $first: "$userId" },
+            createdAt: { $first: "$createdAt" },
+          },
         },
-      },
-      { $sort: { _id: -1 } },
-      { $skip: (page - 1) * 10 },
-      { $limit: 10 },
-      {
-        $lookup: {
-          from: "users",
-          localField: "userId",
-          foreignField: "userId",
-          as: "users",
+        { $skip: (page - 1) * 10 },
+        { $limit: 10 },
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "userId",
+            as: "users",
+          },
         },
-      },
-      { $sort: { createdAt: 1 } },
-      { $project: { text: 1, createdAt: 1, users: 1, _id: 0 } },
-    ]);
+        { $sort: { createdAt: 1 } },
+        { $project: { text: 1, createdAt: 1, users: 1, _id: 0 } },
+      ],
+      {
+        allowDiskUse: true,
+      }
+    );
     if (chatTexts.length === 0)
       return res.status(400).send({
         error: "Reached the last page",

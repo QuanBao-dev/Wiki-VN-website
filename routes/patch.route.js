@@ -37,26 +37,31 @@ route.get("/", async (req, res) => {
   const isMemberOnly = req.query.isMemberOnly === "true";
   const isExclusive = req.query.isExclusive === "true";
   try {
-    const patches = await Patch.aggregate([
-      {
-        $match: !isMemberOnly
-          ? {
-              $or: isExclusive
-                ? [{ isMemberOnly: true }]
-                : [{ isMemberOnly: false }, { isMemberOnly: undefined }],
-            }
-          : {},
-      },
-      {
-        $group: {
-          _id: { $toDate: "$createdAt" },
-          dataVN: { $first: "$dataVN" },
+    const patches = await Patch.aggregate(
+      [
+        {
+          $match: !isMemberOnly
+            ? {
+                $or: isExclusive
+                  ? [{ isMemberOnly: true }]
+                  : [{ isMemberOnly: false }, { isMemberOnly: undefined }],
+              }
+            : {},
         },
-      },
-      { $sort: { _id: -1 } },
-      { $skip: 10 * page },
-      { $limit: 10 },
-    ]);
+        { $sort: { createdAt: -1 } },
+        {
+          $group: {
+            _id: { $toDate: "$createdAt" },
+            dataVN: { $first: "$dataVN" },
+          },
+        },
+        { $skip: 10 * page },
+        { $limit: 10 },
+      ],
+      {
+        allowDiskUse: true,
+      }
+    );
 
     res.send({
       message: patches.map((v, key) => {

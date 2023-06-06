@@ -347,22 +347,33 @@ router.get("/:vnId/vote", async (req, res) => {
     const { vnId } = req.params;
     const page = req.query.page || 0;
     const [users, [{ length }]] = await Promise.all([
-      userModel.aggregate([
-        {
-          $match: {
-            votedVnIdList: parseInt(vnId),
-            isVerified: true,
-            isNotSpam: true,
-            boost: { $gte: 5 },
+      userModel.aggregate(
+        [
+          {
+            $match: {
+              votedVnIdList: parseInt(vnId),
+              isVerified: true,
+              isNotSpam: true,
+              boost: { $gte: 5 },
+            },
           },
-        },
-        { $sort: { boost: -1, _id: 1 } },
-        { $skip: 10 * parseInt(page) },
-        { $limit: 10 },
+          { $sort: { boost: -1, _id: 1 } },
+          { $skip: 10 * parseInt(page) },
+          { $limit: 10 },
+          {
+            $project: {
+              _id: 0,
+              avatarImage: 1,
+              username: 1,
+              role: 1,
+              boost: 1,
+            },
+          },
+        ],
         {
-          $project: { _id: 0, avatarImage: 1, username: 1, role: 1, boost: 1 },
-        },
-      ]),
+          allowDiskUse: true,
+        }
+      ),
       userModel.aggregate([
         {
           $match: {
@@ -647,27 +658,32 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
   let users, supporters, members, peopleFromKofi;
   if (!isFetchApiBMC) {
     [users, supporters, members, peopleFromKofi] = await Promise.all([
-      userModel.aggregate([
-        {
-          $project: {
-            _id: 0,
-            userId: 1,
-            email: 1,
-            username: 1,
-            createdAt: 1,
-            isVerified: 1,
-            isFreeAds: 1,
-            role: 1,
-            boost: 1,
-            votedVnIdList: 1,
-            isNotSpam: 1,
-            discordUsername: 1,
+      userModel.aggregate(
+        [
+          {
+            $sort: { createdAt: -1 },
           },
-        },
+          {
+            $project: {
+              _id: 0,
+              userId: 1,
+              email: 1,
+              username: 1,
+              createdAt: 1,
+              isVerified: 1,
+              isFreeAds: 1,
+              role: 1,
+              boost: 1,
+              votedVnIdList: 1,
+              isNotSpam: 1,
+              discordUsername: 1,
+            },
+          },
+        ],
         {
-          $sort: { createdAt: -1 },
-        },
-      ]),
+          allowDiskUse: true,
+        }
+      ),
       coffeeSupporterModel.find({}).sort({ support_created_on: -1 }).lean(),
       coffeeMemberModel
         .find({})
@@ -679,27 +695,32 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
     members = { data: members };
   } else {
     [users, supporters, members, peopleFromKofi] = await Promise.all([
-      userModel.aggregate([
-        {
-          $project: {
-            _id: 0,
-            userId: 1,
-            email: 1,
-            username: 1,
-            createdAt: 1,
-            isVerified: 1,
-            isFreeAds: 1,
-            role: 1,
-            boost: 1,
-            votedVnIdList: 1,
-            isNotSpam: 1,
-            discordUsername: 1,
+      userModel.aggregate(
+        [
+          {
+            $sort: { createdAt: -1 },
           },
-        },
+          {
+            $project: {
+              _id: 0,
+              userId: 1,
+              email: 1,
+              username: 1,
+              createdAt: 1,
+              isVerified: 1,
+              isFreeAds: 1,
+              role: 1,
+              boost: 1,
+              votedVnIdList: 1,
+              isNotSpam: 1,
+              discordUsername: 1,
+            },
+          },
+        ],
         {
-          $sort: { createdAt: -1 },
-        },
-      ]),
+          allowDiskUse: true,
+        }
+      ),
       getAllSupporters(lastPage),
       getAllSubscriptions(lastPage),
       coffeeModel.find({}).lean(),
