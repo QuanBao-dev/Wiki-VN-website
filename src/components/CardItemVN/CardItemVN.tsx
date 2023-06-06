@@ -1,12 +1,13 @@
-import "./CardItemVN.css";
+import './CardItemVN.css';
 
-import { Link } from "react-router-dom";
-import { VisualNovel } from "../../Interfaces/visualNovelList";
-import { useEffect, useRef } from "react";
-import { parseDescription } from "../../util/parseDescription";
-import { generateUnrepeatedRandomNumber } from "../../util/generateRandomNumber";
-import { userStore } from "../../store/user";
-import { LazyLoadImage } from "react-lazy-load-image-component";
+import { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
+
+import { VisualNovel } from '../../Interfaces/visualNovelList';
+import { userStore } from '../../store/user';
+import { generateUnrepeatedRandomNumber } from '../../util/generateRandomNumber';
+import { parseDescription } from '../../util/parseDescription';
+
 interface Props extends VisualNovel {
   trigger: boolean;
   setTrigger: React.Dispatch<React.SetStateAction<boolean>>;
@@ -39,8 +40,7 @@ const CardItemVN = ({
       className="card-item-vn-container"
     >
       <div className="container-image-frame">
-        <LazyLoadImage
-          effect="opacity"
+        <img
           src={
             !isNsfw || !userStore.currentState().isFilterNsfw
               ? image
@@ -50,7 +50,7 @@ const CardItemVN = ({
               : "/nsfw-warning.webp"
           }
           alt=""
-          afterLoad={() => {
+          onLoad={() => {
             if (setTrigger) setTrigger(!trigger);
           }}
         />
