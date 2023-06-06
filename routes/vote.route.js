@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const { verifyRole } = require("../middlewares/verifyRole");
 const userModel = require("../models/user.model");
 const voteModel = require("../models/vote.model");
@@ -9,55 +10,60 @@ router.get("/", async (req, res) => {
   const page = parseInt(req.query.page || 0);
   const isLowTier = req.query.isLowTier === "true";
   try {
-    let votes = await voteModel.aggregate([
-      { $match: { isTranslatable: true } },
-      {
-        $lookup: {
-          from: "users",
-          localField: "vnId",
-          foreignField: "votedVnIdList",
-          as: "votesData",
+    let votes = await voteModel.aggregate(
+      [
+        { $match: { isTranslatable: true } },
+        { $sort: { votes: -1, vnId: 1 } },
+        {
+          $lookup: {
+            from: "users",
+            localField: "vnId",
+            foreignField: "votedVnIdList",
+            as: "votesData",
+          },
         },
-      },
-      {
-        $project: {
-          _id: 0,
-          vnId: 1,
-          votesData: {
-            $filter: {
-              input: "$votesData",
-              cond: {
-                $and: [
-                  { $gte: ["$$this.boost", 5] },
-                  { $lte: ["$$this.boost", isLowTier ? 25 : 200] },
-                ],
+        {
+          $project: {
+            _id: 0,
+            vnId: 1,
+            votesData: {
+              $filter: {
+                input: "$votesData",
+                cond: {
+                  $and: [
+                    { $gte: ["$$this.boost", 5] },
+                    { $lte: ["$$this.boost", isLowTier ? 25 : 200] },
+                  ],
+                },
               },
             },
+            isTranslatable: 1,
+            dataVN: 1,
           },
-          isTranslatable: 1,
-          dataVN: 1,
         },
-      },
-      { $sort: { votes: -1, vnId: 1 } },
-      {
-        $project: {
-          _id: 0,
-          vnId: 1,
-          votes: {
-            $reduce: {
-              input: "$votesData",
-              initialValue: 0,
-              in: { $sum: ["$$value", "$$this.boost"] },
+        {
+          $project: {
+            _id: 0,
+            vnId: 1,
+            votes: {
+              $reduce: {
+                input: "$votesData",
+                initialValue: 0,
+                in: { $sum: ["$$value", "$$this.boost"] },
+              },
             },
+            isTranslatable: 1,
+            dataVN: 1,
           },
-          isTranslatable: 1,
-          dataVN: 1,
         },
-      },
-      { $sort: { votes: -1, vnId: 1 } },
-      { $skip: 10 * page },
-      { $limit: 10 },
-    ]);
+        { $sort: { votes: -1, vnId: 1 } },
+        { $skip: 10 * page },
+        { $limit: 10 },
+      ],
+      {
+        allowDiskUse: true,
+      }
+    );
     if (votes.filter((v) => v.votes !== 0).length === 0) {
       return res.status(400).send({ error: "It has reached its last page" });
     }
@@ -83,35 +89,42 @@ router.get(
         .findOne({ userId })
         .select({ _id: 0, votedVnIdList: 1 })
         .lean();
-      const votes = await voteModel.aggregate([
-        { $match: { vnId: { $in: votedVnIdList } } },
-        {
-          $lookup: {
-            from: "users",
-            localField: "vnId",
-            foreignField: "votedVnIdList",
-            as: "votesData",
-          },
-        },
-        {
-          $project: {
-            _id: 0,
-            vnId: 1,
-            votes: {
-              $reduce: {
-                input: "$votesData",
-                initialValue: 0,
-                in: { $sum: ["$$value", "$$this.boost"] },
+      const votes = await voteModel
+        .aggregate(
+          [
+            { $match: { vnId: { $in: votedVnIdList } } },
+            { $sort: { votes: -1, vnId: 1 } },
+            {
+              $lookup: {
+                from: "users",
+                localField: "vnId",
+                foreignField: "votedVnIdList",
+                as: "votesData",
               },
             },
-            isTranslatable: 1,
-            dataVN: 1,
-          },
-        },
-        { $sort: { votes: -1, vnId: 1 } },
-        { $skip: 10 * page },
-        { $limit: 10 },
-      ]);
+            {
+              $project: {
+                _id: 0,
+                vnId: 1,
+                votes: {
+                  $reduce: {
+                    input: "$votesData",
+                    initialValue: 0,
+                    in: { $sum: ["$$value", "$$this.boost"] },
+                  },
+                },
+                isTranslatable: 1,
+                dataVN: 1,
+              },
+            },
+            { $skip: 10 * page },
+            { $limit: 10 },
+          ],
+          {
+            allowDiskUse: true,
+          }
+        )
+        .allowDiskUse(true);
       if (votes.length === 0) {
         return res.status(400).send({ error: "It has reached its last page" });
       }
@@ -189,7 +202,7 @@ router.get("/:vnId", async (req, res) => {
       ]),
     ]);
     const validUsersLength = voters.reduce((ans, curr) => {
-      if(!curr.boost || curr.boost === 1) return ans;
+      if (!curr.boost || curr.boost === 1) return ans;
       ans += curr.boost;
       return ans;
     }, 0);
