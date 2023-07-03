@@ -113,6 +113,7 @@ router.post("/BMC/", async (req, res) => {
       default:
         break;
     }
+    await updateAllBMC(true, 1);
     res.send({ message: "Success" });
   } catch (error) {
     if (error) return res.status(400).send({ error });
