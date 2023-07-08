@@ -43,6 +43,8 @@ router.post("/BMC/", async (req, res) => {
         if (!coffeeMember) {
           const newCoffeeMember = new coffeeMemberModel(member);
           await newCoffeeMember.save();
+          await updateAllBMC(true, 1);
+          return res.send({ message: "Success" });      
         }
         coffeeMember.subscription_id = member.subscription_id;
         coffeeMember.subscription_cancelled_on =
@@ -86,6 +88,8 @@ router.post("/BMC/", async (req, res) => {
         if (!coffeeSupporter) {
           const newCoffeeSupporter = new coffeeSupporterModel(supporter);
           await newCoffeeSupporter.save();
+          await updateAllBMC(true, 1);
+          return res.send({ message: "Success" });
         }
         coffeeSupporter.support_id = supporter.support_id;
         coffeeSupporter.support_note = supporter.support_note;
