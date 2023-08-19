@@ -43,7 +43,7 @@ router.post("/BMC/", async (req, res) => {
         if (!coffeeMember) {
           const newCoffeeMember = new coffeeMemberModel(member);
           await newCoffeeMember.save();
-          await updateAllBMC(false, 1);
+          await updateAllBMC(false);
           return res.send({ message: "Success" });      
         }
         coffeeMember.subscription_id = member.subscription_id;
@@ -88,7 +88,7 @@ router.post("/BMC/", async (req, res) => {
         if (!coffeeSupporter) {
           const newCoffeeSupporter = new coffeeSupporterModel(supporter);
           await newCoffeeSupporter.save();
-          await updateAllBMC(false, 1);
+          await updateAllBMC(false);
           return res.send({ message: "Success" });
         }
         coffeeSupporter.support_id = supporter.support_id;
@@ -117,7 +117,7 @@ router.post("/BMC/", async (req, res) => {
       default:
         break;
     }
-    await updateAllBMC(false, 1);
+    await updateAllBMC(false);
     res.send({ message: "Success" });
   } catch (error) {
     if (error) return res.status(400).send({ error });
@@ -665,6 +665,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
   await deleteInactiveAccount();
   let users, supporters, members, peopleFromKofi;
   if (!isFetchApiBMC) {
+    console.log("no fetching")
     [users, supporters, members, peopleFromKofi] = await Promise.all([
       userModel.aggregate(
         [
@@ -702,6 +703,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
     supporters = { data: supporters };
     members = { data: members };
   } else {
+    console.log("fetching")
     [users, supporters, members, peopleFromKofi] = await Promise.all([
       userModel.aggregate(
         [
