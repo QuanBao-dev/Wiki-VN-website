@@ -45,6 +45,12 @@ router.post("/BMC/", async (req, res) => {
         member.subscription_current_period_start = new Date(
           data.current_period_start
         );
+        member.subscription_duration_type =
+          new Date(data.subscription_current_period_end).getFullYear() -
+            new Date(data.subscription_current_period_start).getFullYear() ===
+          1
+            ? "year"
+            : "";
         member.subscription_current_period_end = new Date(
           data.current_period_end
         );
