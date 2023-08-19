@@ -207,7 +207,7 @@ router.post("/kofi/", async (req, res) => {
 
 router.get("/", verifyRole("Admin"), async (req, res) => {
   try {
-    const finalResult = await updateAllBMC(true, 1);
+    const finalResult = await updateAllBMC(false);
     res.send({
       message: finalResult,
     });
