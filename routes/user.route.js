@@ -43,7 +43,7 @@ router.post("/BMC/", async (req, res) => {
         if (!coffeeMember) {
           const newCoffeeMember = new coffeeMemberModel(member);
           await newCoffeeMember.save();
-          await updateAllBMC(true, 1);
+          // await updateAllBMC(true, 1);
           return res.send({ message: "Success" });      
         }
         coffeeMember.subscription_id = member.subscription_id;
@@ -88,7 +88,7 @@ router.post("/BMC/", async (req, res) => {
         if (!coffeeSupporter) {
           const newCoffeeSupporter = new coffeeSupporterModel(supporter);
           await newCoffeeSupporter.save();
-          await updateAllBMC(true, 1);
+          // await updateAllBMC(true, 1);
           return res.send({ message: "Success" });
         }
         coffeeSupporter.support_id = supporter.support_id;
@@ -173,6 +173,10 @@ router.get("/", verifyRole("Admin"), async (req, res) => {
     console.log(error.message);
     try {
       const finalResult = await updateAllBMC();
+      // const coffeeMember = await coffeeMemberModel.findOne({payer_email:"spanishperson12@hotmail.com"});
+      // console.log(coffeeMember.subscription_current_period_start )
+      // coffeeMember.subscription_current_period_start = "2023-08-18 05:20:04"
+      // await coffeeMember.save();
       console.log("temporary");
       res.send({
         message: finalResult,
@@ -659,7 +663,6 @@ router.put(
 
 async function updateAllBMC(isFetchApiBMC, lastPage) {
   await deleteInactiveAccount();
-
   let users, supporters, members, peopleFromKofi;
   if (!isFetchApiBMC) {
     [users, supporters, members, peopleFromKofi] = await Promise.all([
