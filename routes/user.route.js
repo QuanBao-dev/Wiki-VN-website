@@ -33,6 +33,7 @@ const BuyMeCoffee = new BMC(process.env.SUGOICOFFEETOKEN);
 router.post("/BMC/", async (req, res) => {
   try {
     let { data } = req.body;
+    console.log(data);
     const { object, id } = data;
     switch (object) {
       case "membership":
