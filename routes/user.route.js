@@ -197,7 +197,7 @@ router.post("/kofi/", async (req, res) => {
     }
     coffee.url = data.url;
     await coffee.save();
-    await updateAllBMC(true, 1);
+    await updateAllBMC(false);
     res.send({ message: "Success" });
   } catch (error) {
     if (error) return res.status(400).send({ error: error.message });
@@ -298,7 +298,7 @@ router.post("/login", apiLimiter, async (req, res) => {
       return res.status(400).send({ error: "Email or Password is wrong" });
     }
     if (!user.isNotSpam || !user.isVerified) {
-      const allSupporters = (await updateAllBMC(true, 1))
+      const allSupporters = (await updateAllBMC(false))
         .filter(({ role }) => ["Member", "Supporter", "Admin"].includes(role))
         .map(({ email }) => email);
       if (!allSupporters.includes(user.email) && user.role !== "Admin") {
@@ -374,7 +374,7 @@ router.post("/register", apiLimiter, async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     newUser.password = await bcrypt.hash(password, salt);
     await newUser.save();
-    const allSupporters = (await updateAllBMC(true, 1))
+    const allSupporters = (await updateAllBMC(false))
       .filter(({ role }) => ["Member", "Supporter", "Admin"].includes(role))
       .map(({ email }) => email);
     if (!allSupporters.includes(newUser.email) && newUser.role !== "Admin") {
@@ -663,7 +663,7 @@ router.put(
         user.isNotSpam = false;
         await user.save();
         // await verifyEmailUser(user);
-        const allSupporters = (await updateAllBMC(true, 1))
+        const allSupporters = (await updateAllBMC(false))
           .filter(({ role }) => ["Member", "Supporter", "Admin"].includes(role))
           .map(({ email }) => email);
         if (!allSupporters.includes(user.email) && user.role !== "Admin") {
