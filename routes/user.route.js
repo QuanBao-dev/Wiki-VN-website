@@ -157,6 +157,7 @@ router.post("/BMC/", async (req, res) => {
     await updateAllBMC(false);
     res.send({ message: "Success" });
   } catch (error) {
+    console.log(error)
     if (error) return res.status(400).send({ error });
     res.status(404).send({ error: "Something went wrong" });
   }
