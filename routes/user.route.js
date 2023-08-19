@@ -43,7 +43,7 @@ router.post("/BMC/", async (req, res) => {
         if (!coffeeMember) {
           const newCoffeeMember = new coffeeMemberModel(member);
           await newCoffeeMember.save();
-          // await updateAllBMC(true, 1);
+          await updateAllBMC(false, 1);
           return res.send({ message: "Success" });      
         }
         coffeeMember.subscription_id = member.subscription_id;
@@ -88,7 +88,7 @@ router.post("/BMC/", async (req, res) => {
         if (!coffeeSupporter) {
           const newCoffeeSupporter = new coffeeSupporterModel(supporter);
           await newCoffeeSupporter.save();
-          // await updateAllBMC(true, 1);
+          await updateAllBMC(false, 1);
           return res.send({ message: "Success" });
         }
         coffeeSupporter.support_id = supporter.support_id;
@@ -117,7 +117,7 @@ router.post("/BMC/", async (req, res) => {
       default:
         break;
     }
-    // await updateAllBMC(true, 1);
+    await updateAllBMC(false, 1);
     res.send({ message: "Success" });
   } catch (error) {
     if (error) return res.status(400).send({ error });
