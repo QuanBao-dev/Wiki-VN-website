@@ -40,19 +40,23 @@ router.post("/BMC/", async (req, res) => {
         // const member = await BuyMeCoffee.Subscription(id);
         const member = {};
         member.subscription_id = data.id;
-        member.subscription_cancelled_on = new Date(data.canceled_at);
-        member.subscription_created_on = new Date(data.started_at);
+        member.subscription_cancelled_on = new Date(
+          data.canceled_at * 1000
+        ).toISOString();
+        member.subscription_created_on = new Date(
+          data.started_at * 1000
+        ).toISOString();
         member.subscription_current_period_start = new Date(
-          data.current_period_start
-        );
+          data.current_period_start * 1000
+        ).toISOString();
         member.subscription_duration_type =
-          new Date(data.subscription_current_period_end).getFullYear() -
-            new Date(data.subscription_current_period_start).getFullYear() ===
+          new Date(data.subscription_current_period_end*1000).getFullYear() -
+            new Date(data.subscription_current_period_start*1000).getFullYear() ===
           1
             ? "year"
             : "";
         member.subscription_current_period_end = new Date(
-          data.current_period_end
+          data.current_period_end*1000
         );
         member.subscription_coffee_price = data.amount;
         member.subscription_is_cancelled = data.canceled === "true";
@@ -112,8 +116,8 @@ router.post("/BMC/", async (req, res) => {
         supporter.support_note = data.support_note;
         supporter.support_coffees = parseInt(data.amount / 5);
         supporter.transaction_id = data.transaction_id;
-        supporter.support_created_on = new Date(data.created_at);
-        supporter.support_updated_on = new Date(data.created_at);
+        supporter.support_created_on = new Date(data.created_at).toISOString();
+        supporter.support_updated_on = new Date(data.created_at).toISOString();
         supporter.supporter_name = data.supporter_name;
         supporter.payer_name = data.supporter_name;
         supporter.payer_email = data.supporter_email;
@@ -157,7 +161,7 @@ router.post("/BMC/", async (req, res) => {
     await updateAllBMC(false);
     res.send({ message: "Success" });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     if (error) return res.status(400).send({ error });
     res.status(404).send({ error: "Something went wrong" });
   }
@@ -704,77 +708,75 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
   let users, supporters, members, peopleFromKofi;
   if (!isFetchApiBMC) {
     console.log("no fetching");
-    [users, supporters, members, peopleFromKofi] =
-      await Promise.all([
-        userModel.aggregate(
-          [
-            {
-              $sort: { createdAt: -1 },
-            },
-            {
-              $project: {
-                _id: 0,
-                userId: 1,
-                email: 1,
-                username: 1,
-                createdAt: 1,
-                isVerified: 1,
-                isFreeAds: 1,
-                role: 1,
-                boost: 1,
-                votedVnIdList: 1,
-                isNotSpam: 1,
-                discordUsername: 1,
-              },
-            },
-          ],
+    [users, supporters, members, peopleFromKofi] = await Promise.all([
+      userModel.aggregate(
+        [
           {
-            allowDiskUse: true,
-          }
-        ),
-        coffeeSupporterModel.find({}).sort({ support_created_on: -1 }).lean(),
-        coffeeMemberModel
-          .find({})
-          .sort({ subscription_current_period_start: -1 })
-          .lean(),
-        coffeeModel.find({}).lean(),
-      ]);
+            $sort: { createdAt: -1 },
+          },
+          {
+            $project: {
+              _id: 0,
+              userId: 1,
+              email: 1,
+              username: 1,
+              createdAt: 1,
+              isVerified: 1,
+              isFreeAds: 1,
+              role: 1,
+              boost: 1,
+              votedVnIdList: 1,
+              isNotSpam: 1,
+              discordUsername: 1,
+            },
+          },
+        ],
+        {
+          allowDiskUse: true,
+        }
+      ),
+      coffeeSupporterModel.find({}).sort({ support_created_on: -1 }).lean(),
+      coffeeMemberModel
+        .find({})
+        .sort({ subscription_current_period_start: -1 })
+        .lean(),
+      coffeeModel.find({}).lean(),
+    ]);
     supporters = { data: supporters };
     members = { data: members };
   } else {
     console.log("fetching");
-    [users, supporters, members, peopleFromKofi] =
-      await Promise.all([
-        userModel.aggregate(
-          [
-            {
-              $sort: { createdAt: -1 },
-            },
-            {
-              $project: {
-                _id: 0,
-                userId: 1,
-                email: 1,
-                username: 1,
-                createdAt: 1,
-                isVerified: 1,
-                isFreeAds: 1,
-                role: 1,
-                boost: 1,
-                votedVnIdList: 1,
-                isNotSpam: 1,
-                discordUsername: 1,
-              },
-            },
-          ],
+    [users, supporters, members, peopleFromKofi] = await Promise.all([
+      userModel.aggregate(
+        [
           {
-            allowDiskUse: true,
-          }
-        ),
-        getAllSupporters(lastPage),
-        getAllSubscriptions(lastPage),
-        coffeeModel.find({}).lean(),
-      ]);
+            $sort: { createdAt: -1 },
+          },
+          {
+            $project: {
+              _id: 0,
+              userId: 1,
+              email: 1,
+              username: 1,
+              createdAt: 1,
+              isVerified: 1,
+              isFreeAds: 1,
+              role: 1,
+              boost: 1,
+              votedVnIdList: 1,
+              isNotSpam: 1,
+              discordUsername: 1,
+            },
+          },
+        ],
+        {
+          allowDiskUse: true,
+        }
+      ),
+      getAllSupporters(lastPage),
+      getAllSubscriptions(lastPage),
+      coffeeModel.find({}).lean(),
+    ]);
     console.log("ok");
     let coffeeSupporters = await coffeeSupporterModel
       .find({})
