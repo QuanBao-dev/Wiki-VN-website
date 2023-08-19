@@ -157,7 +157,6 @@ router.post("/BMC/", async (req, res) => {
     await updateAllBMC(false);
     res.send({ message: "Success" });
   } catch (error) {
-    console.log(error)
     if (error) return res.status(400).send({ error });
     res.status(404).send({ error: "Something went wrong" });
   }
@@ -703,7 +702,8 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
   await deleteInactiveAccount();
   let users, supporters, members, peopleFromKofi;
   if (!isFetchApiBMC) {
-    console.log("no fetching")[(users, supporters, members, peopleFromKofi)] =
+    console.log("no fetching");
+    [users, supporters, members, peopleFromKofi] =
       await Promise.all([
         userModel.aggregate(
           [
@@ -741,7 +741,8 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
     supporters = { data: supporters };
     members = { data: members };
   } else {
-    console.log("fetching")[(users, supporters, members, peopleFromKofi)] =
+    console.log("fetching");
+    [users, supporters, members, peopleFromKofi] =
       await Promise.all([
         userModel.aggregate(
           [
