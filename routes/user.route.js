@@ -34,10 +34,29 @@ router.post("/BMC/", async (req, res) => {
   try {
     let { data } = req.body;
     console.log(data);
-    const { object, id } = data;
+    const { object } = data;
     switch (object) {
       case "membership":
-        const member = await BuyMeCoffee.Subscription(id);
+        // const member = await BuyMeCoffee.Subscription(id);
+        const member = {};
+        member.subscription_id = data.id;
+        member.subscription_cancelled_on = new Date(data.canceled_at);
+        member.subscription_created_on = new Date(data.started_at);
+        member.subscription_current_period_start = new Date(
+          data.current_period_start
+        );
+        member.subscription_current_period_end = new Date(
+          data.current_period_end
+        );
+        member.subscription_coffee_price = data.amount;
+        member.subscription_is_cancelled = data.canceled === "true";
+        member.subscription_is_cancelled_at_period_end =
+          data.cancel_at_period_end === "true";
+        member.subscription_currency = data.currency;
+        member.subscription_message = data.supporter_feedback;
+        member.message_visibility = !data.note_hidden;
+        member.payer_email = data.supporter_email;
+        member.payer_name = data.supporter_name;
         const coffeeMember = await coffeeMemberModel.findOne({
           payer_email: member.payer_email,
         });
@@ -45,7 +64,7 @@ router.post("/BMC/", async (req, res) => {
           const newCoffeeMember = new coffeeMemberModel(member);
           await newCoffeeMember.save();
           await updateAllBMC(false);
-          return res.send({ message: "Success" });      
+          return res.send({ message: "Success" });
         }
         coffeeMember.subscription_id = member.subscription_id;
         coffeeMember.subscription_cancelled_on =
@@ -82,7 +101,18 @@ router.post("/BMC/", async (req, res) => {
         await coffeeMember.save();
         break;
       case "payment":
-        const supporter = await BuyMeCoffee.Supporter(id);
+        const supporter = {};
+        supporter.support_id = data.id;
+        supporter.support_note = data.support_note;
+        supporter.support_coffees = parseInt(data.amount / 5);
+        supporter.transaction_id = data.transaction_id;
+        supporter.support_created_on = new Date(data.created_at);
+        supporter.support_updated_on = new Date(data.created_at);
+        supporter.supporter_name = data.supporter_name;
+        supporter.payer_name = data.supporter_name;
+        supporter.payer_email = data.supporter_email;
+        supporter.support_coffee_price = data.amount;
+        // const supporter = await BuyMeCoffee.Supporter(id);
         const coffeeSupporter = await coffeeSupporterModel.findOne({
           payer_email: supporter.payer_email,
         });
@@ -666,76 +696,76 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
   await deleteInactiveAccount();
   let users, supporters, members, peopleFromKofi;
   if (!isFetchApiBMC) {
-    console.log("no fetching")
-    [users, supporters, members, peopleFromKofi] = await Promise.all([
-      userModel.aggregate(
-        [
-          {
-            $sort: { createdAt: -1 },
-          },
-          {
-            $project: {
-              _id: 0,
-              userId: 1,
-              email: 1,
-              username: 1,
-              createdAt: 1,
-              isVerified: 1,
-              isFreeAds: 1,
-              role: 1,
-              boost: 1,
-              votedVnIdList: 1,
-              isNotSpam: 1,
-              discordUsername: 1,
+    console.log("no fetching")[(users, supporters, members, peopleFromKofi)] =
+      await Promise.all([
+        userModel.aggregate(
+          [
+            {
+              $sort: { createdAt: -1 },
             },
-          },
-        ],
-        {
-          allowDiskUse: true,
-        }
-      ),
-      coffeeSupporterModel.find({}).sort({ support_created_on: -1 }).lean(),
-      coffeeMemberModel
-        .find({})
-        .sort({ subscription_current_period_start: -1 })
-        .lean(),
-      coffeeModel.find({}).lean(),
-    ]);
+            {
+              $project: {
+                _id: 0,
+                userId: 1,
+                email: 1,
+                username: 1,
+                createdAt: 1,
+                isVerified: 1,
+                isFreeAds: 1,
+                role: 1,
+                boost: 1,
+                votedVnIdList: 1,
+                isNotSpam: 1,
+                discordUsername: 1,
+              },
+            },
+          ],
+          {
+            allowDiskUse: true,
+          }
+        ),
+        coffeeSupporterModel.find({}).sort({ support_created_on: -1 }).lean(),
+        coffeeMemberModel
+          .find({})
+          .sort({ subscription_current_period_start: -1 })
+          .lean(),
+        coffeeModel.find({}).lean(),
+      ]);
     supporters = { data: supporters };
     members = { data: members };
   } else {
-    console.log("fetching")
-    [users, supporters, members, peopleFromKofi] = await Promise.all([
-      userModel.aggregate(
-        [
-          {
-            $sort: { createdAt: -1 },
-          },
-          {
-            $project: {
-              _id: 0,
-              userId: 1,
-              email: 1,
-              username: 1,
-              createdAt: 1,
-              isVerified: 1,
-              isFreeAds: 1,
-              role: 1,
-              boost: 1,
-              votedVnIdList: 1,
-              isNotSpam: 1,
-              discordUsername: 1,
+    console.log("fetching")[(users, supporters, members, peopleFromKofi)] =
+      await Promise.all([
+        userModel.aggregate(
+          [
+            {
+              $sort: { createdAt: -1 },
             },
-          },
-        ],
-        {
-          allowDiskUse: true,
-        }
-      ),
-      getAllSupporters(lastPage),
-      getAllSubscriptions(lastPage),
-      coffeeModel.find({}).lean(),
-    ]);
+            {
+              $project: {
+                _id: 0,
+                userId: 1,
+                email: 1,
+                username: 1,
+                createdAt: 1,
+                isVerified: 1,
+                isFreeAds: 1,
+                role: 1,
+                boost: 1,
+                votedVnIdList: 1,
+                isNotSpam: 1,
+                discordUsername: 1,
+              },
+            },
+          ],
+          {
+            allowDiskUse: true,
+          }
+        ),
+        getAllSupporters(lastPage),
+        getAllSubscriptions(lastPage),
+        coffeeModel.find({}).lean(),
+      ]);
     console.log("ok");
     let coffeeSupporters = await coffeeSupporterModel
       .find({})
