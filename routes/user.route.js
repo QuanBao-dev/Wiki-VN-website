@@ -50,8 +50,8 @@ router.post("/BMC/", async (req, res) => {
           data.current_period_start * 1000
         ).toISOString();
         member.subscription_duration_type =
-          new Date(data.subscription_current_period_end*1000).getFullYear() -
-            new Date(data.subscription_current_period_start*1000).getFullYear() ===
+          new Date(data.current_period_end*1000).getFullYear() -
+            new Date(data.current_period_start*1000).getFullYear() ===
           1
             ? "year"
             : "";
@@ -215,10 +215,6 @@ router.get("/", verifyRole("Admin"), async (req, res) => {
     console.log(error.message);
     try {
       const finalResult = await updateAllBMC();
-      // const coffeeMember = await coffeeMemberModel.findOne({payer_email:"spanishperson12@hotmail.com"});
-      // console.log(coffeeMember.subscription_current_period_start )
-      // coffeeMember.subscription_current_period_start = "2023-08-18 05:20:04"
-      // await coffeeMember.save();
       console.log("temporary");
       res.send({
         message: finalResult,
