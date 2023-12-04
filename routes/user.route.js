@@ -50,13 +50,19 @@ router.post("/BMC/", async (req, res) => {
           data.current_period_start * 1000
         ).toISOString();
         member.subscription_duration_type =
-          new Date(data.current_period_end*1000).getFullYear() -
-            new Date(data.current_period_start*1000).getFullYear() ===
-          1
+          (new Date(data.current_period_end * 1000).getFullYear() -
+            new Date(data.current_period_start * 1000).getFullYear() &&
+            new Date()) === 1 &&
+          new Date(data.current_period_end * 1000).getMonth() -
+            new Date(data.current_period_start * 1000).getMonth() ===
+            0 &&
+          new Date(data.current_period_end * 1000).getDate() -
+            new Date(data.current_period_start * 1000).getDate() ===
+            0
             ? "year"
             : "";
         member.subscription_current_period_end = new Date(
-          data.current_period_end*1000
+          data.current_period_end * 1000
         );
         member.subscription_coffee_price = data.amount;
         member.subscription_is_cancelled = data.canceled === "true";
@@ -116,8 +122,12 @@ router.post("/BMC/", async (req, res) => {
         supporter.support_note = data.support_note;
         supporter.support_coffees = parseInt(data.amount / 5);
         supporter.transaction_id = data.transaction_id;
-        supporter.support_created_on = new Date(data.created_at*1000).toISOString();
-        supporter.support_updated_on = new Date(data.created_at*1000).toISOString();
+        supporter.support_created_on = new Date(
+          data.created_at * 1000
+        ).toISOString();
+        supporter.support_updated_on = new Date(
+          data.created_at * 1000
+        ).toISOString();
         supporter.supporter_name = data.supporter_name;
         supporter.payer_name = data.supporter_name;
         supporter.payer_email = data.supporter_email;
