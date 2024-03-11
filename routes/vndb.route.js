@@ -172,7 +172,6 @@ router.get("/producers/", async (req, res) => {
     }
   }
   try {
-    
     const response = (
       await axios.post("https://api.vndb.org/kana/producer", data)
     ).data;

@@ -56,7 +56,7 @@ const SkeletonLoading = ({
               attributeName="offset"
               values="-2; -2; 1"
               keyTimes="0; 0.25; 1"
-              dur="1.2s"
+              dur="0.2s"
               repeatCount="indefinite"
             ></animate>
           </stop>
@@ -71,7 +71,7 @@ const SkeletonLoading = ({
               attributeName="offset"
               values="-1; -1; 2"
               keyTimes="0; 0.25; 1"
-              dur="1.2s"
+              dur="0.1s"
               repeatCount="indefinite"
             ></animate>
           </stop>
@@ -88,7 +88,7 @@ const SkeletonLoading = ({
               attributeName="offset"
               values="0; 0; 3"
               keyTimes="0; 0.25; 1"
-              dur="1.2s"
+              dur="1s"
               repeatCount="indefinite"
             ></animate>
           </stop>
