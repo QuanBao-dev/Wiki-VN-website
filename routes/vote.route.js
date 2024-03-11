@@ -82,48 +82,46 @@ router.get(
   verifyRole("User", "Admin", "Member", "Supporter"),
   async (req, res) => {
     const { userId } = req.user;
-    const page = req.query.page || 0;
+    const page = parseInt(req.query.page || 0);
     try {
       const { votedVnIdList } = await userModel
         .findOne({ userId })
         .select({ _id: 0, votedVnIdList: 1 })
         .lean();
-      const votes = await voteModel
-        .aggregate(
-          [
-            { $match: { vnId: { $in: votedVnIdList } } },
-            { $sort: { votes: -1, vnId: 1 } },
-            {
-              $lookup: {
-                from: "users",
-                localField: "vnId",
-                foreignField: "votedVnIdList",
-                as: "votesData",
-              },
-            },
-            {
-              $project: {
-                _id: 0,
-                vnId: 1,
-                votes: {
-                  $reduce: {
-                    input: "$votesData",
-                    initialValue: 0,
-                    in: { $sum: ["$$value", "$$this.boost"] },
-                  },
-                },
-                isTranslatable: 1,
-                dataVN: 1,
-              },
-            },
-            { $skip: 10 * page },
-            { $limit: 10 },
-          ],
+      const votes = await voteModel.aggregate(
+        [
+          { $match: { vnId: { $in: votedVnIdList } } },
           {
-            allowDiskUse: true,
-          }
-        )
-        .allowDiskUse(true);
+            $lookup: {
+              from: "users",
+              localField: "vnId",
+              foreignField: "votedVnIdList",
+              as: "votesData",
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              vnId: 1,
+              votes: {
+                $reduce: {
+                  input: "$votesData",
+                  initialValue: 0,
+                  in: { $sum: ["$$value", "$$this.boost"] },
+                },
+              },
+              isTranslatable: 1,
+              dataVN: 1,
+            },
+          },
+          { $sort: { votes: -1 } },
+          { $skip: 10 * page },
+          { $limit: 10 },
+        ],
+        {
+          allowDiskUse: true,
+        }
+      );
       if (votes.length === 0) {
         return res.status(400).send({ error: "It has reached its last page" });
       }
