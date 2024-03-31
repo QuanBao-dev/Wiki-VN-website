@@ -164,7 +164,7 @@ function App() {
                     <h1>Join my Discord</h1>
                     <LazyLoadImage
                       effect="opacity"
-                      src="https://media.discordapp.net/attachments/911517352418504707/1063951746436694076/62a07b53139aec4c1fd07771_discord-logo.png?width=1135&height=617"
+                      src="/background.jpg"
                       alt=""
                     />
                   </a>
@@ -355,7 +355,7 @@ function App() {
                     <h1>Join my Discord</h1>
                     <LazyLoadImage
                       effect="opacity"
-                      src="https://media.discordapp.net/attachments/911517352418504707/1063951746436694076/62a07b53139aec4c1fd07771_discord-logo.png?width=1135&height=617"
+                      src="/background.jpg"
                       alt=""
                     />
                   </a>
