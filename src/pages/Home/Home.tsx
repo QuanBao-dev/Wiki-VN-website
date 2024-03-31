@@ -1,10 +1,10 @@
-import './Home.css';
+import "./Home.css";
 
-import React, { Suspense, useEffect } from 'react';
-import { fromEvent } from 'rxjs';
+import React, { Suspense, useEffect } from "react";
+import { fromEvent } from "rxjs";
 
-import SkeletonLoading from '../../components/SkeletonLoading/SkeletonLoading';
-import { homeStore } from '../../store/home';
+import SkeletonLoading from "../../components/SkeletonLoading/SkeletonLoading";
+import { homeStore } from "../../store/home";
 
 const SearchVN = React.lazy(() => import("../../components/SearchVN/SearchVN"));
 const CardListVN = React.lazy(

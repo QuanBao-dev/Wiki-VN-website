@@ -18,83 +18,23 @@ const SkeletonLoading = ({
     return LoadingComponent;
   }
   return (
-    <svg
-      aria-labelledby="3sbdhl-aria"
-      role="img"
+    <section
+      className="box"
       style={{
-        height: height,
-        width: width,
-        borderRadius: 10,
-        margin: margin,
+        width,
+        height,
+        margin,
       }}
     >
-      <title id="3sbdhl-aria">Loading...</title>
-      <rect
-        role="presentation"
-        x="0"
-        y="0"
-        width="100%"
-        height="100%"
-        clipPath="url(#3sbdhl-diff)"
-        style={{ fill: 'url("#3sbdhl-animated-diff")' }}
-      ></rect>
-      <defs>
-        <clipPath id="3sbdhl-diff">
-          <rect x="0" y="0" width="100%" height="100%"></rect>
-        </clipPath>
-        <linearGradient id="3sbdhl-animated-diff">
-          <stop
-            offset="0%"
-            stopColor={
-              !userStore.currentState().isDarkMode
-                ? "#f5f6f7"
-                : "rgb(39, 42, 85)"
-            }
-            stopOpacity="1"
-          >
-            <animate
-              attributeName="offset"
-              values="-2; -2; 1"
-              keyTimes="0; 0.25; 1"
-              dur="0.2s"
-              repeatCount="indefinite"
-            ></animate>
-          </stop>
-          <stop
-            offset="50%"
-            stopColor={
-              !userStore.currentState().isDarkMode ? "#eee" : "rgb(88, 95, 184)"
-            }
-            stopOpacity="1"
-          >
-            <animate
-              attributeName="offset"
-              values="-1; -1; 2"
-              keyTimes="0; 0.25; 1"
-              dur="0.1s"
-              repeatCount="indefinite"
-            ></animate>
-          </stop>
-          <stop
-            offset="100%"
-            stopColor={
-              !userStore.currentState().isDarkMode
-                ? "#f5f6f7"
-                : "rgb(39, 42, 85)"
-            }
-            stopOpacity="1"
-          >
-            <animate
-              attributeName="offset"
-              values="0; 0; 3"
-              keyTimes="0; 0.25; 1"
-              dur="1s"
-              repeatCount="indefinite"
-            ></animate>
-          </stop>
-        </linearGradient>
-      </defs>
-    </svg>
+      <div
+        className="skeleton-placeholder"
+        style={{
+          background: !userStore.currentState().isDarkMode
+            ? "linear-gradient(90deg, #e8e8e8, #f8f8f8, #e8e8e8)"
+            : "linear-gradient(90deg, #5757a3, #00000052, #5757a3)",
+        }}
+      />
+    </section>
   );
 };
 
