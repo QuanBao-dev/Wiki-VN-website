@@ -216,7 +216,7 @@ function ImageCharacterWrapper({
   image: { sexual: number; url: string };
   name: string;
 }) {
-  const [isHidden, setIsHidden] = useState(
+  const [isHidden] = useState(
     image && image.sexual > 0.7 && userStore.currentState().isFilterNsfw
   );
 
@@ -230,7 +230,7 @@ function ImageCharacterWrapper({
         src={image ? image.url : "/avatar.webp"}
         alt={name}
       />
-      {isHidden && (
+      {/* {isHidden && (
         <div className="block-overlay">
           <div>NSFW Image (18+)</div>
           <div
@@ -242,7 +242,7 @@ function ImageCharacterWrapper({
             Show me anyway
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

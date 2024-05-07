@@ -2,22 +2,23 @@
 import "./Detail.css";
 
 import React, { Suspense, useEffect, useRef, useState } from "react";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 import { Link, useParams } from "react-router-dom";
+import { interval, takeWhile } from "rxjs";
 
+import Characters from "../../components/Characters/Characters";
+import Gif from "../../components/Gif/Gif";
+import Popup from "../../components/Popup/Popup";
+import Votes from "../../components/Votes/Votes";
+import tags from "../../data/tags.json";
 import { Patch } from "../../Interfaces/patch";
 import { VisualNovel } from "../../Interfaces/visualNovelList";
 import cachesStore from "../../store/caches";
+import { userStore } from "../../store/user";
 import { parseDescription } from "../../util/parseDescription";
 import { useFetchApi } from "../Hooks/useFetchApi";
-import Votes from "../../components/Votes/Votes";
-import { userStore } from "../../store/user";
-import Popup from "../../components/Popup/Popup";
-import Gif from "../../components/Gif/Gif";
 import { useInitStore } from "../Hooks/useInitStore";
-import { interval, takeWhile } from "rxjs";
-import tags from "../../data/tags.json";
-import Characters from "../../components/Characters/Characters";
-import { LazyLoadImage } from "react-lazy-load-image-component";
+
 const VoterList = React.lazy(
   () => import("../../components/VoterList/VoterList")
 );
@@ -44,10 +45,8 @@ const convertObject = {
 };
 const Detail = () => {
   const { id } = useParams();
-  const [filterMode, setFilterMode] = useState(
-    userStore.currentState().isFilterNsfw ? 0 : 1
-  );
-  const [isShowExplicitImage, setIsShowExplicitImage] = useState(false);
+  const [filterMode] = useState(userStore.currentState().isFilterNsfw ? 0 : 1);
+  const [isShowExplicitImage] = useState(false);
   const [trigger, setTrigger] = useState(true);
   const [url, setUrl] = useState("");
   const [isHide, setIsHide] = useState(true);
@@ -153,9 +152,7 @@ const Detail = () => {
       {!errorPatch && (
         <Popup
           title={"Thank you!"}
-          description={
-            "If you like these free translation patches on this website and want to say thanks, or encourage me to do more, you can consider buying me a coffee! And If possible, please buy the game from SHOP to support the author of the game."
-          }
+          description={`If you like these translation patches on this website and want to say thanks, or encourage me to do more, you can consider buying me a coffee!`}
           url={url}
           isHide={isHide}
           setIsHide={setIsHide}
@@ -204,17 +201,26 @@ const Detail = () => {
           <div className="image-wrapper">
             <LazyLoadImage
               effect="opacity"
-              className={
+              // className={
+              //   detailState.image_nsfw &&
+              //   !isShowExplicitImage &&
+              //   userStore.currentState().isFilterNsfw
+              //     ? "nsfw"
+              //     : ""
+              // }
+              src={
                 detailState.image_nsfw &&
                 !isShowExplicitImage &&
                 userStore.currentState().isFilterNsfw
-                  ? "nsfw"
-                  : ""
+                  ? detailState.screens &&
+                    detailState.screens.filter(({ nsfw }) => !nsfw)[0]
+                    ? detailState.screens.filter(({ nsfw }) => !nsfw)[0].image
+                    : "/nsfw-warning.webp"
+                  : detailState.image
               }
-              src={detailState.image}
               alt=""
             />
-            {!isShowExplicitImage &&
+            {/* {!isShowExplicitImage &&
               detailState.image_nsfw &&
               userStore.currentState().isFilterNsfw && (
                 <div className="block-overlay">
@@ -226,7 +232,7 @@ const Detail = () => {
                     Show me anyway
                   </div>
                 </div>
-              )}
+              )} */}
           </div>
           <fieldset className="detail-title-table-info-container">
             <legend>Information</legend>
@@ -376,7 +382,7 @@ const Detail = () => {
         {detailState.screens && detailState.screens.length > 0 && (
           <fieldset>
             <legend>Screenshots</legend>
-            {detailState.screens.filter(({ nsfw }) => nsfw).length > 0 && (
+            {/* {detailState.screens.filter(({ nsfw }) => nsfw).length > 0 && (
               <div className="mode-filter-screenshots">
                 <div
                   className={filterMode === 0 ? "active" : ""}
@@ -393,7 +399,7 @@ const Detail = () => {
                   {detailState.screens.filter(({ nsfw }) => nsfw).length})
                 </div>
               </div>
-            )}
+            )} */}
             <div className="screenshots-container">
               {detailState.screens
                 .filter(({ nsfw }) => (filterMode === 0 ? !nsfw : true))
@@ -492,42 +498,50 @@ const Detail = () => {
             </div>
           </fieldset>
         )}
-        {patch.affiliateLinks && patch.affiliateLinks.length > 0 && (
-          <fieldset>
-            <legend>Shop</legend>
-            {patch.affiliateLinks.map((data, key) => (
-              <a
-                key={key}
-                rel="noopener sponsored"
-                href={data.url}
-                target="_blank"
-                className="affiliate-link-item target_type"
-              >
-                {detailState.screens && detailState.screens.length <= 1 && (
-                  <img
-                    src={
-                      !detailState.image_nsfw ||
-                      !userStore.currentState().isFilterNsfw
-                        ? detailState.image
-                        : detailState.screens &&
-                          detailState.screens.filter(({ nsfw }) => !nsfw)[0]
-                        ? detailState.screens.filter(({ nsfw }) => !nsfw)[0]
-                            .image
-                        : isShowExplicitImage
-                        ? detailState.image
-                        : "/nsfw-warning.webp"
-                    }
-                    alt={""}
-                  ></img>
-                )}
-                {detailState.screens && detailState.screens.length > 1 && (
-                  <Gif screens={detailState.screens} isNsfw={filterMode > 0} />
-                )}
-                <label htmlFor="">{data.label}</label>
-              </a>
-            ))}
-          </fieldset>
-        )}
+        {patch.affiliateLinks &&
+          patch.affiliateLinks.filter(
+            (data) => data.label.toLowerCase() === "dlsite"
+          ).length > 0 && (
+            <fieldset>
+              <legend>Shop</legend>
+              {patch.affiliateLinks
+                .filter((data) => data.label.toLowerCase() === "dlsite")
+                .map((data, key) => (
+                  <a
+                    key={key}
+                    rel="noopener sponsored"
+                    href={data.url}
+                    target="_blank"
+                    className="affiliate-link-item target_type"
+                  >
+                    {detailState.screens && detailState.screens.length <= 1 && (
+                      <img
+                        src={
+                          !detailState.image_nsfw ||
+                          !userStore.currentState().isFilterNsfw
+                            ? detailState.image
+                            : detailState.screens &&
+                              detailState.screens.filter(({ nsfw }) => !nsfw)[0]
+                            ? detailState.screens.filter(({ nsfw }) => !nsfw)[0]
+                                .image
+                            : isShowExplicitImage
+                            ? detailState.image
+                            : "/nsfw-warning.webp"
+                        }
+                        alt={""}
+                      ></img>
+                    )}
+                    {detailState.screens && detailState.screens.length > 1 && (
+                      <Gif
+                        screens={detailState.screens}
+                        isNsfw={filterMode > 0}
+                      />
+                    )}
+                    <label htmlFor="">{data.label}</label>
+                  </a>
+                ))}
+            </fieldset>
+          )}
         {patch && patch.linkDownloads && patch.linkDownloads.length > 0 && (
           <fieldset className="release-container">
             {userStore.currentState().role === "Admin" && (
