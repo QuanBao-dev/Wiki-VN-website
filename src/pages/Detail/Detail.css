@@ -72,7 +72,7 @@ legend {
 }
 
 .detail-title-container img.nsfw {
-  filter: blur(10px);
+  filter: blur(30px);
 }
 
 .detail-title-wrapper {

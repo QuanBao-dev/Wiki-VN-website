@@ -87,7 +87,7 @@ const NavBar = () => {
             email: "",
             trigger: !userStore.currentState().trigger,
           });
-          cachesStore.updateState({caches:{}})
+          cachesStore.updateState({ caches: {} });
         }
       });
     return () => {
@@ -193,7 +193,7 @@ const NavBar = () => {
             {!userState.isDarkMode && <span>🌜</span>}
             {userState.isDarkMode && <span>🌞</span>}
           </div>
-          <div className="link-account-setting">
+          {/* <div className="link-account-setting">
             {!userStore.currentState().isFilterNsfw && (
               <i
                 className="fas fa-toggle-on"
@@ -214,12 +214,12 @@ const NavBar = () => {
                 className="fas fa-toggle-off"
                 onClick={() => {
                   userStore.updateState({
-                    isShowNotiFilter: true,
+                    isShowNotiFilter: false,
                   });
                 }}
               ></i>
             )}
-          </div>
+          </div> */}
           {userState.role === "" && !isHide && (
             <NavLink
               className="right-side-link"
@@ -316,7 +316,7 @@ const NavBar = () => {
               target={"_blank"}
               rel="noreferrer"
             >
-              <span style={{fontSize:"1rem"}}>Buy SVN a Coffee</span>
+              <span style={{ fontSize: "1rem" }}>Buy SVN a Coffee</span>
               <Donate color={"#FFDD00"} />
             </a>
           )}
