@@ -60,10 +60,14 @@ const NavBar = () => {
         window.localStorage.getItem("isDarkModeSVN") || "false"
       ),
     });
+    // userStore.updateState({
+    //   isFilterNsfw: JSON.parse(
+    //     // window.localStorage.getItem("isFilterNsfwSVN") || "true"
+    //     "false"
+    //   ),
+    // });
     userStore.updateState({
-      isFilterNsfw: JSON.parse(
-        window.localStorage.getItem("isFilterNsfwSVN") || "true"
-      ),
+      isFilterNsfw: true,
     });
     const subscription = fromEvent(logoutButtonRef.current, "click")
       .pipe(
