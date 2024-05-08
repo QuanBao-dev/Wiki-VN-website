@@ -32,6 +32,7 @@ const NavBar = () => {
   const [isHide, setIsHide] = useState(false);
   useInitStore(userStore, setUserState);
   useEffect(() => {
+    window.localStorage.setItem("isFilterNsfwSVN", "true");
     const subscription = timer(0)
       .pipe(
         switchMap(() =>
