@@ -32,7 +32,7 @@ const PopupNotification = ({ title, message, isNoFetch }: Props) => {
       if (!v.error) {
         popupNotificationContainerRef.current.style.display = "none";
         userStore.updateState({
-          isFilterNsfw: false,
+          isFilterNsfw: true,
           isShowNotiFilter: false,
         });
         window.localStorage.setItem(
