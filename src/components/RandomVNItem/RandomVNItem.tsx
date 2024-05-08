@@ -55,7 +55,7 @@ const RandomVNItem = ({
               : screens &&
                 screens.filter(({ nsfw }) => !nsfw)[randomRef.current]
               ? screens.filter(({ nsfw }) => !nsfw)[randomRef.current].image
-              : "/nsfw-warning.webp"
+              : "/background.jpg"
           }
           alt=""
           effect="opacity"

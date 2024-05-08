@@ -32,7 +32,7 @@ const RankingVNItem = ({
               ? image
               : screens && screens.filter(({ nsfw }) => !nsfw)[0]
               ? screens.filter(({ nsfw }) => !nsfw)[0].image
-              : "/nsfw-warning.webp"
+              : "/background.jpg"
           }
           alt=""
         />

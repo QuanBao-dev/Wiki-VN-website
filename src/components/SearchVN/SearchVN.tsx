@@ -53,7 +53,7 @@ const SearchVN = () => {
                       : suggestion.screens &&
                         suggestion.screens.filter(({ nsfw }) => !nsfw)[0]
                       ? suggestion.screens.filter(({ nsfw }) => !nsfw)[0].image
-                      : "/nsfw-warning.webp"
+                      : "/background.jpg"
                   }
                   alt=""
                   effect="opacity"

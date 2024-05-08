@@ -1,12 +1,12 @@
-import './CardItemVN.css';
+import "./CardItemVN.css";
 
-import { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 
-import { VisualNovel } from '../../Interfaces/visualNovelList';
-import { userStore } from '../../store/user';
-import { generateUnrepeatedRandomNumber } from '../../util/generateRandomNumber';
-import { parseDescription } from '../../util/parseDescription';
+import { VisualNovel } from "../../Interfaces/visualNovelList";
+import { userStore } from "../../store/user";
+import { generateUnrepeatedRandomNumber } from "../../util/generateRandomNumber";
+import { parseDescription } from "../../util/parseDescription";
 
 interface Props extends VisualNovel {
   trigger: boolean;
@@ -35,10 +35,7 @@ const CardItemVN = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [description]);
   return (
-    <Link
-      to={`/vns/${id}`}
-      className="card-item-vn-container"
-    >
+    <Link to={`/vns/${id}`} className="card-item-vn-container">
       <div className="container-image-frame">
         <img
           src={
@@ -47,7 +44,7 @@ const CardItemVN = ({
               : screens &&
                 screens.filter(({ nsfw }) => !nsfw)[randomRef.current]
               ? screens.filter(({ nsfw }) => !nsfw)[randomRef.current].image
-              : "/nsfw-warning.webp"
+              : "/background.jpg"
           }
           alt=""
           onLoad={() => {

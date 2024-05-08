@@ -10,7 +10,7 @@ import Characters from "../../components/Characters/Characters";
 import Gif from "../../components/Gif/Gif";
 import Popup from "../../components/Popup/Popup";
 import Votes from "../../components/Votes/Votes";
-import tags from "../../data/tags.json";
+// import tags from "../../data/tags.json";
 import { Patch } from "../../Interfaces/patch";
 import { VisualNovel } from "../../Interfaces/visualNovelList";
 import cachesStore from "../../store/caches";
@@ -215,7 +215,7 @@ const Detail = () => {
                   ? detailState.screens &&
                     detailState.screens.filter(({ nsfw }) => !nsfw)[0]
                     ? detailState.screens.filter(({ nsfw }) => !nsfw)[0].image
-                    : "/nsfw-warning.webp"
+                    : "/background.jpg"
                   : detailState.image
               }
               alt=""
@@ -321,7 +321,7 @@ const Detail = () => {
             </table>
           </fieldset>
         </div>
-        {detailState.tags && detailState.tags.length > 0 && (
+        {/* {detailState.tags && detailState.tags.length > 0 && (
           <fieldset className="detail-tag-list">
             <legend>Tags</legend>
             <div>
@@ -374,7 +374,7 @@ const Detail = () => {
                 })}
             </div>
           </fieldset>
-        )}
+        )} */}
         <fieldset className="description-container">
           <legend>Description</legend>
           <div ref={descriptionRef}></div>
@@ -526,7 +526,7 @@ const Detail = () => {
                                 .image
                             : isShowExplicitImage
                             ? detailState.image
-                            : "/nsfw-warning.webp"
+                            : "/background.jpg"
                         }
                         alt={""}
                       ></img>

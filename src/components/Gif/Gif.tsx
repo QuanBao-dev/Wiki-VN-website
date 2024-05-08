@@ -31,7 +31,7 @@ const Gif = ({ screens, isNsfw = false }: Props) => {
   )
     return (
       <div>
-        <LazyLoadImage src="/nsfw-warning.webp" alt="" />
+        <LazyLoadImage src="/background.jpg" alt="" />
       </div>
     );
   return (

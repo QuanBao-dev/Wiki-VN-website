@@ -6,7 +6,7 @@ const { default: axios } = require("axios");
 router.get("/vns/:vnId", async (req, res) => {
   try {
     const { vnId } = req.params;
-    console.log(vnId)
+    console.log(vnId);
     let data = {
       filters: ["id", "=", "v" + vnId],
       fields:
@@ -22,7 +22,7 @@ router.get("/vns/:vnId", async (req, res) => {
       : visualNovel.screens &&
         visualNovel.screens.filter(({ nsfw }) => !nsfw)[0]
       ? visualNovel.screens.filter(({ nsfw }) => !nsfw)[0].image
-      : "/nsfw-warning.webp";
+      : "/background.jpg";
     const { title, description } = visualNovel;
     const filePath = path.join(__dirname, "../build", "index.html");
     const descriptionHTML =
