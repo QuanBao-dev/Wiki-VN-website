@@ -94,7 +94,7 @@ const Account = () => {
               <label>Email</label>
               <div>{userState.email}</div>
             </div>
-            <button
+            {/* <button
               onClick={() => {
                 userStore.updateState({
                   isShowEditAccount: true,
@@ -103,7 +103,7 @@ const Account = () => {
               }}
             >
               Edit
-            </button>
+            </button> */}
           </div>
           <div className="detail-account-item">
             <div>
