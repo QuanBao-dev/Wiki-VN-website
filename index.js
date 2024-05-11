@@ -85,7 +85,7 @@ io.on("connection", (socket) => {
         userId,
         text: message,
         type,
-        boost
+        boost,
       });
       await newMessage.save();
       socket.broadcast.emit(

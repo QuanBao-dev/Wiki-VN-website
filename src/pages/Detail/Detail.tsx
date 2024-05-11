@@ -45,8 +45,8 @@ const convertObject = {
 };
 const Detail = () => {
   const { id } = useParams();
-  const [filterMode] = useState(userStore.currentState().isFilterNsfw ? 0 : 1);
-  // const [filterMode] = useState(0);
+  // const [filterMode] = useState(userStore.currentState().isFilterNsfw ? 0 : 1);
+  const [filterMode] = useState(0);
   const [isShowExplicitImage] = useState(false);
   const [trigger, setTrigger] = useState(true);
   const [url, setUrl] = useState("");
