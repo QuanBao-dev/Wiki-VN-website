@@ -209,10 +209,12 @@ legend {
 }
 
 .affiliate-link-item {
-  max-width: 200px;
+  width: 200px;
+  min-height: 150px;
   display: inline-block;
   position: relative;
   border-radius: 10px;
+  border: 1px solid black;
   overflow: hidden;
   margin-right: 10px;
 }
