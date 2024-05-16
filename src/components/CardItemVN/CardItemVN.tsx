@@ -44,7 +44,7 @@ const CardItemVN = ({
               : screens &&
                 screens.filter(({ nsfw }) => !nsfw)[randomRef.current]
               ? screens.filter(({ nsfw }) => !nsfw)[randomRef.current].image
-              : "/background.jpg"
+              : "/nsfw-warning.webp"
           }
           alt=""
           onLoad={() => {

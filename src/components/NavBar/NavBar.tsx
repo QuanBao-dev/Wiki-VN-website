@@ -32,7 +32,6 @@ const NavBar = () => {
   const [isHide, setIsHide] = useState(false);
   useInitStore(userStore, setUserState);
   useEffect(() => {
-    window.localStorage.setItem("isFilterNsfwSVN", "true");
     const subscription = timer(0)
       .pipe(
         switchMap(() =>
@@ -61,14 +60,10 @@ const NavBar = () => {
         window.localStorage.getItem("isDarkModeSVN") || "false"
       ),
     });
-    // userStore.updateState({
-    //   isFilterNsfw: JSON.parse(
-    //     // window.localStorage.getItem("isFilterNsfwSVN") || "true"
-    //     "false"
-    //   ),
-    // });
     userStore.updateState({
-      isFilterNsfw: true,
+      isFilterNsfw: JSON.parse(
+        window.localStorage.getItem("isFilterNsfwSVN") || "true"
+      ),
     });
     const subscription = fromEvent(logoutButtonRef.current, "click")
       .pipe(
@@ -198,7 +193,7 @@ const NavBar = () => {
             {!userState.isDarkMode && <span>🌜</span>}
             {userState.isDarkMode && <span>🌞</span>}
           </div>
-          {/* <div className="link-account-setting">
+          <div className="link-account-setting">
             {!userStore.currentState().isFilterNsfw && (
               <i
                 className="fas fa-toggle-on"
@@ -219,12 +214,12 @@ const NavBar = () => {
                 className="fas fa-toggle-off"
                 onClick={() => {
                   userStore.updateState({
-                    isShowNotiFilter: false,
+                    isShowNotiFilter: true,
                   });
                 }}
               ></i>
             )}
-          </div> */}
+          </div>
           {userState.role === "" && !isHide && (
             <NavLink
               className="right-side-link"
@@ -317,7 +312,7 @@ const NavBar = () => {
           {userState.role === "" && !isHide && (
             <a
               className="link-account-setting right-side-link"
-              href={"https://ko-fi.com/sugoivn"}
+              href={"https://www.buymeacoffee.com/SugoiVN"}
               target={"_blank"}
               rel="noreferrer"
             >
@@ -342,7 +337,7 @@ const NavBar = () => {
                 </NavLink>
                 <a
                   className="link-account-setting right-side-link"
-                  href={"https://ko-fi.com/sugoivn"}
+                  href={"https://www.buymeacoffee.com/SugoiVN"}
                   target={"_blank"}
                   rel="noreferrer"
                 >
