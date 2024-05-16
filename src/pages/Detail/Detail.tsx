@@ -154,7 +154,7 @@ const Detail = () => {
         <Popup
           title={"Thank you!"}
           description={
-            "If you like these free translation patches on this website and want to say thanks, or encourage me to do more, you can consider buying me a coffee! And If possible, please buy the game from SHOP to support the author of the game."
+            "If you like these free translation patches on this website and want to say thanks, or encourage me to do more, you can consider buying me a coffee!"
           }
           url={url}
           isHide={isHide}
@@ -492,42 +492,50 @@ const Detail = () => {
             </div>
           </fieldset>
         )}
-        {patch.affiliateLinks && patch.affiliateLinks.length > 0 && (
-          <fieldset>
-            <legend>Shop</legend>
-            {patch.affiliateLinks.map((data, key) => (
-              <a
-                key={key}
-                rel="noopener sponsored"
-                href={data.url}
-                target="_blank"
-                className="affiliate-link-item target_type"
-              >
-                {detailState.screens && detailState.screens.length <= 1 && (
-                  <img
-                    src={
-                      !detailState.image_nsfw ||
-                      !userStore.currentState().isFilterNsfw
-                        ? detailState.image
-                        : detailState.screens &&
-                          detailState.screens.filter(({ nsfw }) => !nsfw)[0]
-                        ? detailState.screens.filter(({ nsfw }) => !nsfw)[0]
-                            .image
-                        : isShowExplicitImage
-                        ? detailState.image
-                        : "/nsfw-warning.webp"
-                    }
-                    alt={""}
-                  ></img>
-                )}
-                {detailState.screens && detailState.screens.length > 1 && (
-                  <Gif screens={detailState.screens} isNsfw={filterMode > 0} />
-                )}
-                <label htmlFor="">{data.label}</label>
-              </a>
-            ))}
-          </fieldset>
-        )}
+        {patch.affiliateLinks &&
+          patch.affiliateLinks.filter(
+            (data) => data.label.toLowerCase() === "dlsite"
+          ).length > 0 && (
+            <fieldset>
+              <legend>Shop</legend>
+              {patch.affiliateLinks
+                .filter((data) => data.label.toLowerCase() === "dlsite")
+                .map((data, key) => (
+                  <a
+                    key={key}
+                    rel="noopener sponsored"
+                    href={data.url}
+                    target="_blank"
+                    className="affiliate-link-item target_type"
+                  >
+                    {detailState.screens && detailState.screens.length <= 1 && (
+                      <img
+                        src={
+                          !detailState.image_nsfw ||
+                          !userStore.currentState().isFilterNsfw
+                            ? detailState.image
+                            : detailState.screens &&
+                              detailState.screens.filter(({ nsfw }) => !nsfw)[0]
+                            ? detailState.screens.filter(({ nsfw }) => !nsfw)[0]
+                                .image
+                            : isShowExplicitImage
+                            ? detailState.image
+                            : "/background.jpg"
+                        }
+                        alt={""}
+                      ></img>
+                    )}
+                    {detailState.screens && detailState.screens.length > 1 && (
+                      <Gif
+                        screens={detailState.screens}
+                        isNsfw={filterMode > 0}
+                      />
+                    )}
+                    <label htmlFor="">{data.label}</label>
+                  </a>
+                ))}
+            </fieldset>
+          )}
         {patch && patch.linkDownloads && patch.linkDownloads.length > 0 && (
           <fieldset className="release-container">
             {userStore.currentState().role === "Admin" && (
