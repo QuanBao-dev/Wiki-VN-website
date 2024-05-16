@@ -21,7 +21,9 @@ router.get("/vns/:vnId", async (req, res) => {
       ? visualNovel.image
       : visualNovel.screens &&
         visualNovel.screens.filter(({ nsfw }) => !nsfw)[0]
-      ? visualNovel.screens.filter(({ nsfw }) => !nsfw)[0].image
+      ? visualNovel.screens
+          .filter(({ nsfw }) => !nsfw)[0]
+          .image.replace(/sf/g, "st")
       : "/background.jpg";
     const { title, description } = visualNovel;
     const filePath = path.join(__dirname, "../build", "index.html");
