@@ -37,10 +37,9 @@ const Gif = ({ screens, isNsfw = false }: Props) => {
   return (
     <LazyLoadImage
       effect="opacity"
-      src={
-        screens.filter(({ nsfw }) => (!isNsfw ? nsfw === isNsfw : true))[index]
-          .image
-      }
+      src={screens
+        .filter(({ nsfw }) => (!isNsfw ? nsfw === isNsfw : true))
+        [index].image?.replace(/sf/g, "st")}
       alt=""
     />
   );

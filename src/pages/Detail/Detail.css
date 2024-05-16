@@ -210,13 +210,18 @@ legend {
 
 .affiliate-link-item {
   width: 200px;
-  min-height: 150px;
+  min-height: 100px;
   display: inline-block;
   position: relative;
   border-radius: 10px;
   border: 1px solid black;
   overflow: hidden;
   margin-right: 10px;
+}
+
+.affiliate-link-item span{
+  width: 100%;
+  height: 100%;
 }
 
 .affiliate-link-item:hover label {

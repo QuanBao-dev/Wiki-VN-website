@@ -516,8 +516,9 @@ const Detail = () => {
                             ? detailState.image
                             : detailState.screens &&
                               detailState.screens.filter(({ nsfw }) => !nsfw)[0]
-                            ? detailState.screens.filter(({ nsfw }) => !nsfw)[0]
-                                .image
+                            ? detailState.screens
+                                .filter(({ nsfw }) => !nsfw)[0]
+                                .image.replace(/sf/g, "st")
                             : isShowExplicitImage
                             ? detailState.image
                             : "/background.jpg"
