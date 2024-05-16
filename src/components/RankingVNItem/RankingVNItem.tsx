@@ -31,7 +31,9 @@ const RankingVNItem = ({
             !image_nsfw || !userStore.currentState().isFilterNsfw
               ? image
               : screens && screens.filter(({ nsfw }) => !nsfw)[0]
-              ? screens.filter(({ nsfw }) => !nsfw)[0].image
+              ? screens
+                  .filter(({ nsfw }) => !nsfw)[0]
+                  .image.replace(/sf/g, "st")
               : "/background.jpg"
           }
           alt=""
