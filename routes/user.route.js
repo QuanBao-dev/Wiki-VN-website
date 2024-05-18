@@ -203,7 +203,10 @@ router.post("/kofi/", async (req, res) => {
       if (data.is_first_subscription_payment)
         coffee.becomingMemberAt = data.timestamp;
       else if (data.is_subscription_payment)
-        coffee.becomingMemberAt = addMonths(new Date(data.timestamp), 1);
+        coffee.becomingMemberAt = addMonths(
+          new Date(coffee.becomingMemberAt),
+          1
+        );
       coffee.tierName = data.tier_name;
     } else {
       coffee.becomingSupporterAt = data.timestamp;
