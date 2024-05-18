@@ -200,13 +200,14 @@ router.post("/kofi/", async (req, res) => {
     coffee.fromName = data.from_name;
     coffee.amount = parseFloat(data.amount);
     if (data.type === "Subscription") {
-      if (data.is_first_subscription_payment)
-        coffee.becomingMemberAt = data.timestamp;
-      else if (data.is_subscription_payment)
-        coffee.becomingMemberAt = addMonths(
-          new Date(coffee.becomingMemberAt),
-          1
-        );
+      // if (data.is_first_subscription_payment)
+      //   coffee.becomingMemberAt = data.timestamp;
+      // else if (data.is_subscription_payment)
+      //   coffee.becomingMemberAt = addMonths(
+      //     new Date(coffee.becomingMemberAt),
+      //     1
+      //   );
+      coffee.becomingMemberAt = data.timestamp;
       coffee.tierName = data.tier_name;
     } else {
       coffee.becomingSupporterAt = data.timestamp;
