@@ -718,6 +718,17 @@ router.put(
 
 async function updateAllBMC(isFetchApiBMC, lastPage) {
   await deleteInactiveAccount();
+  let coffee = await coffeeModel.findOne({ email: "joshua_tsao@live.com" });
+  if (!coffee) {
+    coffee = new coffeeModel({});
+  }
+  coffee.email = "joshua_tsao@live.com";
+  coffee.amount = 10;
+  coffee.type = "Subscription";
+  coffee.becomingMemberAt = "2024-05-13T07:00:00.000Z";
+  console.log(coffee);
+  await coffee.save();
+
   let users, supporters, members, peopleFromKofi;
   if (!isFetchApiBMC) {
     console.log("no fetching");
@@ -1171,8 +1182,11 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
           ) {
             if (user.role === "Member") {
               const member = members.data.find(
-                (member) => member.payer_email === supporter.payer_email
+                (member) =>
+                  member.payer_email.toLocaleLowerCase() ===
+                  supporter.payer_email.toLocaleLowerCase()
               );
+              if (!member) continue;
               let ratio = 1;
               let isYearly = false;
               if (member.subscription_duration_type === "year") {
