@@ -718,16 +718,6 @@ router.put(
 
 async function updateAllBMC(isFetchApiBMC, lastPage) {
   await deleteInactiveAccount();
-  let coffee = await coffeeModel.findOne({ email: "joshua_tsao@live.com" });
-  if (!coffee) {
-    coffee = new coffeeModel({});
-  }
-  coffee.email = "joshua_tsao@live.com";
-  coffee.amount = 10;
-  coffee.type = "Subscription";
-  coffee.becomingMemberAt = "2024-05-13T07:00:00.000Z";
-  console.log(coffee);
-  await coffee.save();
 
   let users, supporters, members, peopleFromKofi;
   if (!isFetchApiBMC) {
