@@ -3,10 +3,12 @@ export const parseDescription = (description: string) => {
   description = description
     .replace(/URL/gi, "url")
     .replace(/(\[\/url)?\]\]/g, "[/url]]");
-  if (description.match(/\[([ a-zA-Z0-9]+)?From/gi)) {
-    const text = (description.match(/\[([ a-zA-Z0-9]+)?From/gi) as any)[0];
+  if (description.match(/\[([ a-zA-Z0-9]+)?((From)|(Based on))/gi)) {
+    const text = (
+      description.match(/\[([ a-zA-Z0-9]+)?((From)|(Based on))/gi) as any
+    )[0];
     description = description.replace(
-      /\[([ a-zA-Z0-9]+)?From/gi,
+      /\[([ a-zA-Z0-9]+)?((From)|(Based on))/gi,
       text.replace("[", "(")
     );
   }
