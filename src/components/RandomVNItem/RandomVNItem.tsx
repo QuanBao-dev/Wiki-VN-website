@@ -54,7 +54,9 @@ const RandomVNItem = ({
               ? image
               : screens &&
                 screens.filter(({ nsfw }) => !nsfw)[randomRef.current]
-              ? screens.filter(({ nsfw }) => !nsfw)[randomRef.current].image
+              ? screens
+                  .filter(({ nsfw }) => !nsfw)
+                  [randomRef.current].image.replace(/sf/g, "st")
               : "/background.jpg"
           }
           alt=""

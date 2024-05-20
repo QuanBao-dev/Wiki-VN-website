@@ -8,6 +8,7 @@ const cookieParser = require("cookie-parser");
 const app = express();
 const server = require("http").Server(app);
 const io = require("socket.io")(server);
+const { rateLimit } = require("express-rate-limit");
 
 cloudinary.config({
   cloud_name: "storagecloud",
@@ -30,12 +31,12 @@ mongoose.connect(
     }
   }
 );
-// const limiter = rateLimit({
-//   windowMs: 1 * 60 * 1000,
-//   max: 300,
-//   standardHeaders: true,
-//   legacyHeaders: false,
-// });
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 const jwt = require("jsonwebtoken");
 const cookie = require("cookie");
 
@@ -103,7 +104,7 @@ io.on("connection", (socket) => {
 });
 
 ////////////////////////////////
-// app.use(limiter);
+app.use(limiter);
 app.use(cookieParser(process.env.SECRET_SESSION_COOKIE));
 app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ limit: "100mb", extended: true }));
