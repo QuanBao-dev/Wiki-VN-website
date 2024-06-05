@@ -315,60 +315,65 @@ const Detail = () => {
             </table>
           </fieldset>
         </div>
-        {detailState.tags && detailState.tags.length > 0 && (
-          <fieldset className="detail-tag-list">
-            <legend>Tags</legend>
-            <div>
-              {detailState.tags
-                .filter((v) => v.rating >= 1.5 || (v as any)[1] >= 1.5)
-                .sort((a, b) => {
-                  if ((a as any).length) {
-                    return -(a as any)[1] + (b as any)[1];
-                  }
-                  return undefined;
-                })
-                .map((tag: any) => {
-                  if (tag.length) {
-                    const tagId = tag[0];
-                    const rating = tag[1];
-                    const tagName = tags.find((tag) => tag.id === tagId)?.name;
-                    if (!tagName) return undefined;
+        {detailState.tags &&
+          detailState.tags.filter((tag) => tag.category !== "ero").length >
+            0 && (
+            <fieldset className="detail-tag-list">
+              <legend>Tags</legend>
+              <div>
+                {detailState.tags
+                  .filter((tag) => tag.category !== "ero")
+                  .filter((v) => v.rating >= 1.5 || (v as any)[1] >= 1.5)
+                  .sort((a, b) => {
+                    if ((a as any).length) {
+                      return -(a as any)[1] + (b as any)[1];
+                    }
+                    return undefined;
+                  })
+                  .map((tag: any) => {
+                    if (tag.length) {
+                      const tagId = tag[0];
+                      const rating = tag[1];
+                      const tagName = tags.find(
+                        (tag) => tag.id === tagId
+                      )?.name;
+                      if (!tagName) return undefined;
+                      return (
+                        <Link
+                          key={tagId}
+                          to={`/search?textSearch=&page=1&tags=${tagId}&producers=`}
+                        >
+                          <span
+                            style={{
+                              fontSize: `${rating / 3.2}rem`,
+                            }}
+                          >
+                            {tagName} ({rating})
+                          </span>
+                        </Link>
+                      );
+                    }
                     return (
                       <Link
-                        key={tagId}
-                        to={`/search?textSearch=&page=1&tags=${tagId}&producers=`}
+                        key={tag.id}
+                        to={`/search?textSearch=&page=1&tags=${tag.id.replace(
+                          "g",
+                          ""
+                        )}&producers=`}
                       >
                         <span
                           style={{
-                            fontSize: `${rating / 3.2}rem`,
+                            fontSize: `${tag.rating / 3.2}rem`,
                           }}
                         >
-                          {tagName} ({rating})
+                          {tag.name} ({tag.rating})
                         </span>
                       </Link>
                     );
-                  }
-                  return (
-                    <Link
-                      key={tag.id}
-                      to={`/search?textSearch=&page=1&tags=${tag.id.replace(
-                        "g",
-                        ""
-                      )}&producers=`}
-                    >
-                      <span
-                        style={{
-                          fontSize: `${tag.rating / 3.2}rem`,
-                        }}
-                      >
-                        {tag.name} ({tag.rating})
-                      </span>
-                    </Link>
-                  );
-                })}
-            </div>
-          </fieldset>
-        )}
+                  })}
+              </div>
+            </fieldset>
+          )}
         <fieldset className="description-container">
           <legend>Description</legend>
           <div ref={descriptionRef}></div>

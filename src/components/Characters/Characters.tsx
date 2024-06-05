@@ -123,7 +123,7 @@ const Characters = ({ vnId }: Props) => {
                     <th>Original:</th>
                     <td>{original}</td>
                   </tr>
-                  {traits.length > 0 && (
+                  {/* {traits.length > 0 && (
                     <tr>
                       <th>Traits:</th>
                       <td className="trait-list">
@@ -134,7 +134,7 @@ const Characters = ({ vnId }: Props) => {
                         ))}
                       </td>
                     </tr>
-                  )}
+                  )} */}
                   {vns.length > 0 && (
                     <tr>
                       <th>VNs:</th>

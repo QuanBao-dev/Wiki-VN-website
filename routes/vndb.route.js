@@ -313,7 +313,7 @@ router.get("/:id", async (req, res) => {
   let data = {
     filters: ["id", "=", "v" + id],
     fields:
-      "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases, screenshots.dims, tags.name, tags.id, tags.rating",
+      "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases, screenshots.dims, tags.name, tags.id, tags.rating, tags.category",
   };
   try {
     const details = await (
