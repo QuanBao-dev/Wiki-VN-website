@@ -316,13 +316,13 @@ const Detail = () => {
           </fieldset>
         </div>
         {detailState.tags &&
-          detailState.tags.filter((tag) => tag.category !== "ero").length >
+          detailState.tags.filter((tag) => tag.category === "cont").length >
             0 && (
             <fieldset className="detail-tag-list">
               <legend>Tags</legend>
               <div>
                 {detailState.tags
-                  .filter((tag) => tag.category !== "ero")
+                  .filter((tag) => tag.category === "cont")
                   .filter((v) => v.rating >= 1.5 || (v as any)[1] >= 1.5)
                   .sort((a, b) => {
                     if ((a as any).length) {
