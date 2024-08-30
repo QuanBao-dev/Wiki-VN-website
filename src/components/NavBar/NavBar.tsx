@@ -55,6 +55,7 @@ const NavBar = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userState.trigger]);
   useEffect(() => {
+    window.localStorage.setItem("isFilterNsfwSVN", "true");
     userStore.updateState({
       isDarkMode: JSON.parse(
         window.localStorage.getItem("isDarkModeSVN") || "false"
@@ -209,7 +210,7 @@ const NavBar = () => {
                 }}
               ></i>
             )}
-            {userStore.currentState().isFilterNsfw && (
+            {/* {userStore.currentState().isFilterNsfw && (
               <i
                 className="fas fa-toggle-off"
                 onClick={() => {
@@ -218,7 +219,7 @@ const NavBar = () => {
                   });
                 }}
               ></i>
-            )}
+            )} */}
           </div>
           {userState.role === "" && !isHide && (
             <NavLink

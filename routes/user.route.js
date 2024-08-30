@@ -718,7 +718,31 @@ router.put(
 
 async function updateAllBMC(isFetchApiBMC, lastPage) {
   await deleteInactiveAccount();
-
+  // const coffee = await coffeeMemberModel.findOneAndUpdate(
+  //   { payer_email: "victorluong5543279@gmail.com" },
+  //   {
+  //     subscription_duration_type: "",
+  //   },
+  //   {
+  //     new: true,
+  //   }
+  // );
+  // console.log(coffee);
+  // const coffee = await coffeeModel.findOneAndUpdate(
+  //   { email: "cornelioaguilar9@gmail.com" },
+  //   {
+  //     type: "Subscription",
+  //     fromName: "Mr Newb",
+  //     becomingMemberAt: "2024-05-13T07:00:00.000Z",
+  //     url: "https://ko-fi.com/home/coffeeshop?txid=8b21cbca-6d5f-43b8-be9d-80516b1a36e7&mode=r&ReturnUrl=/Manage/SupportReceived",
+  //     amount: 50,
+  //   },
+  //   {
+  //     upsert: true,
+  //     new: true,
+  //   }
+  // );
+  // console.log(coffee);
   let users, supporters, members, peopleFromKofi;
   if (!isFetchApiBMC) {
     console.log("no fetching");
@@ -977,6 +1001,10 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
           ) {
             let ratio = 1;
             let isYearly = false;
+            // if (member.payer_email === "bigglack@hotmail.com") {
+            //   console.log(member);
+            //   member.subscription_duration_type = "year";
+            // }
             if (member.subscription_duration_type === "year") {
               ratio = 10;
               isYearly = true;
@@ -1176,7 +1204,10 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
                   member.payer_email.toLocaleLowerCase() ===
                   supporter.payer_email.toLocaleLowerCase()
               );
-              if (!member) continue;
+              if (!member) {
+                console.log(supporter.payer_email.toLocaleLowerCase(), user);
+                continue;
+              }
               let ratio = 1;
               let isYearly = false;
               if (member.subscription_duration_type === "year") {
