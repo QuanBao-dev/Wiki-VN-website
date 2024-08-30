@@ -336,8 +336,8 @@ function parseData(data) {
         data.image && data.image.sexual === 0 && data.image.violence === 0
           ? data.image.url
           : "/nsfw-warning.webp",
-      sexual: data.image.sexual,
-      violence: data.image.violence,
+      sexual: data.image ? data.image.sexual : 0,
+      violence: data.image ? data.image.violence : 0,
       image_nsfw: data.image ? data.image.sexual >= 1 : false,
       rating: (data.rating * 0.1).toFixed(2),
       screens: data.screenshots.map((screenshot) => ({
