@@ -182,8 +182,8 @@ router.post("/patreon/", async (req, res) => {
     return res.status(401).send("Unauthorized");
   console.log("--Data--");
   console.log(req.body.data);
-  console.log("--included--");
-  console.log(req.body.included);
+  console.log("--relationships--");
+  console.log(req.body.data.relationships);
   res.send({ message: "Success" });
 });
 
