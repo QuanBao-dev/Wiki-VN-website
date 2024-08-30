@@ -44,9 +44,7 @@ const convertObject = {
 };
 const Detail = () => {
   const { id } = useParams();
-  const [filterMode, setFilterMode] = useState(
-    userStore.currentState().isFilterNsfw ? 0 : 1
-  );
+  const [filterMode] = useState(userStore.currentState().isFilterNsfw ? 0 : 1);
   const [isShowExplicitImage, setIsShowExplicitImage] = useState(false);
   const [trigger, setTrigger] = useState(true);
   const [url, setUrl] = useState("");
@@ -381,7 +379,7 @@ const Detail = () => {
         {detailState.screens && detailState.screens.length > 0 && (
           <fieldset>
             <legend>Screenshots</legend>
-            {detailState.screens.filter(({ nsfw }) => nsfw).length > 0 && (
+            {/* {detailState.screens.filter(({ nsfw }) => nsfw).length > 0 && (
               <div className="mode-filter-screenshots">
                 <div
                   className={filterMode === 0 ? "active" : ""}
@@ -398,7 +396,7 @@ const Detail = () => {
                   {detailState.screens.filter(({ nsfw }) => nsfw).length})
                 </div>
               </div>
-            )}
+            )} */}
             <div className="screenshots-container">
               {detailState.screens
                 .filter(({ nsfw }) => (filterMode === 0 ? !nsfw : true))
