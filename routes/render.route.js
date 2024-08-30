@@ -69,10 +69,10 @@ function parseData(data) {
     return {
       ...data,
       id: parseInt(data.id.match(/[0-9]+/g)[0]),
-      image: data.image ? data.image.url : "/background.jpg",
+      image: data.image.url,
       sexual: data.image.sexual,
       violence: data.image.violence,
-      image_nsfw: data.image ? data.image.sexual >= 1 : false,
+      image_nsfw: data.image.sexual >= 1,
       rating: (data.rating * 0.1).toFixed(2),
       screens: data.screenshots.map((screenshot) => ({
         ...screenshot,
@@ -81,9 +81,6 @@ function parseData(data) {
         width: screenshot.dims[0],
         height: screenshot.dims[1],
       })),
-      tags: data.tags
-        .sort((a, b) => -a.rating + b.rating)
-        .map((tag) => ({ ...tag, rating: parseFloat(tag.rating).toFixed(1) })),
     };
   });
 }
