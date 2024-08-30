@@ -313,7 +313,7 @@ router.get("/:id", async (req, res) => {
   let data = {
     filters: ["id", "=", "v" + id],
     fields:
-      "title, description, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases, screenshots.dims, tags.name, tags.id, tags.rating, tags.category",
+      "title, description, image.sexual, image.url, image.sexual, image.violence, screenshots.thumbnail, screenshots.url, screenshots.sexual, screenshots.violence,rating, length, length_minutes, length_votes, languages, released, aliases, screenshots.dims, tags.name, tags.id, tags.rating, tags.category",
   };
   try {
     const details = await (
@@ -332,7 +332,12 @@ function parseData(data) {
     return {
       ...data,
       id: parseInt(data.id.match(/[0-9]+/g)[0]),
-      image: data.image ? data.image.url : "/background.jpg",
+      image:
+        data.image && data.image.sexual === 0 && data.image.violence === 0
+          ? data.image.url
+          : "/nsfw-warning.webp",
+      sexual: data.image.sexual,
+      violence: data.image.violence,
       image_nsfw: data.image ? data.image.sexual >= 1 : false,
       rating: (data.rating * 0.1).toFixed(2),
       screens: data.screenshots.map((screenshot) => ({

@@ -68,6 +68,8 @@ route.get("/", async (req, res) => {
         v.dataVN.createdAt = v.createdAt;
         return {
           ...v.dataVN,
+          sexual: v.dataVN.sexual === undefined ? 0 : v.dataVN.sexual,
+          violence: v.dataVN.violence === undefined ? 0 : v.dataVN.violence,
           isPatchContained: true,
           index: page * 10 + key,
           isExclusive,
@@ -213,6 +215,7 @@ route.post("/", verifyRole("Admin"), async (req, res) => {
             // newPatch.shrinkMeLinkDownloads.push(shrinkMeLinkDownload);
             // newPatch.shrinkEarnLinkDownloads.push(shrinkEarnLinkDownload);
           }
+          newPatch.dataVN = dataVN;
         }
       }
       if (type === "affiliate") {
@@ -227,6 +230,7 @@ route.post("/", verifyRole("Admin"), async (req, res) => {
         } else {
           newPatch.affiliateLinks = [linkDownload];
         }
+        newPatch.dataVN = dataVN;
       }
     }
     newPatch.isMemberOnly = isMemberOnly;

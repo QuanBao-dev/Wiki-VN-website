@@ -31,7 +31,10 @@ const RandomVNItem = ({
         : "");
     if (screens)
       randomRef.current = generateUnrepeatedRandomNumber(
-        screens.filter(({ nsfw }) => !nsfw).length - 1
+        screens.filter(
+          ({ nsfw, sexual, violence }) =>
+            !nsfw && sexual === 0 && violence === 0
+        ).length - 1
       );
     descriptionRef.current.style.marginBottom = description
       ? descriptionRef.current.style.marginBottom
@@ -53,9 +56,15 @@ const RandomVNItem = ({
             !image_nsfw || !userStore.currentState().isFilterNsfw
               ? image
               : screens &&
-                screens.filter(({ nsfw }) => !nsfw)[randomRef.current]
+                screens.filter(
+                  ({ nsfw, sexual, violence }) =>
+                    !nsfw && sexual === 0 && violence === 0
+                )[randomRef.current]
               ? screens
-                  .filter(({ nsfw }) => !nsfw)
+                  .filter(
+                    ({ nsfw, sexual, violence }) =>
+                      !nsfw && sexual === 0 && violence === 0
+                  )
                   [randomRef.current].image.replace(/sf/g, "st")
               : "/background.jpg"
           }

@@ -51,9 +51,15 @@ const SearchVN = () => {
                     !suggestion.image_nsfw
                       ? suggestion.image
                       : suggestion.screens &&
-                        suggestion.screens.filter(({ nsfw }) => !nsfw)[0]
+                        suggestion.screens.filter(
+                          ({ nsfw, sexual, violence }) =>
+                            !nsfw && sexual === 0 && violence === 0
+                        )[0]
                       ? suggestion.screens
-                          .filter(({ nsfw }) => !nsfw)[0]
+                          .filter(
+                            ({ nsfw, sexual, violence }) =>
+                              !nsfw && sexual === 0 && violence === 0
+                          )[0]
                           .image.replace(/sf/g, "st")
                       : "/background.jpg"
                   }

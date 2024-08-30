@@ -14,6 +14,7 @@ const choices = [
   "This VN is untranslatable because there's no available tool to create the patch for it",
 ];
 const FormUpdateTranslatable = ({ dataVN }: Props) => {
+  console.log({ dataVN });
   const formUpdateTranslatableRef = useRef(document.createElement("input"));
   const buttonRef = useRef(document.createElement("button"));
   const [indexActive, setIndexActive] = useState(10);

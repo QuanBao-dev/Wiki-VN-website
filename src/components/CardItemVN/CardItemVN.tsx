@@ -22,6 +22,8 @@ const CardItemVN = ({
   trigger,
   setTrigger,
   isNsfw,
+  sexual,
+  violence,
   screens,
 }: Partial<Props>) => {
   const descriptionRef = useRef(document.createElement("div"));
@@ -30,7 +32,10 @@ const CardItemVN = ({
     descriptionRef.current.innerHTML = parseDescription(description as string);
     if (screens)
       randomRef.current = generateUnrepeatedRandomNumber(
-        screens.filter(({ nsfw }) => !nsfw).length - 1
+        screens.filter(
+          ({ nsfw, sexual, violence }) =>
+            !nsfw && sexual === 0 && violence === 0
+        ).length - 1
       );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [description]);
@@ -39,12 +44,19 @@ const CardItemVN = ({
       <div className="container-image-frame">
         <img
           src={
-            !isNsfw || !userStore.currentState().isFilterNsfw
+            (!isNsfw && violence === 0 && sexual === 0) ||
+            !userStore.currentState().isFilterNsfw
               ? image
               : screens &&
-                screens.filter(({ nsfw }) => !nsfw)[randomRef.current]
+                screens.filter(
+                  ({ nsfw, sexual, violence }) =>
+                    !nsfw && sexual === 0 && violence === 0
+                )[randomRef.current]
               ? screens
-                  .filter(({ nsfw }) => !nsfw)
+                  .filter(
+                    ({ nsfw, sexual, violence }) =>
+                      !nsfw && sexual === 0 && violence === 0
+                  )
                   [randomRef.current].image.replace(/sf/g, "st")
               : "/nsfw-warning.webp"
           }

@@ -13,6 +13,8 @@ export interface VisualNovel {
   anime: AnimeItem[] | [];
   title: string;
   popularity: number;
+  sexual: number;
+  violence: number;
   rating: number;
   votecount: number;
   screens: Screen[] | [];
@@ -49,6 +51,8 @@ export interface Screen {
   flagging: ImageFlagging;
   height: number;
   width: number;
+  sexual: number;
+  violence: number;
 }
 
 interface Staff {

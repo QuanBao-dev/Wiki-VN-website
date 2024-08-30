@@ -20,9 +20,15 @@ router.get("/vns/:vnId", async (req, res) => {
     const image = !visualNovel.image_nsfw
       ? visualNovel.image
       : visualNovel.screens &&
-        visualNovel.screens.filter(({ nsfw }) => !nsfw)[0]
+        visualNovel.screens.filter(
+          ({ nsfw, sexual, violence }) =>
+            !nsfw && sexual === 0 && violence === 0
+        )[0]
       ? visualNovel.screens
-          .filter(({ nsfw }) => !nsfw)[0]
+          .filter(
+            ({ nsfw, sexual, violence }) =>
+              !nsfw && sexual === 0 && violence === 0
+          )[0]
           .image.replace(/sf/g, "st")
       : "/background.jpg";
     const { title, description } = visualNovel;
@@ -63,8 +69,10 @@ function parseData(data) {
     return {
       ...data,
       id: parseInt(data.id.match(/[0-9]+/g)[0]),
-      image: data.image.url,
-      image_nsfw: data.image.sexual >= 1,
+      image: data.image ? data.image.url : "/background.jpg",
+      sexual: data.image.sexual,
+      violence: data.image.violence,
+      image_nsfw: data.image ? data.image.sexual >= 1 : false,
       rating: (data.rating * 0.1).toFixed(2),
       screens: data.screenshots.map((screenshot) => ({
         ...screenshot,
@@ -73,6 +81,9 @@ function parseData(data) {
         width: screenshot.dims[0],
         height: screenshot.dims[1],
       })),
+      tags: data.tags
+        .sort((a, b) => -a.rating + b.rating)
+        .map((tag) => ({ ...tag, rating: parseFloat(tag.rating).toFixed(1) })),
     };
   });
 }

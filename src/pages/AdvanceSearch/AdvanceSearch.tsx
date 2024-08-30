@@ -298,7 +298,16 @@ const AdvanceSearch = () => {
         {!isLoading2 &&
           vnList &&
           vnListData.map(
-            ({ title, description, image, id, image_nsfw, screens }) => (
+            ({
+              title,
+              description,
+              image,
+              id,
+              image_nsfw,
+              screens,
+              sexual,
+              violence,
+            }) => (
               <Suspense
                 key={id}
                 fallback={
@@ -320,6 +329,8 @@ const AdvanceSearch = () => {
                   isNsfw={image_nsfw}
                   screens={screens}
                   setTrigger={setTrigger}
+                  sexual={sexual}
+                  violence={violence}
                   isNormal={true}
                   trigger={trigger}
                 />

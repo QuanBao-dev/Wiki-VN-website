@@ -230,6 +230,7 @@ router.put("/:vnId/translatable", verifyRole("Admin"), async (req, res) => {
       });
     }
     vote.isTranslatable = isTranslatable;
+    vote.dataVN = dataVN;
     vote.reason = reason.trim();
     await vote.save();
     res.send({ message: "success" });

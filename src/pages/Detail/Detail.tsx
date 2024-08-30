@@ -44,7 +44,7 @@ const convertObject = {
 const Detail = () => {
   const { id } = useParams();
   const [filterMode] = useState(userStore.currentState().isFilterNsfw ? 0 : 1);
-  const [isShowExplicitImage, setIsShowExplicitImage] = useState(false);
+  const [isShowExplicitImage] = useState(false);
   const [trigger, setTrigger] = useState(true);
   const [url, setUrl] = useState("");
   const [isHide, setIsHide] = useState(true);
@@ -202,16 +202,24 @@ const Detail = () => {
             <LazyLoadImage
               effect="opacity"
               className={
-                detailState.image_nsfw &&
+                (detailState.image_nsfw ||
+                  detailState.sexual !== 0 ||
+                  detailState.violence !== 0) &&
                 !isShowExplicitImage &&
                 userStore.currentState().isFilterNsfw
                   ? "nsfw"
                   : ""
               }
-              src={detailState.image}
+              src={
+                detailState.image_nsfw ||
+                detailState.sexual !== 0 ||
+                detailState.violence !== 0
+                  ? "/nsfw-warning.webp"
+                  : detailState.image
+              }
               alt=""
             />
-            {!isShowExplicitImage &&
+            {/* {!isShowExplicitImage &&
               detailState.image_nsfw &&
               userStore.currentState().isFilterNsfw && (
                 <div className="block-overlay">
@@ -223,7 +231,7 @@ const Detail = () => {
                     Show me anyway
                   </div>
                 </div>
-              )}
+              )} */}
           </div>
           <fieldset className="detail-title-table-info-container">
             <legend>Information</legend>
@@ -384,7 +392,7 @@ const Detail = () => {
                   className={filterMode === 0 ? "active" : ""}
                   onClick={() => setFilterMode(0)}
                 >
-                  Safe ({detailState.screens.filter(({ nsfw }) => !nsfw).length}
+                  Safe ({detailState.screens.filter(({ nsfw, sexual, violence }) => !nsfw && sexual === 0 && violence === 0).length}
                   )
                 </div>
                 <div
@@ -398,12 +406,18 @@ const Detail = () => {
             )} */}
             <div className="screenshots-container">
               {detailState.screens
-                .filter(({ nsfw }) => (filterMode === 0 ? !nsfw : true))
+                .filter(({ nsfw, sexual }) =>
+                  filterMode === 0 ? !nsfw && sexual === 0 : true
+                )
                 .map((screen, key) => (
                   <LazyLoadImage
                     effect="opacity"
                     key={key}
-                    src={screen.image.replace("sf", "st")}
+                    src={
+                      screen.nsfw
+                        ? "/nsfw-warning.webp"
+                        : screen.image.replace("sf", "st")
+                    }
                     alt=""
                     className={screen.nsfw ? "nsfw" : ""}
                     onClick={(e) => {
@@ -517,9 +531,15 @@ const Detail = () => {
                           !userStore.currentState().isFilterNsfw
                             ? detailState.image
                             : detailState.screens &&
-                              detailState.screens.filter(({ nsfw }) => !nsfw)[0]
+                              detailState.screens.filter(
+                                ({ nsfw, sexual, violence }) =>
+                                  !nsfw && sexual === 0 && violence === 0
+                              )[0]
                             ? detailState.screens
-                                .filter(({ nsfw }) => !nsfw)[0]
+                                .filter(
+                                  ({ nsfw, sexual, violence }) =>
+                                    !nsfw && sexual === 0 && violence === 0
+                                )[0]
                                 .image.replace(/sf/g, "st")
                             : isShowExplicitImage
                             ? detailState.image

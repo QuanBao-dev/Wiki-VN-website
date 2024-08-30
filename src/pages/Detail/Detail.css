@@ -71,9 +71,9 @@ legend {
   max-width: 300px;
 }
 
-.detail-title-container img.nsfw {
+/* .detail-title-container img.nsfw {
   filter: blur(30px);
-}
+} */
 
 .detail-title-wrapper {
   margin-left: 1rem;

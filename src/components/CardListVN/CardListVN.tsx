@@ -390,7 +390,16 @@ const CardListVN = () => {
       >
         {!isLoading &&
           visualNovelList.map(
-            ({ title, description, image, id, image_nsfw, screens }) => (
+            ({
+              title,
+              description,
+              image,
+              id,
+              image_nsfw,
+              screens,
+              sexual,
+              violence,
+            }) => (
               <Suspense
                 key={id}
                 fallback={
@@ -412,6 +421,8 @@ const CardListVN = () => {
                   setTrigger={setTrigger}
                   isNsfw={image_nsfw}
                   screens={screens}
+                  sexual={sexual}
+                  violence={violence}
                 />
               </Suspense>
             )
