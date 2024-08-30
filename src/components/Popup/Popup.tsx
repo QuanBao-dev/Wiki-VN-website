@@ -87,6 +87,15 @@ const Popup = ({ title, description, url, isHide, setIsHide }: Props) => {
               Buy me a coffee
             </span>
           </a>
+          <a
+            title="Support me on patreon"
+            className="patreon-button"
+            target="_blank"
+            href={"https://www.patreon.com/SugoiVN"}
+            rel="noreferrer"
+          >
+            <span className="patreon-text">Patreon</span>
+          </a>
           {title !== "Early Access!" && (
             <a
               className="button-link-download"

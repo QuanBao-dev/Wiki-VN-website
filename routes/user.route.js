@@ -184,7 +184,79 @@ router.post("/patreon/", async (req, res) => {
   console.log(req.body.data);
   console.log("--relationships--");
   console.log(req.body.data.relationships);
-  res.send({ message: "Success" });
+  try {
+    const { attributes } = req.body.data;
+    const { email, full_name, currently_entitled_amount_cents } = attributes;
+    const type = "Subscription";
+    let tierName = "";
+    switch (currently_entitled_amount_cents) {
+      case 200:
+        tierName = "Master Level";
+        break;
+      case 100:
+        tierName = "Diamond Level";
+        break;
+      case 50:
+        tierName = "Platinum Level";
+        break;
+      case 25:
+        tierName = "Gold Level";
+        break;
+      case 20:
+        tierName = "Silver Level";
+        break;
+      case 10:
+        tierName = "Bronze Level";
+        break;
+      default:
+        tierName = "";
+        break;
+    }
+    const data = {
+      email,
+      type,
+      from_name: full_name,
+      amount: currently_entitled_amount_cents,
+      tier_name: tierName,
+      url: "",
+      timestamp: new Date(Date.now()).toISOString(),
+    };
+    let coffee = await coffeeModel.findOne({
+      email: data.email.toLocaleLowerCase(),
+      type: data.type,
+    });
+    if (!coffee) {
+      coffee = new coffeeModel({
+        email: data.email.toLocaleLowerCase(),
+        type: data.type,
+        fromName: data.from_name,
+      });
+    }
+    coffee.email = data.email.toLocaleLowerCase();
+    coffee.type = data.type;
+    coffee.fromName = data.from_name;
+    coffee.amount = parseFloat(data.amount);
+    if (data.type === "Subscription") {
+      // if (data.is_first_subscription_payment)
+      //   coffee.becomingMemberAt = data.timestamp;
+      // else if (data.is_subscription_payment)
+      //   coffee.becomingMemberAt = addMonths(
+      //     new Date(coffee.becomingMemberAt),
+      //     1
+      //   );
+      coffee.becomingMemberAt = data.timestamp;
+      coffee.tierName = data.tier_name;
+    } else {
+      coffee.becomingSupporterAt = data.timestamp;
+    }
+    coffee.url = data.url;
+    await coffee.save();
+    await updateAllBMC(false);
+    res.send({ message: "Success" });
+  } catch (error) {
+    if (error) return res.status(400).send({ error: error.message });
+    res.status(404).send({ error: "Something went wrong" });
+  }
 });
 
 router.post("/kofi/", async (req, res) => {
@@ -327,7 +399,7 @@ router.post("/login", apiLimiter, async (req, res) => {
       if (!allSupporters.includes(user.email) && user.role !== "Admin") {
         return res.status(401).send({
           error:
-            "Require to verify your email address, to do this you have to buy me a coffee using this email address",
+            "To verify your email address, please buy me a coffee or become a member using this email address.",
         });
       }
       user.isVerified = true;
@@ -403,7 +475,7 @@ router.post("/register", apiLimiter, async (req, res) => {
     if (!allSupporters.includes(newUser.email) && newUser.role !== "Admin") {
       return res.status(401).send({
         error:
-          "Require to verify your email address, to do this you have to buy me a coffee using this email address",
+          "To verify your email address, please buy me a coffee or become a member using this email address.",
       });
     }
     return res.send({
@@ -692,7 +764,7 @@ router.put(
         if (!allSupporters.includes(user.email) && user.role !== "Admin") {
           return res.status(401).send({
             error:
-              "Require to verify your email address, to do this you have to buy me a coffee using this email address",
+              "To verify your email address, please buy me a coffee or become a member using this email address.",
           });
         }
         res.send({

@@ -287,12 +287,12 @@ const NavBar = () => {
               <div ref={logoutButtonRef}>Logout</div>
               <a
                 className="link-account-setting"
-                href={"https://ko-fi.com/sugoivn"}
+                href={"https://www.patreon.com/SugoiVN"}
                 target={"_blank"}
                 rel="noreferrer"
               >
-                <span>Buy SVN a Coffee</span>
-                <Donate color={"#FFDD00"} />
+                <span>Become a member</span>
+                {/* <Donate color={"#FFDD00"} /> */}
               </a>
               <NavLink
                 className="link-account-setting"

@@ -89,6 +89,21 @@
   border-radius:5px
 }
 
+.patreon-button{
+  background-color: orange;
+  text-transform: uppercase;
+  border-radius: 5px;
+  color: white!important;
+  font-weight: bolder;
+  box-shadow: 0 0 5px 1px rgb(167, 167, 167);
+}
+
+.patreon-text{
+  text-shadow: 1px 1px rgba(0, 0, 0, 0.627);
+  font-size: 1.2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 .app-container.dark-mode .popup-wrapper {
   background-color: rgb(39, 42, 85);
 }
