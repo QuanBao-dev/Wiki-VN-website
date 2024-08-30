@@ -313,7 +313,7 @@ const Detail = () => {
             </table>
           </fieldset>
         </div>
-        {detailState.tags &&
+        {/* {detailState.tags &&
           detailState.tags.filter((tag) => tag.category === "cont").length >
             0 && (
             <fieldset className="detail-tag-list">
@@ -371,7 +371,7 @@ const Detail = () => {
                   })}
               </div>
             </fieldset>
-          )}
+          )} */}
         <fieldset className="description-container">
           <legend>Description</legend>
           <div ref={descriptionRef}></div>

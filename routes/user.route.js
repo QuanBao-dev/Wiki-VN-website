@@ -177,6 +177,13 @@ router.post("/BMC/", async (req, res) => {
   }
 });
 
+router.post("/patreon/", async (req, res) => {
+  if (req.headers["X-Patreon-Signature"] !== process.env.PATREONSECRETKEY)
+    return res.status(401).send("Unauthorized");
+  console.log(req.body);
+  res.send({ message: "Success" });
+});
+
 router.post("/kofi/", async (req, res) => {
   let data = JSON.parse(req.body.data);
   console.log(data);
