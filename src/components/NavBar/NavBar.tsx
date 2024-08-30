@@ -313,12 +313,12 @@ const NavBar = () => {
           {userState.role === "" && !isHide && (
             <a
               className="link-account-setting right-side-link"
-              href={"https://ko-fi.com/sugoivn"}
+              href={"https://www.patreon.com/SugoiVN"}
               target={"_blank"}
               rel="noreferrer"
             >
-              <span style={{ fontSize: "1rem" }}>Buy SVN a Coffee</span>
-              <Donate color={"#FFDD00"} />
+              <span style={{ fontSize: "1.1rem" }}>Become a member</span>
+              {/* <Donate color={"#FFDD00"} /> */}
             </a>
           )}
           <div className="navbar-small-mobile-container">
