@@ -15,7 +15,6 @@ import Popup from "../../components/Popup/Popup";
 import Gif from "../../components/Gif/Gif";
 import { useInitStore } from "../Hooks/useInitStore";
 import { interval, takeWhile } from "rxjs";
-import tags from "../../data/tags.json";
 import Characters from "../../components/Characters/Characters";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 const VoterList = React.lazy(
