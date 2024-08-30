@@ -383,10 +383,13 @@ const Detail = () => {
           <legend>Description</legend>
           <div ref={descriptionRef}></div>
         </fieldset>
-        {detailState.screens && detailState.screens.length > 0 && (
-          <fieldset>
-            <legend>Screenshots</legend>
-            {/* {detailState.screens.filter(({ nsfw }) => nsfw).length > 0 && (
+        {detailState.screens &&
+          detailState.screens.filter(({ nsfw, sexual, violence }) =>
+            filterMode === 0 ? !nsfw && sexual === 0 && violence === 0 : true
+          ).length > 0 && (
+            <fieldset>
+              <legend>Screenshots</legend>
+              {/* {detailState.screens.filter(({ nsfw }) => nsfw).length > 0 && (
               <div className="mode-filter-screenshots">
                 <div
                   className={filterMode === 0 ? "active" : ""}
@@ -404,110 +407,114 @@ const Detail = () => {
                 </div>
               </div>
             )} */}
-            <div className="screenshots-container">
-              {detailState.screens
-                .filter(({ nsfw, sexual }) =>
-                  filterMode === 0 ? !nsfw && sexual === 0 : true
-                )
-                .map((screen, key) => (
-                  <LazyLoadImage
-                    effect="opacity"
-                    key={key}
-                    src={
-                      screen.nsfw
-                        ? "/nsfw-warning.webp"
-                        : screen.image.replace("sf", "st")
-                    }
-                    alt=""
-                    className={screen.nsfw ? "nsfw" : ""}
-                    onClick={(e) => {
-                      clearTimeout(timeoutRef.current);
-                      const element = e.target as HTMLImageElement;
-                      chosenImageRef.current = element;
-                      const { y, x } = element.getBoundingClientRect();
-                      imageZoomContainerRef.current.style.display = "block";
-                      imageZoomContainerRef.current.style.transition = "0s";
-                      imageZoomContainerRef.current.style.zIndex = "1000";
-                      blackBackgroundRef.current.style.zIndex = "999";
-                      imageZoomContainerRef.current.style.left = `${x}px`;
-                      imageZoomContainerRef.current.style.top = `${y}px`;
-                      imageZoomContainerRef.current.style.width = `${element.offsetWidth}px`;
-                      imageZoomContainerRef.current.style.height = `${element.offsetHeight}px`;
-                      // console.log(screen.image);
-                      (
-                        imageZoomContainerRef.current.querySelector(
-                          "img"
-                        ) as any
-                      ).src = screen.image;
-                      chosenImageRef.current.style.opacity = "0";
-                      timeoutRef.current = setTimeout(() => {
-                        document.body.style.overflow = "hidden";
-                        imageZoomContainerRef.current.style.transition = "0.4s";
-                        if (
-                          screen.width < window.innerWidth &&
-                          screen.height < window.innerHeight
-                        ) {
-                          imageZoomContainerRef.current.style.width = `${screen.width}px`;
-                          imageZoomContainerRef.current.style.height = `${screen.height}px`;
-                          imageZoomContainerRef.current.style.top = `${
-                            window.innerHeight / 2 - screen.height / 2
-                          }px`;
-                          imageZoomContainerRef.current.style.left = `${
-                            window.innerWidth / 2 - screen.width / 2
-                          }px`;
-                        } else {
+              <div className="screenshots-container">
+                {detailState.screens
+                  .filter(({ nsfw, sexual, violence }) =>
+                    filterMode === 0
+                      ? !nsfw && sexual === 0 && violence === 0
+                      : true
+                  )
+                  .map((screen, key) => (
+                    <LazyLoadImage
+                      effect="opacity"
+                      key={key}
+                      src={
+                        screen.nsfw
+                          ? "/nsfw-warning.webp"
+                          : screen.image.replace("sf", "st")
+                      }
+                      alt=""
+                      className={screen.nsfw ? "nsfw" : ""}
+                      onClick={(e) => {
+                        clearTimeout(timeoutRef.current);
+                        const element = e.target as HTMLImageElement;
+                        chosenImageRef.current = element;
+                        const { y, x } = element.getBoundingClientRect();
+                        imageZoomContainerRef.current.style.display = "block";
+                        imageZoomContainerRef.current.style.transition = "0s";
+                        imageZoomContainerRef.current.style.zIndex = "1000";
+                        blackBackgroundRef.current.style.zIndex = "999";
+                        imageZoomContainerRef.current.style.left = `${x}px`;
+                        imageZoomContainerRef.current.style.top = `${y}px`;
+                        imageZoomContainerRef.current.style.width = `${element.offsetWidth}px`;
+                        imageZoomContainerRef.current.style.height = `${element.offsetHeight}px`;
+                        // console.log(screen.image);
+                        (
+                          imageZoomContainerRef.current.querySelector(
+                            "img"
+                          ) as any
+                        ).src = screen.image;
+                        chosenImageRef.current.style.opacity = "0";
+                        timeoutRef.current = setTimeout(() => {
+                          document.body.style.overflow = "hidden";
+                          imageZoomContainerRef.current.style.transition =
+                            "0.4s";
                           if (
-                            window.innerWidth <= screen.width &&
-                            window.innerWidth *
-                              (screen.height / screen.width) <=
-                              window.innerHeight
+                            screen.width < window.innerWidth &&
+                            screen.height < window.innerHeight
                           ) {
-                            imageZoomContainerRef.current.style.width = `${window.innerWidth}px`;
-                            imageZoomContainerRef.current.style.height = `${
-                              window.innerWidth * (screen.height / screen.width)
-                            }px`;
+                            imageZoomContainerRef.current.style.width = `${screen.width}px`;
+                            imageZoomContainerRef.current.style.height = `${screen.height}px`;
                             imageZoomContainerRef.current.style.top = `${
-                              window.innerHeight / 2 -
-                              (window.innerWidth *
-                                (screen.height / screen.width)) /
-                                2
+                              window.innerHeight / 2 - screen.height / 2
                             }px`;
-                            imageZoomContainerRef.current.style.left = `${0}px`;
-                          }
-                          if (
-                            window.innerHeight <= screen.height &&
-                            window.innerHeight *
-                              (screen.width / screen.height) <=
-                              window.innerWidth
-                          ) {
-                            imageZoomContainerRef.current.style.width = `${
-                              window.innerHeight *
-                              (screen.width / screen.height)
-                            }px`;
-                            imageZoomContainerRef.current.style.height = `${window.innerHeight}px`;
-                            imageZoomContainerRef.current.style.top = `${0}px`;
                             imageZoomContainerRef.current.style.left = `${
-                              window.innerWidth / 2 -
-                              (window.innerHeight *
-                                (screen.width / screen.height)) /
-                                2
+                              window.innerWidth / 2 - screen.width / 2
                             }px`;
+                          } else {
+                            if (
+                              window.innerWidth <= screen.width &&
+                              window.innerWidth *
+                                (screen.height / screen.width) <=
+                                window.innerHeight
+                            ) {
+                              imageZoomContainerRef.current.style.width = `${window.innerWidth}px`;
+                              imageZoomContainerRef.current.style.height = `${
+                                window.innerWidth *
+                                (screen.height / screen.width)
+                              }px`;
+                              imageZoomContainerRef.current.style.top = `${
+                                window.innerHeight / 2 -
+                                (window.innerWidth *
+                                  (screen.height / screen.width)) /
+                                  2
+                              }px`;
+                              imageZoomContainerRef.current.style.left = `${0}px`;
+                            }
+                            if (
+                              window.innerHeight <= screen.height &&
+                              window.innerHeight *
+                                (screen.width / screen.height) <=
+                                window.innerWidth
+                            ) {
+                              imageZoomContainerRef.current.style.width = `${
+                                window.innerHeight *
+                                (screen.width / screen.height)
+                              }px`;
+                              imageZoomContainerRef.current.style.height = `${window.innerHeight}px`;
+                              imageZoomContainerRef.current.style.top = `${0}px`;
+                              imageZoomContainerRef.current.style.left = `${
+                                window.innerWidth / 2 -
+                                (window.innerHeight *
+                                  (screen.width / screen.height)) /
+                                  2
+                              }px`;
+                            }
                           }
-                        }
-                        backupObj.current = {
-                          x,
-                          y,
-                          width: element.offsetWidth,
-                          height: element.offsetHeight,
-                        };
-                        blackBackgroundRef.current.style.display = "block";
-                      }, 100);
-                    }}
-                  />
-                ))}
-            </div>
-          </fieldset>
-        )}
+                          backupObj.current = {
+                            x,
+                            y,
+                            width: element.offsetWidth,
+                            height: element.offsetHeight,
+                          };
+                          blackBackgroundRef.current.style.display = "block";
+                        }, 100);
+                      }}
+                    />
+                  ))}
+              </div>
+            </fieldset>
+          )}
         {patch.affiliateLinks &&
           patch.affiliateLinks.filter(
             (data) => data.label.toLowerCase() === "dlsite"
