@@ -27,7 +27,9 @@ const Gif = ({ screens, isNsfw = false }: Props) => {
   }, [index, isNsfw]);
   if (
     !screens ||
-    !screens.filter(({ nsfw }) => (!isNsfw ? nsfw === isNsfw : true))[index]
+    !screens.filter(({ nsfw, sexual, violence }) =>
+      !isNsfw && sexual === 0 && violence === 0 ? nsfw === isNsfw : true
+    )[index]
   )
     return (
       <div>

@@ -191,8 +191,8 @@ const NavBar = () => {
               );
             }}
           >
-            {!userState.isDarkMode && <span>ðŸŒœ</span>}
-            {userState.isDarkMode && <span>ðŸŒž</span>}
+            {!userState.isDarkMode && <span>?Œœ</span>}
+            {userState.isDarkMode && <span>?Œž</span>}
           </div>
           <div className="link-account-setting">
             {!userStore.currentState().isFilterNsfw && (
@@ -338,11 +338,11 @@ const NavBar = () => {
                 </NavLink>
                 <a
                   className="link-account-setting right-side-link"
-                  href={"https://ko-fi.com/sugoivn"}
+                  href={"https://www.patreon.com/SugoiVN"}
                   target={"_blank"}
                   rel="noreferrer"
                 >
-                  <span style={{ whiteSpace: "nowrap" }}>Buy SVN a Coffee</span>
+                  <span style={{ whiteSpace: "nowrap" }}>Become a member</span>
                   <Donate color={"#FFDD00"} />
                 </a>
                 <NavLink
