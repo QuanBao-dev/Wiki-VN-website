@@ -186,10 +186,10 @@ router.post("/patreon/", async (req, res) => {
   console.log(req.body.data.relationships);
   try {
     const { attributes } = req.body.data;
-    const { email, full_name, currently_entitled_amount_cents } = attributes;
+    const { email, full_name, will_pay_amount_cents } = attributes;
     const type = "Subscription";
     let tierName = "";
-    switch (currently_entitled_amount_cents) {
+    switch (parseInt(will_pay_amount_cents / 100)) {
       case 200:
         tierName = "Master Level";
         break;
@@ -216,7 +216,7 @@ router.post("/patreon/", async (req, res) => {
       email,
       type,
       from_name: full_name,
-      amount: currently_entitled_amount_cents,
+      amount: parseInt(will_pay_amount_cents / 100),
       tier_name: tierName,
       url: "",
       timestamp: new Date(Date.now()).toISOString(),
