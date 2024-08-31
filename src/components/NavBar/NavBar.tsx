@@ -191,8 +191,8 @@ const NavBar = () => {
               );
             }}
           >
-            {!userState.isDarkMode && <span>?Œœ</span>}
-            {userState.isDarkMode && <span>?Œž</span>}
+            {!userState.isDarkMode && <span>ðŸŒœ</span>}
+            {userState.isDarkMode && <span>ðŸŒž</span>}
           </div>
           <div className="link-account-setting">
             {!userStore.currentState().isFilterNsfw && (
