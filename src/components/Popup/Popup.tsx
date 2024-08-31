@@ -75,7 +75,7 @@ const Popup = ({ title, description, url, isHide, setIsHide }: Props) => {
             title="Support me on ko-fi"
             className="kofi-button"
             target="_blank"
-            href={"https://ko-fi.com/sugoivn"}
+            href={"https://ko-fi.com/tomoyonagisa"}
             rel="noreferrer"
           >
             <span className="kofitext">

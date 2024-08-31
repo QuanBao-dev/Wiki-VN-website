@@ -263,7 +263,11 @@ router.post("/kofi/", async (req, res) => {
   let data = JSON.parse(req.body.data);
   console.log(data);
   try {
-    if (data.verification_token !== process.env.SUGOIKOFITOKEN) {
+    if (
+      ![process.env.SUGOIKOFITOKEN, process.env.SUGOIKOFITOKEN2].includes(
+        data.verification_token
+      )
+    ) {
       return res.status(401).send({ error: "Access Denied" });
     }
     let coffee = await coffeeModel.findOne({
