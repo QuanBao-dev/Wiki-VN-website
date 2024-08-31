@@ -1058,10 +1058,6 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
           ) {
             let ratio = 1;
             let isYearly = false;
-            // if (member.payer_email === "bigglack@hotmail.com") {
-            //   console.log(member);
-            //   member.subscription_duration_type = "year";
-            // }
             if (member.subscription_duration_type === "year") {
               ratio = 10;
               isYearly = true;
