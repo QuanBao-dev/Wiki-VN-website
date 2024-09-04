@@ -194,8 +194,8 @@ router.post("/patreon/", async (req, res) => {
       last_charge_status,
     } = attributes;
     const type = "Subscription";
-    if (!["Paid", "Pending"].includes(last_charge_status))
-      return res.status(400).send({ error: last_charge_status });
+    if (!["Paid"].includes(last_charge_status))
+      return res.send({ message: last_charge_status });
 
     let tierName = "";
     switch (parseInt(will_pay_amount_cents / 100)) {
