@@ -186,8 +186,17 @@ router.post("/patreon/", async (req, res) => {
   console.log(req.body.data.relationships);
   try {
     const { attributes } = req.body.data;
-    const { email, full_name, will_pay_amount_cents } = attributes;
+    const {
+      email,
+      full_name,
+      will_pay_amount_cents,
+      last_charge_date,
+      last_charge_status,
+    } = attributes;
     const type = "Subscription";
+    if (last_charge_status !== "Paid")
+      return res.status(400).send({ error: last_charge_status });
+
     let tierName = "";
     switch (parseInt(will_pay_amount_cents / 100)) {
       case 200:
@@ -219,7 +228,9 @@ router.post("/patreon/", async (req, res) => {
       amount: parseInt(will_pay_amount_cents / 100),
       tier_name: tierName,
       url: "",
-      timestamp: new Date(Date.now()).toISOString(),
+      timestamp: last_charge_date
+        ? new Date(last_charge_date).toISOString()
+        : new Date(Date.now()).toISOString(),
     };
     let coffee = await coffeeModel.findOne({
       email: data.email.toLocaleLowerCase(),
