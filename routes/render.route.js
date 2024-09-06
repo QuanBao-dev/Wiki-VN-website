@@ -68,7 +68,7 @@ function parseData(data) {
     return {
       ...data,
       id: parseInt(data.id.match(/[0-9]+/g)[0]),
-      image: data.image ? data.image.url : "/nsfw-warning.webp",
+      image: data.image ? data.image.url : "/background.jpg",
       sexual: data.image ? data.image.sexual : 0,
       violence: data.image ? data.image.violence : 0,
       image_nsfw: data.image ? data.image.sexual >= 1 : false,
