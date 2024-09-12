@@ -197,7 +197,7 @@ router.post("/patreon/", async (req, res) => {
     if (!["Paid"].includes(last_charge_status))
       return res.send({ message: last_charge_status });
     if (will_pay_amount_cents === 0)
-      return res.status(400).send({ error: "Not a paid member" });
+      return res.send({ message: "Not a paid member" });
 
     let tierName = "";
     switch (parseInt(will_pay_amount_cents / 100)) {
