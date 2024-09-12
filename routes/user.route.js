@@ -219,6 +219,9 @@ router.post("/patreon/", async (req, res) => {
       case 10:
         tierName = "Bronze Level";
         break;
+      case 5:
+        tierName = "Supporter";
+        break;
       default:
         tierName = "";
         break;
