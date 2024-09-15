@@ -11,7 +11,7 @@ try {
     encoding: "utf-8",
   });
 } catch (error) {
-  console.log(error);
+  // console.log(error);
 }
 router.get("/", async (req, res) => {
   let {
@@ -90,56 +90,60 @@ router.get("/tags", (req, res) => {
   const q = req.query.q;
   const list = req.query.list;
   const isNormal = req.query.isNormal;
-  if (isNormal === "true") {
-    if (!list || list === "undefined") {
+  try {
+    if (isNormal === "true") {
+      if (!list || list === "undefined") {
+        return res.send({
+          message: [],
+        });
+      }
+      const tagsData = list
+        .split(",")
+        .map((v) => {
+          const tag = tags.find(({ id }) => id === parseInt(v));
+          return {
+            id: tag.id,
+            name: tag.name,
+            cat: tag.cat,
+            description: tag.description,
+            applicable: tag.applicable,
+          };
+        })
+        .filter((v) => v.applicable === true);
       return res.send({
-        message: [],
+        message: tagsData,
       });
     }
-    const tagsData = list
-      .split(",")
-      .map((v) => {
-        const tag = tags.find(({ id }) => id === parseInt(v));
-        return {
-          id: tag.id,
-          name: tag.name,
-          cat: tag.cat,
-          description: tag.description,
-          applicable: tag.applicable,
-        };
-      })
-      .filter((v) => v.applicable === true);
-    return res.send({
-      message: tagsData,
+    const tagsData = tags.map((v) => ({
+      name: v.name,
+      id: v.id,
+      cat: v.cat,
+      aliases: v.aliases,
+      description: v.description,
+      applicable: v.applicable,
+    }));
+    res.send({
+      message: {
+        data: tagsData
+          .filter(({ name, aliases, applicable }) => {
+            for (let i = 0; i < aliases.length; i++) {
+              if (aliases[i].match(new RegExp(q, "i"))) return true;
+            }
+            return !!name.match(new RegExp(q, "i")) && applicable === true;
+          })
+          .slice((page - 1) * 10, page * 10)
+          .map((v) => ({
+            name: v.name,
+            id: v.id,
+            description: v.description,
+            cat: v.cat,
+          })),
+        last_visible_page: Math.ceil(tagsData.length / 10),
+      },
     });
+  } catch (error) {
+    res.status(404).send({ error });
   }
-  const tagsData = tags.map((v) => ({
-    name: v.name,
-    id: v.id,
-    cat: v.cat,
-    aliases: v.aliases,
-    description: v.description,
-    applicable: v.applicable,
-  }));
-  res.send({
-    message: {
-      data: tagsData
-        .filter(({ name, aliases, applicable }) => {
-          for (let i = 0; i < aliases.length; i++) {
-            if (aliases[i].match(new RegExp(q, "i"))) return true;
-          }
-          return !!name.match(new RegExp(q, "i")) && applicable === true;
-        })
-        .slice((page - 1) * 10, page * 10)
-        .map((v) => ({
-          name: v.name,
-          id: v.id,
-          description: v.description,
-          cat: v.cat,
-        })),
-      last_visible_page: Math.ceil(tagsData.length / 10),
-    },
-  });
 });
 
 router.get("/producers/", async (req, res) => {
@@ -230,7 +234,7 @@ router.get("/random", async (req, res) => {
       message: parseData(randomVNList.results),
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     res.status(404).send({ error });
   }
 });
