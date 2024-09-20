@@ -189,18 +189,18 @@ router.post("/patreon/", async (req, res) => {
     const {
       email,
       full_name,
-      will_pay_amount_cents,
+      currently_entitled_amount_cents,
       last_charge_date,
       last_charge_status,
     } = attributes;
     const type = "Subscription";
     if (!["Paid"].includes(last_charge_status))
       return res.send({ message: last_charge_status });
-    if (will_pay_amount_cents === 0)
+    if (currently_entitled_amount_cents === 0)
       return res.send({ message: "Not a paid member" });
 
     let tierName = "";
-    switch (parseInt(will_pay_amount_cents / 100)) {
+    switch (parseInt(currently_entitled_amount_cents / 100)) {
       case 200:
         tierName = "Master Level";
         break;
@@ -230,7 +230,7 @@ router.post("/patreon/", async (req, res) => {
       email,
       type,
       from_name: full_name,
-      amount: parseInt(will_pay_amount_cents / 100),
+      amount: parseInt(currently_entitled_amount_cents / 100),
       tier_name: tierName,
       url: "",
       timestamp: last_charge_date
@@ -326,6 +326,15 @@ router.post("/kofi/", async (req, res) => {
 
 router.get("/", verifyRole("Admin"), async (req, res) => {
   try {
+    // await findOneCoffeeModel("hotosdrogo@gmail.com");
+    // await updateCoffeeModel(
+    //   "hotosdrogo@gmail.com",
+    //   "Subscription",
+    //   "Supporter",
+    //   "Mario Rossi",
+    //   5,
+    //   "2024-09-20T22:52:02.000+00:00"
+    // );
     const finalResult = await updateAllBMC(false);
     res.send({
       message: finalResult,
