@@ -171,7 +171,7 @@ router.post("/BMC/", async (req, res) => {
     await updateAllBMC(false);
     res.send({ message: "Success" });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     if (error) return res.status(400).send({ error });
     res.status(404).send({ error: "Something went wrong" });
   }
@@ -344,6 +344,36 @@ router.get("/", verifyRole("Admin"), async (req, res) => {
     }
   }
 });
+async function findOneCoffeeModel(email) {
+  const coffee = await coffeeModel.findOne({ email }).lean();
+  console.log(coffee);
+}
+async function updateCoffeeModel(
+  email,
+  type,
+  tierName,
+  fromName,
+  amount,
+  becomingMemberAt
+) {
+  const coffee = await coffeeModel.findOneAndUpdate(
+    {
+      email,
+    },
+    {
+      type,
+      tierName,
+      fromName,
+      amount,
+      becomingMemberAt,
+    },
+    {
+      upsert: true,
+      new: true,
+    }
+  );
+  console.log(coffee);
+}
 
 async function getAllSupporters(lastPage) {
   if (!lastPage) lastPage = (await BuyMeCoffee.Supporters()).last_page;

@@ -53,7 +53,7 @@ router.get("/vns/:vnId", async (req, res) => {
       .replace(/\n/g, "");
     res.send(fileContent);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     res.status(404).send("Something went wrong");
   }
 });

@@ -282,7 +282,7 @@ router.get("/:vnId/relations", async (req, res) => {
       message: items[0].relations,
     });
   } catch (error) {
-    console.log({ error });
+    // console.log({ error });
     res.status(404).send({ error });
   }
 });
