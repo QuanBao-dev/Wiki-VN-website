@@ -326,15 +326,6 @@ router.post("/kofi/", async (req, res) => {
 
 router.get("/", verifyRole("Admin"), async (req, res) => {
   try {
-    // await findOneCoffeeModel("hotosdrogo@gmail.com");
-    // await updateCoffeeModel(
-    //   "hotosdrogo@gmail.com",
-    //   "Subscription",
-    //   "Supporter",
-    //   "Mario Rossi",
-    //   5,
-    //   "2024-09-20T22:52:02.000+00:00"
-    // );
     const finalResult = await updateAllBMC(false);
     res.send({
       message: finalResult,
