@@ -449,7 +449,7 @@ router.post("/login", apiLimiter, async (req, res) => {
       if (!allSupporters.includes(user.email) && user.role !== "Admin") {
         return res.status(401).send({
           error:
-            "To verify your email address, please buy me a coffee or become a member using this email address.",
+            "To verify your email address, please become a member using this email address.",
         });
       }
       user.isVerified = true;
@@ -525,7 +525,7 @@ router.post("/register", apiLimiter, async (req, res) => {
     if (!allSupporters.includes(newUser.email) && newUser.role !== "Admin") {
       return res.status(401).send({
         error:
-          "To verify your email address, please buy me a coffee or become a member using this email address.",
+          "To verify your email address, please become a member using this email address.",
       });
     }
     return res.send({
@@ -814,7 +814,7 @@ router.put(
         if (!allSupporters.includes(user.email) && user.role !== "Admin") {
           return res.status(401).send({
             error:
-              "To verify your email address, please buy me a coffee or become a member using this email address.",
+              "To verify your email address, please become a member using this email address.",
           });
         }
         res.send({

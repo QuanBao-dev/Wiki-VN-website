@@ -71,7 +71,7 @@ const Popup = ({ title, description, url, isHide, setIsHide }: Props) => {
             <Donate />
             <span className="bmc-btn-text">Buy me a Coffee</span>
           </a> */}
-          <a
+          {/* <a
             title="Support me on ko-fi"
             className="kofi-button"
             target="_blank"
@@ -86,7 +86,7 @@ const Popup = ({ title, description, url, isHide, setIsHide }: Props) => {
               />
               Buy me a coffee
             </span>
-          </a>
+          </a> */}
           <a
             title="Support me on patreon"
             className="patreon-button"
