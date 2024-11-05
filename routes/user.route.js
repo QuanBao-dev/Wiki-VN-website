@@ -226,6 +226,9 @@ router.post("/patreon/", async (req, res) => {
         tierName = "";
         break;
     }
+    if (parseInt(currently_entitled_amount_cents / 100) < 5) {
+      return res.send({ message: "Not a paid member" });
+    }
     const data = {
       email,
       type,
