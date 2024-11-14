@@ -12,7 +12,6 @@ router.get("/", async (req, res) => {
     let votes = await voteModel.aggregate(
       [
         { $match: { isTranslatable: true } },
-        { $sort: { votes: -1, vnId: 1 } },
         {
           $lookup: {
             from: "users",
