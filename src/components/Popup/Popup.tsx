@@ -91,7 +91,7 @@ const Popup = ({ title, description, url, isHide, setIsHide }: Props) => {
             title="Support me on patreon"
             className="patreon-button"
             target="_blank"
-            href={"https://www.patreon.com/SugoiVN"}
+            href={"https://www.patreon.com/GreatVN"}
             rel="noreferrer"
           >
             <span className="patreon-text">Patreon</span>
