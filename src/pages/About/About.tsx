@@ -9,7 +9,7 @@ const About = () => {
         you can vote for your favorite Visual Novel and your visual novel will
         get translated soon with machine translation.
       </p>
-      <h2>How do I release all of the translation patches on this site?</h2>
+      {/* <h2>How do I release all of the translation patches on this site?</h2>
       <p>
         Basically, I collected multiple tools to extract the text files from
         game, then create translation text files by my programing skills with
@@ -34,7 +34,7 @@ const About = () => {
             Many other people from github (Tool extract text and repack patch)
           </li>
         </ul>
-      </p>
+      </p> */}
       <h2>
         Why are there some Visual Novel games which you can't vote on this site?
       </h2>
