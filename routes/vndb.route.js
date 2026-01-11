@@ -209,7 +209,7 @@ router.get("/random", async (req, res) => {
     // const response = await vndb.query(`dbstats`);
     const response = (await axios.get("https://api.vndb.org/kana/stats")).data;
     const { vn } = response;
-    const randomNumberList = Array.from(Array(4).keys()).reduce((ans, curr) => {
+    const randomNumberList = Array.from(Array(2).keys()).reduce((ans, curr) => {
       let randomNumber = Math.ceil(Math.random() * vn);
       while (ans.includes(randomNumber)) {
         randomNumber = Math.ceil(Math.random() * vn);
