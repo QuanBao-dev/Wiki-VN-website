@@ -41,13 +41,13 @@ router.post("/BMC/", async (req, res) => {
         const member = {};
         member.subscription_id = data.id;
         member.subscription_cancelled_on = new Date(
-          data.canceled_at * 1000
+          data.canceled_at * 1000,
         ).toISOString();
         member.subscription_created_on = new Date(
-          data.started_at * 1000
+          data.started_at * 1000,
         ).toISOString();
         member.subscription_current_period_start = new Date(
-          data.current_period_start * 1000
+          data.current_period_start * 1000,
         ).toISOString();
         member.subscription_duration_type =
           (new Date(data.current_period_end * 1000).getFullYear() -
@@ -62,7 +62,7 @@ router.post("/BMC/", async (req, res) => {
             ? "year"
             : "";
         member.subscription_current_period_end = new Date(
-          data.current_period_end * 1000
+          data.current_period_end * 1000,
         );
         member.subscription_coffee_price = data.amount;
         member.subscription_is_cancelled = data.canceled === "true";
@@ -123,10 +123,10 @@ router.post("/BMC/", async (req, res) => {
         supporter.support_coffees = parseInt(data.amount / 5);
         supporter.transaction_id = data.transaction_id;
         supporter.support_created_on = new Date(
-          data.created_at * 1000
+          data.created_at * 1000,
         ).toISOString();
         supporter.support_updated_on = new Date(
-          data.created_at * 1000
+          data.created_at * 1000,
         ).toISOString();
         supporter.supporter_name = data.supporter_name;
         supporter.payer_name = data.supporter_name;
@@ -178,8 +178,9 @@ router.post("/BMC/", async (req, res) => {
 });
 
 router.post("/patreon/", async (req, res) => {
+  console.log(JSON.stringify(req.headers));
   if (req.headers["X-Patreon-Signature"] !== process.env.PATREONSECRETKEY)
-    return res.send("Unauthorized");
+    return res.status(401).send("Unauthorized");
   console.log("--Data--");
   console.log(req.body.data);
   console.log("--relationships--");
@@ -284,7 +285,7 @@ router.post("/kofi/", async (req, res) => {
   try {
     if (
       ![process.env.SUGOIKOFITOKEN, process.env.SUGOIKOFITOKEN2].includes(
-        data.verification_token
+        data.verification_token,
       )
     ) {
       return res.status(401).send({ error: "Access Denied" });
@@ -357,7 +358,7 @@ async function updateCoffeeModel(
   tierName,
   fromName,
   amount,
-  becomingMemberAt
+  becomingMemberAt,
 ) {
   const coffee = await coffeeModel.findOneAndUpdate(
     {
@@ -373,7 +374,7 @@ async function updateCoffeeModel(
     {
       upsert: true,
       new: true,
-    }
+    },
   );
   console.log(coffee);
 }
@@ -404,7 +405,7 @@ function delay(time) {
   return new Promise((resolve) => {
     let count = 0;
     console.log(
-      `Wait for ${parseInt(time / 1000)} seconds for the server to reset`
+      `Wait for ${parseInt(time / 1000)} seconds for the server to reset`,
     );
     let interval = setInterval(() => {
       count++;
@@ -468,7 +469,7 @@ router.post("/login", apiLimiter, async (req, res) => {
       process.env.JWT_KEY,
       {
         expiresIn: 60 * 5,
-      }
+      },
     );
     await addNewAccessToken(user, token);
     res.cookie("token", token, {
@@ -571,7 +572,7 @@ router.get("/:vnId/vote", async (req, res) => {
         ],
         {
           allowDiskUse: true,
-        }
+        },
       ),
       userModel.aggregate([
         {
@@ -620,7 +621,7 @@ router.delete(
       if (error) return res.status(400).send({ error: error.message });
       res.status(404).send({ error: "Something went wrong" });
     }
-  }
+  },
 );
 
 router.delete("/:userId", verifyRole("Admin"), async (req, res) => {
@@ -730,13 +731,13 @@ router.put("/reset/password", async (req, res) => {
       process.env.JWT_KEY,
       {
         expiresIn: 60 * 15,
-      }
+      },
     );
     sendEmail(
       email,
       "Reset your password",
       `- This link will be expired after 15 minutes
-      - Please click this link ${process.env.HOST_EMAIL}/resetPassword/${jwtToken} to reset your password`
+      - Please click this link ${process.env.HOST_EMAIL}/resetPassword/${jwtToken} to reset your password`,
     );
     res.send({ message: "Please check your email to reset your password" });
   } catch (error) {
@@ -837,7 +838,7 @@ router.put(
         user.avatarImage = result.secure_url;
         user.avatarImage = user.avatarImage.replace(
           "upload/",
-          "upload/f_auto,q_auto/"
+          "upload/f_auto,q_auto/",
         );
         await user.save();
         res.send({
@@ -848,7 +849,7 @@ router.put(
       if (error) return res.status(400).send({ error: error.message });
       res.status(404).send({ error: "Something went wrong" });
     }
-  }
+  },
 );
 
 async function updateAllBMC(isFetchApiBMC, lastPage) {
@@ -881,7 +882,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
         ],
         {
           allowDiskUse: true,
-        }
+        },
       ),
       coffeeSupporterModel.find({}).sort({ support_created_on: -1 }).lean(),
       coffeeMemberModel
@@ -919,7 +920,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
         ],
         {
           allowDiskUse: true,
-        }
+        },
       ),
       getAllSupporters(lastPage),
       getAllSubscriptions(lastPage),
@@ -932,7 +933,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
     for (let i = 0; i < supporters.data.length; i++) {
       const supporter = supporters.data[i];
       let coffeeSupporter = coffeeSupporters.find(
-        (v) => v.payer_email === supporter.payer_email
+        (v) => v.payer_email === supporter.payer_email,
       );
       if (!coffeeSupporter) {
         coffeeSupporter = new coffeeSupporterModel(supporter);
@@ -977,7 +978,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
     for (let j = 0; j < members.data.length; j++) {
       const member = members.data[j];
       let coffeeMember = coffeeMembers.find(
-        (v) => v.payer_email === member.payer_email
+        (v) => v.payer_email === member.payer_email,
       );
       if (!coffeeMember) {
         coffeeMember = new coffeeMemberModel(member);
@@ -1047,10 +1048,10 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
           temp[people.email].support_created_on = people.becomingSupporterAt;
         } else {
           const supportCreatedOn = new Date(
-            temp[people.email].support_created_on
+            temp[people.email].support_created_on,
           ).getTime();
           const becomingSupporterAt = new Date(
-            people.becomingSupporterAt
+            people.becomingSupporterAt,
           ).getTime();
           if (supportCreatedOn < becomingSupporterAt) {
             temp[people.email].support_created_on = people.becomingSupporterAt;
@@ -1078,7 +1079,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
             people.becomingMemberAt;
         } else {
           const subscriptionCurrentPeriodStart = new Date(
-            temp2[people.email].subscription_current_period_start
+            temp2[people.email].subscription_current_period_start,
           ).getTime();
           const becomingMemberAt = new Date(people.becomingMemberAt).getTime();
           if (subscriptionCurrentPeriodStart < becomingMemberAt) {
@@ -1119,8 +1120,8 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
               addMonths(
                 new Date(member.subscription_current_period_start),
                 isYearly ? 12 : 1,
-                true
-              )
+                true,
+              ),
             ).getTime();
             if (Date.now() - endFreeAdsDate < 0) {
               if (
@@ -1160,7 +1161,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
                   notification.message = `Hi ${
                     user.username
                   }! Now your votes is now boosted by x${parseInt(
-                    member.subscription_coffee_price / ratio
+                    member.subscription_coffee_price / ratio,
                   )}, you can access to the secret room on the top right as well as long as you are still a membership`;
                 }
                 userData.role = "Member";
@@ -1184,7 +1185,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
                   user.email.toLocaleLowerCase()
               ) {
                 const endFreeAdsDate = new Date(
-                  addMonths(new Date(supporter.support_created_on), 1, true)
+                  addMonths(new Date(supporter.support_created_on), 1, true),
                 ).getTime();
                 if (Date.now() - endFreeAdsDate < 0) {
                   const boost =
@@ -1215,7 +1216,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
                     notification.message = `Hi ${
                       user.username
                     }! Now your vote is counted as ${boost} votes and you will be able to access to early access patch for 1 month since the last day you supported. This will be end at ${new Date(
-                      endFreeAdsDate
+                      endFreeAdsDate,
                     ).toUTCString()}`;
                     await Promise.all([userData.save(), notification.save()]);
                   }
@@ -1292,7 +1293,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
           }
         }
         return user;
-      })
+      }),
     );
   if (supporters.data)
     finalResult = await Promise.all(
@@ -1308,7 +1309,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
               const member = members.data.find(
                 (member) =>
                   member.payer_email.toLocaleLowerCase() ===
-                  supporter.payer_email.toLocaleLowerCase()
+                  supporter.payer_email.toLocaleLowerCase(),
               );
               if (!member) {
                 console.log(supporter.payer_email.toLocaleLowerCase(), user);
@@ -1324,8 +1325,8 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
                 addMonths(
                   new Date(member.subscription_current_period_start),
                   isYearly ? 12 : 1,
-                  true
-                )
+                  true,
+                ),
               ).getTime();
               return {
                 ...user,
@@ -1338,7 +1339,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
               };
             }
             const endFreeAdsDate = new Date(
-              addMonths(new Date(supporter.support_created_on), 1, true)
+              addMonths(new Date(supporter.support_created_on), 1, true),
             ).getTime();
             if (Date.now() - endFreeAdsDate < 0) {
               const boost =
@@ -1369,7 +1370,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
                 notification.message = `Hi ${
                   user.username
                 }! Now your vote is counted as ${boost} votes and you will be able to access to early access patch for 1 month since the last day you supported. This will be end at ${new Date(
-                  endFreeAdsDate
+                  endFreeAdsDate,
                 ).toUTCString()}`;
                 await Promise.all([userData.save(), notification.save()]);
               }
@@ -1405,7 +1406,7 @@ async function updateAllBMC(isFetchApiBMC, lastPage) {
           }
         }
         return user;
-      })
+      }),
     );
   return finalResult;
 }
@@ -1435,7 +1436,7 @@ async function deleteInactiveAccount() {
       ) {
         await user.delete();
       }
-    })
+    }),
   );
 }
 
