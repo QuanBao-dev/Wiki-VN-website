@@ -179,8 +179,7 @@ router.post("/BMC/", async (req, res) => {
 router.post("/patreon/", async (req, res) => {
   console.log(JSON.stringify(req.headers));
   console.log(req.headers["x-patreon-signature"]);
-  console.log(req.headers["X-Patreon-Signature"]);
-  if (req.headers["X-Patreon-Signature"] !== process.env.PATREONSECRETKEY)
+  if (req.headers["x-patreon-signature"] !== process.env.PATREONSECRETKEY)
     return res.status(401).send("Unauthorized");
   console.log("--Data--");
   console.log(req.body.data);
