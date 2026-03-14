@@ -19,15 +19,14 @@ const coffeeModel = require("../models/coffee.model");
 const tokenModel = require("../models/token.model");
 const coffeeMemberModel = require("../models/coffeeMember.model");
 const coffeeSupporterModel = require("../models/coffeeSupporter.model");
-const rateLimit = require("express-rate-limit");
 const addMonths = require("@jsbits/add-months");
 
-const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-});
+// const apiLimiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   max: 20, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+//   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+//   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+// });
 
 const BuyMeCoffee = new BMC(process.env.SUGOICOFFEETOKEN);
 router.post("/BMC/", async (req, res) => {
@@ -179,6 +178,7 @@ router.post("/BMC/", async (req, res) => {
 
 router.post("/patreon/", async (req, res) => {
   console.log(JSON.stringify(req.headers));
+  console.log(req.headers["x-patreon-signature"]);
   console.log(req.headers["X-Patreon-Signature"]);
   if (req.headers["X-Patreon-Signature"] !== process.env.PATREONSECRETKEY)
     return res.status(401).send("Unauthorized");
@@ -420,7 +420,7 @@ function delay(time) {
   });
 }
 
-router.post("/login", apiLimiter, async (req, res) => {
+router.post("/login", async (req, res) => {
   const result = loginValidation(req.body);
   if (result.error) {
     return res.status(400).send({ error: result.error.details[0].message });
@@ -488,7 +488,7 @@ router.post("/login", apiLimiter, async (req, res) => {
   }
 });
 
-router.post("/register", apiLimiter, async (req, res) => {
+router.post("/register", async (req, res) => {
   const result = registerValidation(req.body);
   if (result.error) {
     return res.status(400).send({ error: result.error.details[0].message });

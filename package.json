@@ -19,7 +19,6 @@
     "dotenv": "^16.0.1",
     "encoding-japanese": "^2.0.0",
     "express": "^4.18.1",
-    "express-rate-limit": "^6.7.0",
     "joi": "^17.6.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.6.1",
