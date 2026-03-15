@@ -180,7 +180,7 @@ router.post("/patreon/", async (req, res) => {
   // console.log(JSON.stringify(req.headers));
   // console.log(req.headers["x-patreon-signature"]);
   if (
-    req.headers["x-patreon-signature"].length ===
+    req.headers["x-patreon-signature"].length !==
     process.env.PATREONSECRETKEY.length
   ) {
     console.log("Unauthorized");
