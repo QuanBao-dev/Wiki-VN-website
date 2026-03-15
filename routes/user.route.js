@@ -177,14 +177,17 @@ router.post("/BMC/", async (req, res) => {
 });
 
 router.post("/patreon/", async (req, res) => {
-  console.log(JSON.stringify(req.headers));
-  console.log(req.headers["x-patreon-signature"]);
-  if (req.headers["x-patreon-signature"] !== process.env.PATREONSECRETKEY)
+  // console.log(JSON.stringify(req.headers));
+  // console.log(req.headers["x-patreon-signature"]);
+  if (
+    req.headers["x-patreon-signature"].length ===
+    process.env.PATREONSECRETKEY.length
+  ) {
+    console.log("Unauthorized");
     return res.status(401).send("Unauthorized");
+  }
   console.log("--Data--");
-  console.log(req.body.data);
-  console.log("--relationships--");
-  console.log(req.body.data.relationships);
+  console.log(JSON.stringify(req.body.data));
   try {
     const { attributes } = req.body.data;
     const {
