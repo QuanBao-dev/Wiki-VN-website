@@ -58,7 +58,7 @@ const CardItemVN = ({
                       !nsfw && sexual === 0 && violence === 0
                   )
                   [randomRef.current].image.replace(/sf/g, "st")
-              : "/nsfw-warning.webp"
+              : "/background.jpg"
           }
           alt=""
           onLoad={() => {

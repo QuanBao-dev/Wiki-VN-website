@@ -214,7 +214,7 @@ const Detail = () => {
                 detailState.image_nsfw ||
                 detailState.sexual !== 0 ||
                 detailState.violence !== 0
-                  ? "/nsfw-warning.webp"
+                  ? "/background.jpg"
                   : detailState.image
               }
               alt=""
@@ -420,7 +420,7 @@ const Detail = () => {
                       key={key}
                       src={
                         screen.nsfw
-                          ? "/nsfw-warning.webp"
+                          ? "/background.jpg"
                           : screen.image.replace("sf", "st")
                       }
                       alt=""
