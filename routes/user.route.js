@@ -736,12 +736,15 @@ router.put("/reset/password", async (req, res) => {
         expiresIn: 60 * 15,
       },
     );
-    sendEmail(
-      email,
-      "Reset your password",
-      `- This link will be expired after 15 minutes
-      - Please click this link ${process.env.HOST_EMAIL}/resetPassword/${jwtToken} to reset your password`,
-    );
+    try {
+      await sendEmail(
+        email,
+        "Reset your password",
+        `- This link will be expired after 15 minutes\n- Please click this link ${process.env.HOST_EMAIL}/resetPassword/${jwtToken} to reset your password`,
+      );
+    } catch {
+      return res.status(400).send({ error: "Fail to send to email" });
+    }
     res.send({ message: "Please check your email to reset your password" });
   } catch (error) {
     if (error) return res.status(400).send({ error: error.message });
