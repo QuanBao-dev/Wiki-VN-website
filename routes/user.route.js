@@ -726,6 +726,7 @@ router.put("/reset/password", async (req, res) => {
       });
     }
     await token.save();
+    const minutes = 15;
     const jwtToken = jwt.sign(
       {
         userId: token.userId,
@@ -733,14 +734,14 @@ router.put("/reset/password", async (req, res) => {
       },
       process.env.JWT_KEY,
       {
-        expiresIn: 60 * 15,
+        expiresIn: 60 * minutes,
       },
     );
     try {
       await sendEmail(
         email,
         "Reset your password",
-        `- This link will be expired after 15 minutes\n- Please click this link ${process.env.HOST_EMAIL}/resetPassword/${jwtToken} to reset your password`,
+        `- This link will be expired after ${minutes} minutes\n- Please click this link ${process.env.HOST_EMAIL}/resetPassword/${jwtToken} to reset your password`,
       );
     } catch {
       return res.status(400).send({ error: "Fail to send to email" });
@@ -1449,6 +1450,12 @@ async function deleteInactiveAccount() {
 function sendEmail(to, subject, message) {
   return new Promise((res, rej) => {
     const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
+      requireTLS: true,
+      logger: true,
+      debug: true,
       service: "gmail",
       auth: {
         user: process.env.EMAIL,
